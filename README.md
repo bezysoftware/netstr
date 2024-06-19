@@ -1,0 +1,2 @@
+# netstr
+.NET nostr implementation
