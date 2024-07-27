@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Netstr", "src\Netstr\Netstr.csproj", "{2D316EDF-7F10-4524-9FCB-0A864B39E92C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{B51E10A8-A570-45BB-BD1F-CC1FC8F9F6ED}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Netstr.Tests", "test\Netstr.Tests\Netstr.Tests.csproj", "{1884912E-54C0-4879-9E1B-C6EE633D1E20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{320F094E-4B63-40D7-8D8B-AB5B01F6FCB0}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D316EDF-7F10-4524-9FCB-0A864B39E92C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D316EDF-7F10-4524-9FCB-0A864B39E92C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D316EDF-7F10-4524-9FCB-0A864B39E92C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D316EDF-7F10-4524-9FCB-0A864B39E92C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1884912E-54C0-4879-9E1B-C6EE633D1E20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1884912E-54C0-4879-9E1B-C6EE633D1E20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1884912E-54C0-4879-9E1B-C6EE633D1E20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1884912E-54C0-4879-9E1B-C6EE633D1E20}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64B66C4D-CDA3-46DF-A742-60D1569090A3}
+	EndGlobalSection
+EndGlobal
