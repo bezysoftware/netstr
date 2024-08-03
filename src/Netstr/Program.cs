@@ -19,3 +19,6 @@ application
     .EnsureDbContextMigrations<NetstrDbContext>();
 
 application.Run();
+
+// Required for tests
+public partial class Program { }

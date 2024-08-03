@@ -14,7 +14,7 @@ namespace Netstr.Tests
         {
         }
 
-        public static (SqliteConnection connection, TestDbContext context, DbContextOptions<NetstrDbContext> options) InitializeAndSeed(string file = "./Resources/Events.json")
+        public static (SqliteConnection connection, TestDbContext context, DbContextOptions<NetstrDbContext> options) InitializeAndSeed(bool seed = true, string file = "./Resources/Events.json")
         {
             // SQLite connection
             var connection = new SqliteConnection("DataSource=:memory:");
@@ -26,13 +26,16 @@ namespace Netstr.Tests
             var context = new TestDbContext(options);
             context.Database.EnsureCreated();
 
-            // Seed with data
-            var json = File.ReadAllText("./Resources/Events.json");
-            var events = JsonSerializer.Deserialize<Event[]>(json) ?? throw new InvalidOperationException("Couldn't deserialize events");
-            var entities = events.Select(x => x.ToEntity(DateTimeOffset.UtcNow));
+            if (seed)
+            {
+                // Seed with data
+                var json = File.ReadAllText("./Resources/Events.json");
+                var events = JsonSerializer.Deserialize<Event[]>(json) ?? throw new InvalidOperationException("Couldn't deserialize events");
+                var entities = events.Select(x => x.ToEntity(DateTimeOffset.UtcNow));
 
-            context.AddRange(entities);
-            context.SaveChanges();
+                context.AddRange(entities);
+                context.SaveChanges();
+            }
 
             return (connection, context, options);
         }

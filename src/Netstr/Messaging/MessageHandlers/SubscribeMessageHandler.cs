@@ -32,6 +32,8 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException("REQ message should be an array with at least 2 elements");
             }
 
+            var start = DateTimeOffset.UtcNow;
+
             var id = parameters[1].DeserializeRequired<string>();
             var filters = parameters
                 .Skip(2)
@@ -43,12 +45,19 @@ namespace Netstr.Messaging.MessageHandlers
             {
                 using var context = this.db.CreateDbContext();
 
+                // get stored events
+                var entities = await context.Events
+                    .WhereAnyFilterMatches(filters, this.limits.Value.MaxInitialLimit)
+                    .Where(x => x.FirstSeen < start)
+                    .OrderByDescending(x => x.EventCreatedAt)
+                    .ThenBy(x => x.EventId)
+                    .ToArrayAsync();
+
+                var events = entities.Select(CreateEvent).ToArray();
+                var maxFirstSeen = entities.MaxOrDefault(x => x.FirstSeen);
+
                 // add sub
                 x.AddSubscription(id, filters);
-
-                // get stored events
-                var entities = await context.Events.WhereAnyFilterMatches(filters, this.limits.Value.MaxInitialLimit).ToArrayAsync();
-                var events = entities.Select(CreateEvent).ToArray();
 
                 // send back
                 await adapter.SendEventsAsync(id, events);

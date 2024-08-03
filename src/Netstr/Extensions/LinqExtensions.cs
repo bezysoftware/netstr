@@ -23,7 +23,7 @@ namespace Netstr.Extensions
         /// <summary>
         /// Returns <paramref name="defaultValue"/> if the sequence is empty, otherwise find the max int value.
         /// </summary>
-        public static int MaxOrDefault<T>(this IEnumerable<T> enumerable, Func<T, int> func, int defaultValue = 0)
+        public static Tvalue? MaxOrDefault<T, Tvalue>(this IEnumerable<T> enumerable, Func<T, Tvalue> func, Tvalue? defaultValue = default)
         {
             return enumerable.Any() ? enumerable.Max(func) : defaultValue;
         }

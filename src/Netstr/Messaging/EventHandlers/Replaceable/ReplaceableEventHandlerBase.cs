@@ -26,7 +26,6 @@ namespace Netstr.Messaging.EventHandlers.Replaceable
             using var db = this.db.CreateDbContext();
 
             var newEntity = e.ToEntity(DateTimeOffset.UtcNow);
-
             var existing = await db.Events
                 .AsNoTracking()
                 .Where(GetUniqueEntityExpression(newEntity))

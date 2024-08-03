@@ -23,7 +23,7 @@ namespace Netstr.Messaging
 
         void RemoveSubscription(string id);
 
-        IDictionary<string, IEnumerable<SubscriptionFilter>> GetSubscriptions();
+        IDictionary<string, Subscription> GetSubscriptions();
     }
 
     public interface IWebSocketAdapterCollection

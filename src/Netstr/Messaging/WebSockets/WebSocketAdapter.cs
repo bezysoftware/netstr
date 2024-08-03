@@ -15,7 +15,7 @@ namespace Netstr.Messaging.WebSockets
         private readonly IOptions<ConnectionOptions> options;
         private readonly IMessageDispatcher dispatcher;
         private readonly WebSocket ws;
-        private readonly Dictionary<string, SubscriptionFilter[]> subscriptions;
+        private readonly Dictionary<string, Subscription> subscriptions;
         private readonly AsyncReaderWriterLock asyncLock;
 
         private CancellationToken cancellationToken;
@@ -46,12 +46,12 @@ namespace Netstr.Messaging.WebSockets
             this.logger.LogInformation(this.subscriptions.ContainsKey(id)
                 ? $"Adding a new subscription {id} for client {ClientId}"
                 : $"Replacing existing subscription {id} for client {ClientId}");
-            this.subscriptions[id] = filters.ToArray();
+            this.subscriptions[id] = new Subscription(filters.ToArray(), DateTimeOffset.UtcNow);
         }
 
-        public IDictionary<string, IEnumerable<SubscriptionFilter>> GetSubscriptions()
+        public IDictionary<string, Subscription> GetSubscriptions()
         {
-            return this.subscriptions.ToImmutableDictionary(x => x.Key, x => x.Value.AsEnumerable());
+            return this.subscriptions.ToImmutableDictionary(x => x.Key, x => x.Value);
         }
 
         public async Task LockAsync(LockType type, Func<IWebSocketSubscriptionsAdapter, Task> func)

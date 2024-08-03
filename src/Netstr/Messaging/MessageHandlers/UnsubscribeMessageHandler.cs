@@ -15,13 +15,12 @@ namespace Netstr.Messaging.MessageHandlers
         {
             var id = parameters[1].DeserializeRequired<string>();
 
-            await sender.LockAsync(LockType.Write, async adapter =>
+            await sender.LockAsync(LockType.Write, adapter =>
             {
                 // remove sub
                 adapter.RemoveSubscription(id);
 
-                // send CLOSED
-                await adapter.SendClosedAsync(id);
+                return Task.CompletedTask;
             });
         }
     }
