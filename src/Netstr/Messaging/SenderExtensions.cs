@@ -66,7 +66,7 @@ namespace Netstr.Messaging
         {
             return sender.SendAsync(
             [
-                MessageType.Close,
+                MessageType.Closed,
                 id,
                 message
             ]);

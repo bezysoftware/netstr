@@ -40,6 +40,9 @@ namespace Netstr.Data.Migrations
                     b.Property<string>("EventDeduplication")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("EventExpiration")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("EventId")
                         .IsRequired()
                         .HasColumnType("text");
@@ -54,9 +57,6 @@ namespace Netstr.Data.Migrations
                     b.Property<string>("EventSignature")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("Expires")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTimeOffset>("FirstSeen")
                         .HasColumnType("timestamp with time zone");

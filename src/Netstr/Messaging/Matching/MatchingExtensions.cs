@@ -33,6 +33,7 @@ namespace Netstr.Messaging.Matching
                         (filter.Until >= x.EventCreatedAt || !filter.Until.HasValue))
                     .WhereTags(filter.Tags)
                     .OrderByDescending(x => x.EventCreatedAt)
+                    .ThenBy(x => x.EventId)
                     .Take(filter.Limit > 0 && filter.Limit < maxLimit ? filter.Limit : maxLimit))
                 .Aggregate((acc, x) => acc.Union(x))
                 .AsNoTracking();
