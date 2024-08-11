@@ -1,17 +1,17 @@
 Feature: NIP-01
-
+	NIP-01 defines the basic protocol that should be implemented by everybody. 
 
 Background: 
 	Given a relay is running
 	And Alice is connected to relay
-	| PublicKey                                                        | PrivateKey                                                      |
-	| 5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75 | nsec12y4pgafw6kpcqjtfyrdyxtcupnddj5kdft768kdl55wzq50ervpqauqnw4 |
+	| PublicKey                                                        | PrivateKey                                                       |
+	| 5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75 | 512a14752ed58380496920da432f1c0cdad952cd4afda3d9bfa51c2051f91b02 |
 	And Bob is connected to relay
-	| PublicKey                                                        | PrivateKey                                                      |
-	| 5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627 | nsec1x4glcash7anr9ez59xfvp0qplm9jyn0x88ztdg0qj455d69m3g5snmf2km |
+	| PublicKey                                                        | PrivateKey                                                       |
+	| 5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627 | 3551fc7617f76632e4542992c0bc01fecb224de639c4b6a1e0956946e8bb8a29 |
 	And Charlie is connected to relay
-	| PublicKey                                                        | PrivateKey                                                      |
-	| fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614 | nsec17alcrf4zy043t7qlaetfzcdy7u55qx5uhscmk6077655nwwncgaqdu8j06 |
+	| PublicKey                                                        | PrivateKey                                                       |
+	| fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614 | f77f81a6a223eb15f81fee569161a4f729401a9cbc31bb69fef6a949b9d3c23a |
 
 Scenario: Invalid messages are discarded
 	Relay shouldn't broadcast messages with invalid Id or Signnature. 
