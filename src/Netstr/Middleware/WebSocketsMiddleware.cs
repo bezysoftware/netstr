@@ -28,26 +28,17 @@ namespace Netstr.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Path == this.options.Value.WebSocketsPath)
+            if (context.Request.Path == this.options.Value.WebSocketsPath && context.WebSockets.IsWebSocketRequest)
             {
-                if (context.WebSockets.IsWebSocketRequest)
-                {
-                    this.logger.LogInformation($"Accepting websocket connection from {context.Connection.RemoteIpAddress}");
+                this.logger.LogInformation($"Accepting websocket connection from {context.Connection.RemoteIpAddress}");
 
-                    var ws = await context.WebSockets.AcceptWebSocketAsync();
-                    var adapter = this.factory.CreateAdapter(ws, context.Request.Headers);
+                var ws = await context.WebSockets.AcceptWebSocketAsync();
+                var adapter = this.factory.CreateAdapter(ws, context.Request.Headers);
 
-                    await adapter.StartAsync();
+                await adapter.StartAsync();
 
-                    this.logger.LogInformation($"Closing websocket connection from {context.Connection.RemoteIpAddress}");
-                    this.factory.DisposeAdapter(adapter.ClientId);
-                }
-                else
-                {
-                    // TODO: this might be a good place to load UI
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    this.logger.LogWarning($"Request from {context.Connection.RemoteIpAddress} to path {context.Request.Path} is not a WebSocket");
-                }
+                this.logger.LogInformation($"Closing websocket connection from {context.Connection.RemoteIpAddress}");
+                this.factory.DisposeAdapter(adapter.ClientId);
             }
             else
             {

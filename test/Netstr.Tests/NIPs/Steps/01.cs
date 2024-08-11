@@ -4,52 +4,16 @@ using System.Text.Json;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
-namespace Netstr.Tests.NIPs
+namespace Netstr.Tests.NIPs.Steps
 {
-    [Binding]
-    public class CommonSteps : IClassFixture<WebApplicationFactory>
+    public partial class Steps
     {
-        private readonly WebApplicationFactory factory;
-        private readonly ScenarioContext scenarioContext;
-
-        public CommonSteps(
-            WebApplicationFactory factory,
-            ScenarioContext scenarioContext)
-        {
-            this.factory = factory;
-            this.scenarioContext = scenarioContext;
-
-            scenarioContext.Set(new Clients());
-        }
-
-        [Given(@"a relay is running")]
-        public void GivenARelayIsRunning()
-        {
-            // start server
-            this.factory.CreateDefaultClient();
-        }
-
-        [Given(@"(.*) is connected to relay")]
-        public async Task GivenAliceIsConnectedToRelay(string name, Keys keys)
-        {
-            var wsClient = this.factory.Server.CreateWebSocketClient();
-            wsClient.ConfigureRequest = http => http.Headers["sec-websocket-key"] = name;
-
-            var ws = await wsClient.ConnectAsync(new Uri($"ws://localhost"), CancellationToken.None);
-
-            var client = new Client(ws, keys);
-
-            _ = Task.Run(() => ws.ReceiveAsync(client.AddReceivedMessage));
-
-            this.scenarioContext.Get<Clients>().Add(name, client);
-        }
-
         [When(@"(.*) sends a subscription request (.*)")]
         public async Task WhenAliceSubscribesToEvents(string client, string subscriptionId, IEnumerable<SubscriptionFilterRequest> filters)
         {
             var now = DateTimeOffset.UtcNow;
             var c = this.scenarioContext.Get<Clients>()[client];
-            
+
             await c.WebSocket.SendAsync([
                 "REQ",
                 subscriptionId,
@@ -89,7 +53,7 @@ namespace Netstr.Tests.NIPs
 
             foreach (var e in events)
             {
-                await c.WaitForMessageAsync(start, ["OK",  e.Id]);
+                await c.WaitForMessageAsync(start, ["OK", e.Id]);
             }
         }
 

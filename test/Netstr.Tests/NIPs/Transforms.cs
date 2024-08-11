@@ -1,12 +1,13 @@
 ﻿using Netstr.Messaging;
 using Netstr.Messaging.Models;
+using System.Reflection;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
 namespace Netstr.Tests.NIPs
 {
     [Binding]
-    public class CommonTransforms
+    public class Transforms
     {
         [StepArgumentTransformation]
         public IEnumerable<SubscriptionFilterRequest> CreateSubscriptionFilters(Table table)
@@ -44,5 +45,16 @@ namespace Netstr.Tests.NIPs
         {
             return table.CreateInstance<Keys>();
         }
+
+        [StepArgumentTransformation]
+        public Dictionary<string, string> CreateHeaders(Table table)
+        {
+            return table.Rows.ToDictionary(row => row.GetString("Header"), row => row.GetString("Value"));
+        }
+
+        //public IEnumerable<PropertyInfo> CreateProperties(Table table)
+        //{
+        //    return table.Rows.Select(x => PropertyInfo)
+        //}
     }
 }

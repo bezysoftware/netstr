@@ -14,16 +14,22 @@ namespace Netstr.Tests.NIPs
     {
     }
 
-    public record Client(WebSocket WebSocket, Keys Keys)
+    public record Client(HttpClient http, WebSocket WebSocket, Keys Keys)
     {
         private const int WaitMessageAttempts = 5;
         private const int WaitMessageTimeoutMilis = 200;
 
         private List<Message> messages { get; } = new();
+        private List<HttpResponseMessage> responses { get; } = new();
 
         public IEnumerable<object[]> GetReceivedMessages()
         {
             return this.messages.Select(x => x.Data);
+        }
+
+        public IEnumerable<HttpResponseMessage> GetHttpResponses()
+        {
+            return this.responses.AsEnumerable();
         }
 
         public void AddReceivedMessage(JsonElement[] message)
@@ -37,6 +43,11 @@ namespace Netstr.Tests.NIPs
             };
 
             this.messages.Add(new(DateTimeOffset.UtcNow, [message[0].ToString(), message[1].ToString(), ..msg]));
+        }
+
+        public void AddResponse(HttpResponseMessage response)
+        {
+            this.responses.Add(response);
         }
 
         public async Task WaitForMessageAsync(DateTimeOffset since, string[] value)
