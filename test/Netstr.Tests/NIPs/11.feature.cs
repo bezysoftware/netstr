@@ -40,7 +40,9 @@ namespace Netstr.Tests.NIPs
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "NIPs", "NIP-11", null, ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "NIPs", "NIP-11", "\tRelays may provide server metadata to clients to inform them of capabilities, ad" +
+                    "ministrative contacts, and various server attributes.\r\n\tThis is made available a" +
+                    "s a JSON document over HTTP, on the same URI as the relay\'s websocket.", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -77,9 +79,9 @@ namespace Netstr.Tests.NIPs
         
         public virtual void FeatureBackground()
         {
-#line 3
+#line 5
 #line hidden
-#line 4
+#line 6
  testRunner.Given("a relay is running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
             TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
@@ -88,7 +90,7 @@ namespace Netstr.Tests.NIPs
             table32.AddRow(new string[] {
                         "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75",
                         "nsec12y4pgafw6kpcqjtfyrdyxtcupnddj5kdft768kdl55wzq50ervpqauqnw4"});
-#line 5
+#line 7
  testRunner.And("Alice is connected to relay", ((string)(null)), table32, "And ");
 #line hidden
         }
@@ -107,7 +109,7 @@ namespace Netstr.Tests.NIPs
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Relay sends an information document", "\tGET HTTP request to the websockets endpoint with a application/nostr+json Accept" +
                     " header should\r\n\tproduce a json Relay Information Document", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 9
+#line 11
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -117,7 +119,7 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 3
+#line 5
 this.FeatureBackground();
 #line hidden
                 TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
@@ -126,7 +128,7 @@ this.FeatureBackground();
                 table33.AddRow(new string[] {
                             "Accept",
                             "application/nostr+json"});
-#line 12
+#line 14
  testRunner.When("Alice sends a GET HTTP request to its websockets endpoint", ((string)(null)), table33, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
@@ -135,7 +137,7 @@ this.FeatureBackground();
                 table34.AddRow(new string[] {
                             "Access-Control-Allow-Origin",
                             "*"});
-#line 15
+#line 17
  testRunner.Then("Alice receives a response with headers", ((string)(null)), table34, "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
@@ -162,7 +164,7 @@ this.FeatureBackground();
                 table35.AddRow(new string[] {
                             "supported_nips",
                             "int[]"});
-#line 18
+#line 20
  testRunner.And("Alice receives a response with json content", ((string)(null)), table35, "And ");
 #line hidden
             }

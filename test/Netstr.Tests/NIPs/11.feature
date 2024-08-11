@@ -1,4 +1,6 @@
 Feature: NIP-11
+	Relays may provide server metadata to clients to inform them of capabilities, administrative contacts, and various server attributes.
+	This is made available as a JSON document over HTTP, on the same URI as the relay's websocket.
 
 Background: 
 	Given a relay is running

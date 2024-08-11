@@ -40,7 +40,7 @@ namespace Netstr.Tests.NIPs
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "NIPs", "NIP-01", null, ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "NIPs", "NIP-01", "\tNIP-01 defines the basic protocol that should be implemented by everybody. ", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -87,7 +87,7 @@ namespace Netstr.Tests.NIPs
                         "PrivateKey"});
             table1.AddRow(new string[] {
                         "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75",
-                        "nsec12y4pgafw6kpcqjtfyrdyxtcupnddj5kdft768kdl55wzq50ervpqauqnw4"});
+                        "512a14752ed58380496920da432f1c0cdad952cd4afda3d9bfa51c2051f91b02"});
 #line 6
  testRunner.And("Alice is connected to relay", ((string)(null)), table1, "And ");
 #line hidden
@@ -96,7 +96,7 @@ namespace Netstr.Tests.NIPs
                         "PrivateKey"});
             table2.AddRow(new string[] {
                         "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627",
-                        "nsec1x4glcash7anr9ez59xfvp0qplm9jyn0x88ztdg0qj455d69m3g5snmf2km"});
+                        "3551fc7617f76632e4542992c0bc01fecb224de639c4b6a1e0956946e8bb8a29"});
 #line 9
  testRunner.And("Bob is connected to relay", ((string)(null)), table2, "And ");
 #line hidden
@@ -105,7 +105,7 @@ namespace Netstr.Tests.NIPs
                         "PrivateKey"});
             table3.AddRow(new string[] {
                         "fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614",
-                        "nsec17alcrf4zy043t7qlaetfzcdy7u55qx5uhscmk6077655nwwncgaqdu8j06"});
+                        "f77f81a6a223eb15f81fee569161a4f729401a9cbc31bb69fef6a949b9d3c23a"});
 #line 12
  testRunner.And("Charlie is connected to relay", ((string)(null)), table3, "And ");
 #line hidden

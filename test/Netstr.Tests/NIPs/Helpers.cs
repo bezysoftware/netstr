@@ -1,5 +1,4 @@
-﻿using Nano.Bech32;
-using NBitcoin.Secp256k1;
+﻿using NBitcoin.Secp256k1;
 
 namespace Netstr.Tests.NIPs
 {
@@ -23,8 +22,8 @@ namespace Netstr.Tests.NIPs
 
         public static string Sign(string id, string privateKey)
         {
-            Bech32Encoder.Decode(privateKey, out var hrp, out var privkey);
             var hash = Convert.FromHexString(id);
+            var privkey = Convert.FromHexString(privateKey);
 
             var buf = new ArraySegment<byte>(new byte[64]);
             ECPrivKey.Create(privkey).SignBIP340(hash).WriteToSpan(buf);

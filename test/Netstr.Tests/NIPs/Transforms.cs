@@ -51,10 +51,5 @@ namespace Netstr.Tests.NIPs
         {
             return table.Rows.ToDictionary(row => row.GetString("Header"), row => row.GetString("Value"));
         }
-
-        //public IEnumerable<PropertyInfo> CreateProperties(Table table)
-        //{
-        //    return table.Rows.Select(x => PropertyInfo)
-        //}
     }
 }
