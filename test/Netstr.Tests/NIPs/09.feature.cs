@@ -111,24 +111,6 @@ namespace Netstr.Tests.NIPs
 #line 13
  testRunner.And("Charlie is connected to relay", ((string)(null)), table34, "And ");
 #line hidden
-            TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
-                        "Id",
-                        "Content",
-                        "Kind",
-                        "CreatedAt"});
-            table35.AddRow(new string[] {
-                        "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
-                        "Hello",
-                        "1",
-                        "1722337838"});
-            table35.AddRow(new string[] {
-                        "86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927",
-                        "Later",
-                        "1",
-                        "1722337848"});
-#line 16
- testRunner.When("Alice publishes events", ((string)(null)), table35, "When ");
-#line hidden
         }
         
         void System.IDisposable.Dispose()
@@ -145,7 +127,7 @@ namespace Netstr.Tests.NIPs
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Deletion removes referenced regular events and is itself broadcast", "\tDeletion event can contain multiple \"e\" tags referencing known and unknown event" +
                     "s", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 21
+#line 17
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -158,45 +140,59 @@ this.ScenarioInitialize(scenarioInfo);
 #line 5
 this.FeatureBackground();
 #line hidden
-                TechTalk.SpecFlow.Table table36 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
                             "Id",
+                            "Content",
                             "Kind",
                             "Tags",
                             "CreatedAt"});
-                table36.AddRow(new string[] {
+                table35.AddRow(new string[] {
+                            "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
+                            "Hello",
+                            "1",
+                            "",
+                            "1722337838"});
+                table35.AddRow(new string[] {
+                            "86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927",
+                            "Later",
+                            "1",
+                            "",
+                            "1722337848"});
+                table35.AddRow(new string[] {
                             "04c4ee3333f6f4c59ee5d476e5c86d77922976ea0134c5e19eae665324f735c7",
+                            "",
                             "5",
                             "[[\"e\", \"8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5\"], [\"e\"," +
                                 " \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"]]",
                             "1722337845"});
-#line 23
- testRunner.When("Alice publishes an event", ((string)(null)), table36, "When ");
+#line 19
+ testRunner.When("Alice publishes events", ((string)(null)), table35, "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table36 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Authors"});
+                table36.AddRow(new string[] {
+                            "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75"});
+#line 24
+ testRunner.And("Bob sends a subscription request abcd", ((string)(null)), table36, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table37 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Authors"});
-                table37.AddRow(new string[] {
-                            "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75"});
-#line 26
- testRunner.And("Bob sends a subscription request abcd", ((string)(null)), table37, "And ");
-#line hidden
-                TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
                             "Type",
                             "Id",
                             "EventId"});
-                table38.AddRow(new string[] {
+                table37.AddRow(new string[] {
                             "EVENT",
                             "abcd",
                             "86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927"});
-                table38.AddRow(new string[] {
+                table37.AddRow(new string[] {
                             "EVENT",
                             "abcd",
                             "04c4ee3333f6f4c59ee5d476e5c86d77922976ea0134c5e19eae665324f735c7"});
-                table38.AddRow(new string[] {
+                table37.AddRow(new string[] {
                             "EOSE",
                             "abcd",
                             ""});
-#line 29
- testRunner.Then("Bob receives messages", ((string)(null)), table38, "Then ");
+#line 27
+ testRunner.Then("Bob receives messages", ((string)(null)), table37, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -211,8 +207,8 @@ this.FeatureBackground();
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("It\'s not allowed to delete someone else\'s events", "\tDeletion event might reference someone else\'s events, those shouldn\'t be deleted" +
                     "\r\n\tIf the deletion references other events which belong to the author, those sho" +
-                    "uld be deleted ", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 35
+                    "uld be deleted", tagsOfScenario, argumentsOfScenario, featureTags);
+#line 33
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -224,6 +220,27 @@ this.ScenarioInitialize(scenarioInfo);
                 this.ScenarioStart();
 #line 5
 this.FeatureBackground();
+#line hidden
+                TechTalk.SpecFlow.Table table38 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Content",
+                            "Kind",
+                            "Tags",
+                            "CreatedAt"});
+                table38.AddRow(new string[] {
+                            "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
+                            "Hello",
+                            "1",
+                            "",
+                            "1722337838"});
+                table38.AddRow(new string[] {
+                            "86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927",
+                            "Later",
+                            "1",
+                            "",
+                            "1722337848"});
+#line 36
+ testRunner.When("Alice publishes events", ((string)(null)), table38, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table39 = new TechTalk.SpecFlow.Table(new string[] {
                             "Id",
@@ -244,15 +261,15 @@ this.FeatureBackground();
                             "[[\"e\", \"a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346\"],[\"e\", " +
                                 "\"8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5\"]]",
                             "1722337845"});
-#line 38
- testRunner.When("Bob publishes an event", ((string)(null)), table39, "When ");
+#line 40
+ testRunner.And("Bob publishes an event", ((string)(null)), table39, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table40 = new TechTalk.SpecFlow.Table(new string[] {
                             "Authors"});
                 table40.AddRow(new string[] {
                             "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75,5bc683a5d12133a9" +
                                 "6ac5502c15fe1c2287986cff7baf6283600360e6bb01f627"});
-#line 42
+#line 44
  testRunner.And("Charlie sends a subscription request abcd", ((string)(null)), table40, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table41 = new TechTalk.SpecFlow.Table(new string[] {
@@ -275,8 +292,97 @@ this.FeatureBackground();
                             "EOSE",
                             "abcd",
                             ""});
-#line 45
+#line 47
  testRunner.Then("Charlie receives messages", ((string)(null)), table41, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableFactAttribute(DisplayName="Deleting a deletion has no affect")]
+        [Xunit.TraitAttribute("FeatureTitle", "NIP-09")]
+        [Xunit.TraitAttribute("Description", "Deleting a deletion has no affect")]
+        public void DeletingADeletionHasNoAffect()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Deleting a deletion has no affect", "\tClients and relays are not obliged to support \"undelete\" functionality", tagsOfScenario, argumentsOfScenario, featureTags);
+#line 54
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 5
+this.FeatureBackground();
+#line hidden
+                TechTalk.SpecFlow.Table table42 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Content",
+                            "Kind",
+                            "Tags",
+                            "CreatedAt"});
+                table42.AddRow(new string[] {
+                            "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
+                            "Hello",
+                            "1",
+                            "",
+                            "1722337838"});
+                table42.AddRow(new string[] {
+                            "86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927",
+                            "Later",
+                            "1",
+                            "",
+                            "1722337848"});
+                table42.AddRow(new string[] {
+                            "367ca4fcb31777b20fffc7057ca10e3f251322022b57fc4c123ecbf423f3b529",
+                            "",
+                            "5",
+                            "[[\"e\", \"8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5\"]]",
+                            "1722337845"});
+                table42.AddRow(new string[] {
+                            "254ab6e975fc906256f9f318e50c450cd745745031459bddb027c655124302a7",
+                            "",
+                            "5",
+                            "[[\"e\", \"367ca4fcb31777b20fffc7057ca10e3f251322022b57fc4c123ecbf423f3b529\"]]",
+                            "1722337845"});
+#line 56
+ testRunner.When("Alice publishes events", ((string)(null)), table42, "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table43 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Authors"});
+                table43.AddRow(new string[] {
+                            "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75,5bc683a5d12133a9" +
+                                "6ac5502c15fe1c2287986cff7baf6283600360e6bb01f627"});
+#line 62
+ testRunner.And("Charlie sends a subscription request abcd", ((string)(null)), table43, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table44 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Type",
+                            "Id",
+                            "EventId"});
+                table44.AddRow(new string[] {
+                            "EVENT",
+                            "abcd",
+                            "86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927"});
+                table44.AddRow(new string[] {
+                            "EVENT",
+                            "abcd",
+                            "254ab6e975fc906256f9f318e50c450cd745745031459bddb027c655124302a7"});
+                table44.AddRow(new string[] {
+                            "EVENT",
+                            "abcd",
+                            "367ca4fcb31777b20fffc7057ca10e3f251322022b57fc4c123ecbf423f3b529"});
+                table44.AddRow(new string[] {
+                            "EOSE",
+                            "abcd",
+                            ""});
+#line 65
+ testRunner.Then("Charlie receives messages", ((string)(null)), table44, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

@@ -32,9 +32,10 @@ namespace Netstr.Messaging.EventHandlers
             // delete by EventId
             var deleteIds = GetEventIdsToDelete(db, e.Tags);
             await db.Events
-                .Where(x => x.EventPublicKey == e.PublicKey)
-                .Where(x => !x.DeletedAt.HasValue)
-                .Where(x => deleteIds.Contains(x.EventId))
+                .Where(x => x.EventPublicKey == e.PublicKey) // only delete own events
+                .Where(x => x.EventKind != EventKind.Delete) // cannnot delete a delete event
+                .Where(x => !x.DeletedAt.HasValue)           // not deleted yet
+                .Where(x => deleteIds.Contains(x.EventId))   // in the list of ids
                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.DeletedAt, now));
 
             db.Add(e.ToEntity(now));

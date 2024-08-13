@@ -28,17 +28,10 @@ application
     .EnsureDbContextMigrations<NetstrDbContext>();
 
 // Relay Information Document
-application.MapGet(
-    options.Value.WebSocketsPath, 
-    ([FromServices] IRelayInformationService service, [FromHeader(Name = "Accept")] string? accept) =>
-    {
-        if (accept == "application/nostr+json")
-        {
-            return Results.Ok(service.GetDocument());
-        }
-
-        return Results.NotFound();
-    });
+application.UseRouting();
+application.MapWhen(
+    ctx => ctx.Request.Headers["Accept"] == "application/nostr+json", 
+    app => app.UseEndpoints(x => x.MapGet(options.Value.WebSocketsPath, ([FromServices] IRelayInformationService service) => service.GetDocument())));
 
 // Start the application
 application.Run();
