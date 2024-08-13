@@ -1,11 +1,17 @@
 ﻿using Netstr.Messaging.Models;
 using System.Security.Cryptography;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 
 namespace Netstr.Messaging.MessageHandlers.Events
 {
     public class EventHashValidator : IEventValidator
     {
+        private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
         public string? Validate(Event e)
         {
             var obj = (object[])[
@@ -18,7 +24,7 @@ namespace Netstr.Messaging.MessageHandlers.Events
             ];
 
             // TODO: ToHexStringLower in .NET 9
-            var hash = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(obj))).ToLower();
+            var hash = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(obj, serializerOptions))).ToLower();
 
             return hash.Equals(e.Id)
                 ? null

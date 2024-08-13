@@ -1,5 +1,5 @@
 Feature: NIP-01
-	NIP-01 defines the basic protocol that should be implemented by everybody. 
+	Defines the basic protocol that should be implemented by everybody. 
 
 Background: 
 	Given a relay is running
@@ -13,23 +13,26 @@ Background:
 	| PublicKey                                                        | PrivateKey                                                       |
 	| fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614 | f77f81a6a223eb15f81fee569161a4f729401a9cbc31bb69fef6a949b9d3c23a |
 
-Scenario: Invalid messages are discarded
-	Relay shouldn't broadcast messages with invalid Id or Signnature. 
-	It should also reply with OK false.
+Scenario: Invalid messages are discarded, valid ones accepted
+	Relay shouldn't broadcast messages with invalid Id or Signnature. It should also reply with OK false.
+	This also covers correct validation of events with special characters
 	When Alice sends a subscription request abcd
 	| Kinds |
 	| 1     |
 	And Bob publishes events
-	| Id                                                               | Content | Kind | CreatedAt  | Signature |
-	| Invalid                                                          | Hello 1 | 1    | 1722337838 |           |
-	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1 | 1    | 1722337838 | Invalid   |
+	| Id                                                               | Content              | Kind | CreatedAt  | Signature |
+	| ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff | Hello 1              | 1    | 1722337838 |           |
+	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1              | 1    | 1722337838 | Invalid   |
+	| 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 | Hi ' \" \b \t \r \n  | 1    | 1722337838 |           |
 	Then Bob receives messages
  	| Type | Id                                                               | Success |
- 	| OK   | Invalid                                                          | false   |
+ 	| OK   | ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff | false   |
  	| OK   | a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | false   |
+ 	| OK   | 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 | true    |
 	And Alice receives a message
- 	| Type | Id   |
- 	| EOSE | abcd |
+ 	| Type  | Id   | EventId                                                          |
+ 	| EOSE  | abcd |                                                                  |
+ 	| EVENT | abcd | 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 |
 
 Scenario: Newly subscribed client receives matching events, EOSE and future events
 	Bob publishes events which are stored by the relay before any subscription exists. 

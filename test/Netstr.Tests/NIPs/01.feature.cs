@@ -40,7 +40,7 @@ namespace Netstr.Tests.NIPs
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "NIPs", "NIP-01", "\tNIP-01 defines the basic protocol that should be implemented by everybody. ", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "NIPs", "NIP-01", "\tDefines the basic protocol that should be implemented by everybody. ", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -116,15 +116,16 @@ namespace Netstr.Tests.NIPs
             this.TestTearDown();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Invalid messages are discarded")]
+        [Xunit.SkippableFactAttribute(DisplayName="Invalid messages are discarded, valid ones accepted")]
         [Xunit.TraitAttribute("FeatureTitle", "NIP-01")]
-        [Xunit.TraitAttribute("Description", "Invalid messages are discarded")]
-        public void InvalidMessagesAreDiscarded()
+        [Xunit.TraitAttribute("Description", "Invalid messages are discarded, valid ones accepted")]
+        public void InvalidMessagesAreDiscardedValidOnesAccepted()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid messages are discarded", "\tRelay shouldn\'t broadcast messages with invalid Id or Signnature. \r\n\tIt should a" +
-                    "lso reply with OK false.", tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Invalid messages are discarded, valid ones accepted", "\tRelay shouldn\'t broadcast messages with invalid Id or Signnature. It should also" +
+                    " reply with OK false.\r\n\tThis also covers correct validation of events with speci" +
+                    "al characters", tagsOfScenario, argumentsOfScenario, featureTags);
 #line 16
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -152,7 +153,7 @@ this.FeatureBackground();
                             "CreatedAt",
                             "Signature"});
                 table5.AddRow(new string[] {
-                            "Invalid",
+                            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                             "Hello 1",
                             "1",
                             "1722337838",
@@ -163,6 +164,12 @@ this.FeatureBackground();
                             "1",
                             "1722337838",
                             "Invalid"});
+                table5.AddRow(new string[] {
+                            "9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296",
+                            "Hi \' \\\" \\b \\t \\r \n",
+                            "1",
+                            "1722337838",
+                            ""});
 #line 22
  testRunner.And("Bob publishes events", ((string)(null)), table5, "And ");
 #line hidden
@@ -172,22 +179,32 @@ this.FeatureBackground();
                             "Success"});
                 table6.AddRow(new string[] {
                             "OK",
-                            "Invalid",
+                            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
                             "false"});
                 table6.AddRow(new string[] {
                             "OK",
                             "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346",
                             "false"});
-#line 26
+                table6.AddRow(new string[] {
+                            "OK",
+                            "9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296",
+                            "true"});
+#line 27
  testRunner.Then("Bob receives messages", ((string)(null)), table6, "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                             "Type",
-                            "Id"});
+                            "Id",
+                            "EventId"});
                 table7.AddRow(new string[] {
                             "EOSE",
-                            "abcd"});
-#line 30
+                            "abcd",
+                            ""});
+                table7.AddRow(new string[] {
+                            "EVENT",
+                            "abcd",
+                            "9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296"});
+#line 32
  testRunner.And("Alice receives a message", ((string)(null)), table7, "And ");
 #line hidden
             }
@@ -205,7 +222,7 @@ this.FeatureBackground();
 	Alice then connects to the relay and should receive the matching stored events and EOSE.
 	Bob publishes a new event which should be broadcast to Alice. 
 	Bob receives OK for all of his messages.", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 34
+#line 37
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -233,14 +250,14 @@ this.FeatureBackground();
                             "Hello MD",
                             "30023",
                             "1722337839"});
-#line 39
+#line 42
  testRunner.When("Bob publishes events", ((string)(null)), table8, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table9 = new TechTalk.SpecFlow.Table(new string[] {
                             "Kinds"});
                 table9.AddRow(new string[] {
                             "1"});
-#line 43
+#line 46
  testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table9, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table10 = new TechTalk.SpecFlow.Table(new string[] {
@@ -253,7 +270,7 @@ this.FeatureBackground();
                             "Hello 2",
                             "1",
                             "1722337840"});
-#line 46
+#line 49
  testRunner.And("Bob publishes an event", ((string)(null)), table10, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table11 = new TechTalk.SpecFlow.Table(new string[] {
@@ -272,7 +289,7 @@ this.FeatureBackground();
                             "EVENT",
                             "abcd",
                             "8013e4630a69528007355f65e01936c9b761a4bbd9340b60a4bd0222b15b7cf3"});
-#line 49
+#line 52
  testRunner.Then("Alice receives messages", ((string)(null)), table11, "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table12 = new TechTalk.SpecFlow.Table(new string[] {
@@ -291,7 +308,7 @@ this.FeatureBackground();
                             "OK",
                             "8013e4630a69528007355f65e01936c9b761a4bbd9340b60a4bd0222b15b7cf3",
                             "true"});
-#line 54
+#line 57
  testRunner.And("Bob receives messages", ((string)(null)), table12, "And ");
 #line hidden
             }
@@ -308,7 +325,7 @@ this.FeatureBackground();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Closed subscriptions should no longer receive events", "\tAfter a subscription is closed the relay should no longer forward events for tha" +
                     "t subscription\r\n\tHowever it should still forward them for other existing subscri" +
                     "ptions", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 60
+#line 63
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -325,17 +342,17 @@ this.FeatureBackground();
                             "Kinds"});
                 table13.AddRow(new string[] {
                             "1"});
-#line 63
+#line 66
  testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table13, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table14 = new TechTalk.SpecFlow.Table(new string[] {
                             "Kinds"});
                 table14.AddRow(new string[] {
                             "1"});
-#line 66
+#line 69
  testRunner.And("Alice sends a subscription request efgh", ((string)(null)), table14, "And ");
 #line hidden
-#line 69
+#line 72
  testRunner.And("Alice closes a subscription abcd", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table15 = new TechTalk.SpecFlow.Table(new string[] {
@@ -348,7 +365,7 @@ this.FeatureBackground();
                             "Hello 1",
                             "1",
                             "1722337838"});
-#line 70
+#line 73
  testRunner.And("Bob publishes an event", ((string)(null)), table15, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table16 = new TechTalk.SpecFlow.Table(new string[] {
@@ -367,7 +384,7 @@ this.FeatureBackground();
                             "EVENT",
                             "efgh",
                             "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346"});
-#line 73
+#line 76
  testRunner.Then("Alice receives a message", ((string)(null)), table16, "Then ");
 #line hidden
             }
@@ -387,7 +404,7 @@ this.FeatureBackground();
 	Parametrized replaceable events have a unique combination of PublicKey+Kind+[d tag] and only the last version should be stored
 	Relay should discard older versions of existing events
 	Events returned for initial subscription request should be ordered by CreatedAt (newer first), then by Id lexically", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 79
+#line 82
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -404,7 +421,7 @@ this.FeatureBackground();
                             "Authors"});
                 table17.AddRow(new string[] {
                             "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627"});
-#line 86
+#line 89
  testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table17, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table18 = new TechTalk.SpecFlow.Table(new string[] {
@@ -461,14 +478,14 @@ this.FeatureBackground();
                             "30000",
                             "[[ \"d\", \"b\" ]]",
                             "1722337836"});
-#line 89
+#line 92
  testRunner.And("Bob publishes events", ((string)(null)), table18, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table19 = new TechTalk.SpecFlow.Table(new string[] {
                             "Authors"});
                 table19.AddRow(new string[] {
                             "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627"});
-#line 99
+#line 102
  testRunner.And("Charlie sends a subscription request abcd", ((string)(null)), table19, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table20 = new TechTalk.SpecFlow.Table(new string[] {
@@ -503,7 +520,7 @@ this.FeatureBackground();
                             "EVENT",
                             "abcd",
                             "cbefb02df14d326dcf8a0b8cb16aa264a041502d25c1e1952ebe3c54fbe9c53c"});
-#line 102
+#line 105
  testRunner.Then("Alice receives messages", ((string)(null)), table20, "Then ");
 #line hidden
                 TechTalk.SpecFlow.Table table21 = new TechTalk.SpecFlow.Table(new string[] {
@@ -526,7 +543,7 @@ this.FeatureBackground();
                             "EOSE",
                             "abcd",
                             ""});
-#line 111
+#line 114
  testRunner.And("Charlie receives messages", ((string)(null)), table21, "And ");
 #line hidden
             }
@@ -544,7 +561,7 @@ this.FeatureBackground();
 	Charlie previously published an event and publishes another one after Alice's new subscription
 	Bob also publishes an event after Alice re-subscribes
 	Alice should receive EOSE from Bob, then stored event+EOSE+new event from Charlie and no more events from Bob", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 118
+#line 121
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -567,21 +584,21 @@ this.FeatureBackground();
                             "Hello",
                             "1",
                             "1722337836"});
-#line 123
+#line 126
  testRunner.When("Charlie publishes an event", ((string)(null)), table22, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table23 = new TechTalk.SpecFlow.Table(new string[] {
                             "Authors"});
                 table23.AddRow(new string[] {
                             "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627"});
-#line 126
+#line 129
  testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table23, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table24 = new TechTalk.SpecFlow.Table(new string[] {
                             "Authors"});
                 table24.AddRow(new string[] {
                             "fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614"});
-#line 129
+#line 132
  testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table24, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table25 = new TechTalk.SpecFlow.Table(new string[] {
@@ -594,7 +611,7 @@ this.FeatureBackground();
                             "Hello again",
                             "1",
                             "1722337837"});
-#line 132
+#line 135
  testRunner.And("Charlie publishes an event", ((string)(null)), table25, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table26 = new TechTalk.SpecFlow.Table(new string[] {
@@ -607,7 +624,7 @@ this.FeatureBackground();
                             "Hello 1",
                             "1",
                             "1722337838"});
-#line 135
+#line 138
  testRunner.And("Bob publishes events", ((string)(null)), table26, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table27 = new TechTalk.SpecFlow.Table(new string[] {
@@ -630,7 +647,7 @@ this.FeatureBackground();
                             "EVENT",
                             "abcd",
                             "a56ce3b0684d78d3ebe3d6d3e06d3a82317b8f7fdde9830727ee914b582a6091"});
-#line 138
+#line 141
  testRunner.Then("Alice receives messages", ((string)(null)), table27, "Then ");
 #line hidden
             }
@@ -646,7 +663,7 @@ this.FeatureBackground();
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Relay can handle complex filters", "\tSubscription requests can contain multiple filter objects which are interpreted " +
                     "as || conditions", tagsOfScenario, argumentsOfScenario, featureTags);
-#line 145
+#line 148
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -679,7 +696,7 @@ this.FeatureBackground();
                             "Hello MD",
                             "30023",
                             "1722337839"});
-#line 147
+#line 150
  testRunner.When("Bob publishes events", ((string)(null)), table28, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table29 = new TechTalk.SpecFlow.Table(new string[] {
@@ -702,7 +719,7 @@ this.FeatureBackground();
                             "Hello again",
                             "1",
                             "1722337837"});
-#line 152
+#line 155
  testRunner.When("Charlie publishes events", ((string)(null)), table29, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
@@ -745,7 +762,7 @@ this.FeatureBackground();
                             "",
                             "",
                             ""});
-#line 157
+#line 160
  testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table30, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
@@ -772,7 +789,7 @@ this.FeatureBackground();
                             "EOSE",
                             "abcd",
                             ""});
-#line 163
+#line 166
  testRunner.Then("Alice receives messages", ((string)(null)), table31, "Then ");
 #line hidden
             }
