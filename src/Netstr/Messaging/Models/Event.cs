@@ -36,6 +36,8 @@ namespace Netstr.Messaging.Models
 
         public bool IsParametrizedReplaceable() => Kind is >= 30000 and < 40000;
 
+        public bool IsDelete() => Kind == EventKind.Delete;
+
         public string ToStringUnique()
         {
             return IsParametrizedReplaceable()
