@@ -34,9 +34,10 @@ namespace Netstr.Tests.NIPs.Steps
                 var tags = table.Rows[i].GetString("Tags");
                 return e with
                 {
+                    Content = e.Content.Replace("\\b", "\b").Replace("\\r", "\r").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\n", "\n"),
                     CreatedAt = DateTimeOffset.FromUnixTimeSeconds(table.Rows[i].GetInt64("CreatedAt")),
                     PublicKey = c.Keys.PublicKey,
-                    Signature = e.Signature ?? Helpers.Sign(e.Id, c.Keys.PrivateKey),
+                    Signature = string.IsNullOrEmpty(e.Signature) ? Helpers.Sign(e.Id, c.Keys.PrivateKey) : e.Signature,
                     Tags = string.IsNullOrWhiteSpace(tags)
                         ? []
                         : JsonSerializer.Deserialize<string[][]>(tags) ?? []
