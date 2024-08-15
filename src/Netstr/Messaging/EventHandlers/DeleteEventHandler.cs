@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Netstr.Data;
+using Netstr.Extensions;
 using Netstr.Messaging.Models;
 
 namespace Netstr.Messaging.EventHandlers
@@ -9,6 +11,8 @@ namespace Netstr.Messaging.EventHandlers
     /// </summary>
     public class DeleteEventHandler : EventHandlerBase
     {
+        private record ReplaceableEventRef(string PublicKey, int Kind, string? Deduplication) { }
+
         private readonly IDbContextFactory<NetstrDbContext> db;
 
         public DeleteEventHandler(
@@ -29,13 +33,15 @@ namespace Netstr.Messaging.EventHandlers
 
             var now = DateTimeOffset.UtcNow;
 
-            // delete by EventId
-            var deleteIds = GetEventIdsToDelete(db, e.Tags);
+            // delete events (= mark as deleted)
+            var regularEventIds = GetRegularEventIds(e.Tags);
+            var replaceableQuery = GetReplaceableQuery(db, e, now);
+
             await db.Events
                 .Where(x => x.EventPublicKey == e.PublicKey) // only delete own events
                 .Where(x => x.EventKind != EventKind.Delete) // cannnot delete a delete event
                 .Where(x => !x.DeletedAt.HasValue)           // not deleted yet
-                .Where(x => deleteIds.Contains(x.EventId))   // in the list of ids
+                .Where(x => regularEventIds.Contains(x.EventId) || replaceableQuery.Contains(x.EventId))
                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.DeletedAt, now));
 
             db.Add(e.ToEntity(now));
@@ -51,16 +57,51 @@ namespace Netstr.Messaging.EventHandlers
             await BroadcastEventAsync(e);
         }
 
-        private IEnumerable<string> GetEventIdsToDelete(NetstrDbContext db, string[][] tags)
+        private IEnumerable<string> GetRegularEventIds(string[][] tags)
         {
-            var regularEvents = tags
+            return tags
                 .Where(x => x.Length >= 2 && x[0] == EventTag.Event)
                 .Select(x => x[1])
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct()
+                .Distinct();
+        }
+
+        private IQueryable<string> GetReplaceableQuery(NetstrDbContext db, Event e, DateTimeOffset now)
+        {
+            var replacableEvents = e.Tags
+                .Where(x => x.Length >= 2 && x[0] == EventTag.ReplaceableEvent)
+                .Select(x => ParseReplaceableTag(x[1]))
+                .WhereNotNull()
                 .ToArray();
 
-            return regularEvents;
+            var replaceableQuery = db.Events.Where(x => false);
+
+            foreach (var re in replacableEvents)
+            {
+                var query = db.Events.Where(x => x.EventKind == re.Kind);
+                replaceableQuery = replaceableQuery.Union(query);
+            }
+
+            return replaceableQuery
+                .Where(x => x.EventCreatedAt <= e.CreatedAt) // only delete those before the deletion request
+                .Select(x => x.EventId);
+        }
+
+        private ReplaceableEventRef? ParseReplaceableTag(string tag)
+        {
+            var parsed = tag.Split(":", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            if (parsed.Length < 2)
+            {
+                return null;
+            }
+
+            if (!int.TryParse(parsed[1], out var kind))
+            {
+                return null;
+            }
+
+            return new (parsed[0], kind, parsed.Length > 2 ? parsed[2] : null);
         }
     }
 }

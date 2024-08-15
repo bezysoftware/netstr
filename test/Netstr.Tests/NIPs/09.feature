@@ -29,6 +29,36 @@ Scenario: Deletion removes referenced regular events and is itself broadcast
 	| EVENT | abcd | 86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927 |
 	| EVENT | abcd | 04c4ee3333f6f4c59ee5d476e5c86d77922976ea0134c5e19eae665324f735c7 |
 	| EOSE  | abcd |                                                                  |
+
+
+Scenario: Deletion removes referenced replaceable events and is itself broadcast
+	Deletion event can contain "a" tags referencing (parametrized) replaceable events,
+	but only those which took place before the deletion event.
+	If a newer event arives after it was previously deleted, it is saved.
+	If a newer event which was created before the deleted event arrives, it is ignored.
+	When Bob publishes events
+	| Id                                                               | Kind  | Tags                                                                                | CreatedAt  |
+	| af3224801d0ea862ceb45e3d75998373ff8726541f133dd0bc5badc79c832e88 | 0     |                                                                                     | 1722337838 |
+	| 37b30f773a1a7ba1615f34482194a531eca4b3a353e7c73a8f0e08985f6a09e4 | 10000 |                                                                                     | 1722337840 |
+	| a23d28af8e9395478f297bd649d71a80b3d6c6c2af2c1dc1c9036ac4f451263d | 30000 | [[ "d", "a" ]]                                                                      | 1722337835 |
+	| 8a75f74fe8798771c98c4c17b847f95e7ef28c7822b57e399bca41dc911f8baf | 30000 | [[ "d", "b" ]]                                                                      | 1722337840 |
+	| 9ead3323b0e26292d96b01bd6ed24cfea1973eceea878ad19c8d56e8916c625d | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:0:"]]      | 1722337839 |
+	| 753a8fc529a44a82097d54012fd7a5c8d5d201cdb41ef1f77e3a7ff8cf70ab36 | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:10000:"]]  | 1722337839 |
+	| 6101fb0b269a4e3c0bfa79c853c07c081fbbcc9ed562a93359ad443a757183c4 | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:30000:a"]] | 1722337839 |
+	| 5842861d68412d6fd994e7e11b1ddac08bfd84fdd4e82100b14c2dbc41739308 | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:30000:b"]] | 1722337839 |
+	| 4a2a7d1fe9ea53ba1604eab98523f26eaee750a86983aa5fbe86614f9c5a2318 | 30000 | [[ "d", "a" ]]                                                                      | 1722337836 |
+	And Alice sends a subscription request abcd
+	| Authors                                                          |
+	| 5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627 |
+	Then Alice receives messages
+	| Type  | Id   | EventId                                                          |
+	| EVENT | abcd | 37b30f773a1a7ba1615f34482194a531eca4b3a353e7c73a8f0e08985f6a09e4 |
+	| EVENT | abcd | 8a75f74fe8798771c98c4c17b847f95e7ef28c7822b57e399bca41dc911f8baf |
+	| EVENT | abcd | 5842861d68412d6fd994e7e11b1ddac08bfd84fdd4e82100b14c2dbc41739308 |
+	| EVENT | abcd | 6101fb0b269a4e3c0bfa79c853c07c081fbbcc9ed562a93359ad443a757183c4 |
+	| EVENT | abcd | 753a8fc529a44a82097d54012fd7a5c8d5d201cdb41ef1f77e3a7ff8cf70ab36 |
+	| EVENT | abcd | 9ead3323b0e26292d96b01bd6ed24cfea1973eceea878ad19c8d56e8916c625d |
+	| EOSE  | abcd |                                                                  |
 	
 Scenario: It's not allowed to delete someone else's events
 	Deletion event might reference someone else's events, those shouldn't be deleted

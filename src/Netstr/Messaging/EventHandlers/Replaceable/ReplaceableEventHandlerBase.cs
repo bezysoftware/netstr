@@ -40,6 +40,14 @@ namespace Netstr.Messaging.EventHandlers.Replaceable
                     return;
                 }
 
+                // if event was previously deleted only accept newer events if they are newer than the deletion
+                if (existing.DeletedAt.HasValue && newEntity.EventCreatedAt < existing.DeletedAt)
+                {
+                    this.logger.LogInformation($"Newer event {e.ToStringUnique()} already exists, ignoring");
+                    await sender.SendOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                    return;
+                }
+
                 db.Remove(existing);
 
                 // copy over original first seen

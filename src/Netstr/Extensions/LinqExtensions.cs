@@ -27,5 +27,13 @@ namespace Netstr.Extensions
         {
             return enumerable.Any() ? enumerable.Max(func) : defaultValue;
         }
+
+        /// <summary>
+        /// Filters the sequence and returns only not null elements.
+        /// </summary>
+        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> enumerable)
+        {
+            return enumerable.Where(x => x != null)!;
+        }
     }
 }
