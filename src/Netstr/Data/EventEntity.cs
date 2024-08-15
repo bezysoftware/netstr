@@ -20,6 +20,8 @@
 
         public DateTimeOffset? EventExpiration { get; set; }
 
+        public DateTimeOffset? DeletedAt { get; set; }
+
         public required DateTimeOffset FirstSeen { get; set; }
 
         public required ICollection<TagEntity> Tags { get; set; }

@@ -8,6 +8,7 @@
         public const string InvalidSignature = "invalid: event signature verification failed";
         public const string DuplicateEvent = "duplicate: already have this event";
         public const string DuplicateReplaceableEvent = "duplicate: already have a newer version of this event";
+        public const string DuplicateDeletedEvent = "duplicate: future version of this event was already deleted";
 
         public const string CannotParseMessage = "unable to parse the message";
         public const string CannotProcessMessageType = "unknown message type";

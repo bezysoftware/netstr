@@ -3,5 +3,6 @@
     public static class EventKind
     {
         public static int UserMetadata = 0;
+        public static int Delete = 5;
     }
 }

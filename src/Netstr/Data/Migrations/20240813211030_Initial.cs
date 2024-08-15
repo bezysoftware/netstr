@@ -26,6 +26,7 @@ namespace Netstr.Data.Migrations
                     EventSignature = table.Column<string>(type: "text", nullable: false),
                     EventDeduplication = table.Column<string>(type: "text", nullable: true),
                     EventExpiration = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     FirstSeen = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>

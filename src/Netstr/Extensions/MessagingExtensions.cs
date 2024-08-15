@@ -24,6 +24,7 @@ namespace Netstr.Extensions
 
             // event
             services.AddSingleton<IEventDispatcher, EventDispatcher>();
+            services.AddSingleton<IEventHandler, DeleteEventHandler>();
             services.AddSingleton<IEventHandler, RegularEventHandler>();
             services.AddSingleton<IEventHandler, ReplaceableEventHandler>();
             services.AddSingleton<IEventHandler, EphemeralEventHandler>();

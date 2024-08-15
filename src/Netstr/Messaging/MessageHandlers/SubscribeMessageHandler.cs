@@ -49,6 +49,7 @@ namespace Netstr.Messaging.MessageHandlers
                 var entities = await context.Events
                     .WhereAnyFilterMatches(filters, this.limits.Value.MaxInitialLimit)
                     .Where(x => x.FirstSeen < start)
+                    .Where(x => !x.DeletedAt.HasValue)
                     .OrderByDescending(x => x.EventCreatedAt)
                     .ThenBy(x => x.EventId)
                     .ToArrayAsync();
