@@ -1,4 +1,5 @@
-﻿using TechTalk.SpecFlow;
+﻿using Netstr.Options;
+using TechTalk.SpecFlow;
 
 namespace Netstr.Tests.NIPs.Steps
 {
@@ -24,6 +25,13 @@ namespace Netstr.Tests.NIPs.Steps
             // start server
             this.factory.CreateDefaultClient();
         }
+
+        [Given(@"a relay is running with options")]
+        public void GivenARelayIsRunningWithOptions(LimitsOptions options)
+        {
+            this.factory.Limits = options;
+        }
+
 
         [Given(@"(.*) is connected to relay")]
         public async Task GivenAliceIsConnectedToRelay(string name, Keys keys)

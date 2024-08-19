@@ -12,10 +12,12 @@ namespace Netstr.RelayInformation
     public class RelayInformationService : IRelayInformationService
     {
         private readonly IOptions<RelayInformationOptions> options;
+        private readonly IOptions<LimitsOptions> limits;
 
-        public RelayInformationService(IOptions<RelayInformationOptions> options)
+        public RelayInformationService(IOptions<RelayInformationOptions> options, IOptions<LimitsOptions> limits)
         {
             this.options = options;
+            this.limits = limits;
         }
 
         public RelayInformationModel GetDocument()
@@ -31,7 +33,11 @@ namespace Netstr.RelayInformation
                 Contact = opts.Contact,
                 SupportedNips = opts.SupportedNips ?? [],
                 Software = RelayInformationDefaults.Software,
-                SoftwareVersion = version
+                SoftwareVersion = version,
+                Limits = new()
+                {
+                    MinPowDifficulty = this.limits.Value.MinPowDifficulty
+                }
             };
         }
     }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Netstr.Data;
+using Netstr.Options;
 
 namespace Netstr.Tests
 {
@@ -12,28 +14,23 @@ namespace Netstr.Tests
         {
             builder.ConfigureServices(services =>
             {
-                //services.RemoveAll<NetstrDbContext>();
-                //services.RemoveAll<IDbContextFactory<NetstrDbContext>>();
-                //services.RemoveAll<DbContextOptions>();
-
-                //foreach (var option in services.Where(s => s.ServiceType.BaseType == typeof(DbContextOptions)).ToList())
-                //{
-                //    services.Remove(option);
-                //}
-
-                //services.AddDbContext<TestDbContext>();
-                //services.AddDbContext<NetstrDbContext, TestDbContext>();
-                //services.AddDbContextFactory<NetstrDbContext>((sp, _) => sp.GetRequiredService<NetstrDbContext>());
                 services.AddScoped<NetstrDbContext>(x => TestDbContext.InitializeAndSeed(false).context);
                 services.AddSingleton<IDbContextFactory<NetstrDbContext>>(x => new DbContextFactory());
             });
+
+            builder.ConfigureAppConfiguration((ctx, b) =>
+            {
+                b.AddInMemoryObject(Limits, "Limits");
+            });
         }
+
+        public LimitsOptions? Limits { get; set; }
     }
 
     public class DbContextFactory : IDbContextFactory<NetstrDbContext>
     {
         private readonly DbContextOptions<NetstrDbContext> options;
-
+        
         public DbContextFactory()
         {
             this.options = TestDbContext.InitializeAndSeed(false).options;

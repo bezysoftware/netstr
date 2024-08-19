@@ -5,6 +5,9 @@ using System.Text.Json;
 
 namespace Netstr.Messaging.MessageHandlers.Events
 {
+    /// <summary>
+    /// <see cref="IEventValidator"/> which validates event's id.
+    /// </summary>
     public class EventHashValidator : IEventValidator
     {
         private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions

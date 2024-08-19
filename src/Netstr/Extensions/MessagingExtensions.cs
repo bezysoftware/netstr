@@ -39,6 +39,7 @@ namespace Netstr.Extensions
         {
             services.AddSingleton<IEventValidator, EventHashValidator>();
             services.AddSingleton<IEventValidator, EventSignatureValidator>();
+            services.AddSingleton<IEventValidator, EventPowValidator>();
 
             return services;
         }

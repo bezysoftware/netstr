@@ -9,6 +9,8 @@
         public const string DuplicateEvent = "duplicate: already have this event";
         public const string DuplicateReplaceableEvent = "duplicate: already have a newer version of this event";
         public const string DuplicateDeletedEvent = "duplicate: future version of this event was already deleted";
+        public const string PowNotEnough = "pow: difficulty {0} is less than {1}";
+        public const string PowNoMatch = "pow: difficulty {0} doesn't match target of {1}";
 
         public const string CannotParseMessage = "unable to parse the message";
         public const string CannotProcessMessageType = "unknown message type";

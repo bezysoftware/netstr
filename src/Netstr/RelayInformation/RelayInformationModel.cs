@@ -24,5 +24,8 @@ namespace Netstr.RelayInformation
 
         [JsonPropertyName("software")]
         public string? Software { get; init; }
+
+        [JsonPropertyName("limitation")]
+        public required RelayInformationLimits Limits { get; init; }
     }
 }
