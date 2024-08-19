@@ -4,6 +4,11 @@
     {
         public static IEnumerable<KeyValuePair<string, string?>> ToKeyValuePairs(this Object settings, string settingsRoot)
         {
+            if (settings == null)
+            {
+                yield break;
+            }
+
             foreach (var property in settings.GetType().GetProperties())
             {
                 if (property != null)
