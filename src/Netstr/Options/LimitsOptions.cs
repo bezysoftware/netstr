@@ -3,5 +3,6 @@
     public class LimitsOptions
     {
         public required int MaxInitialLimit { get; init; }
+        public required int MinPowDifficulty { get; init; }
     }
 }

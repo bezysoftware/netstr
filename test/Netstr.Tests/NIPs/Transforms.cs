@@ -1,5 +1,6 @@
 ﻿using Netstr.Messaging;
 using Netstr.Messaging.Models;
+using Netstr.Options;
 using System.Reflection;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
@@ -50,6 +51,12 @@ namespace Netstr.Tests.NIPs
         public Dictionary<string, string> CreateHeaders(Table table)
         {
             return table.Rows.ToDictionary(row => row.GetString("Header"), row => row.GetString("Value"));
+        }
+
+        [StepArgumentTransformation]
+        public LimitsOptions GetLimits(Table table)
+        {
+            return table.CreateInstance<LimitsOptions>();
         }
     }
 }

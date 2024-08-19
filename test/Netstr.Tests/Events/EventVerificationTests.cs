@@ -8,6 +8,7 @@ using Netstr.Messaging;
 using Netstr.Messaging.MessageHandlers;
 using Netstr.Messaging.MessageHandlers.Events;
 using Netstr.Messaging.Models;
+using Netstr.Options;
 using System.Text.Json;
 
 namespace Netstr.Tests.Events
@@ -19,6 +20,7 @@ namespace Netstr.Tests.Events
         public EventVerificationTests()
         {
             this.validators = new ServiceCollection()
+                .AddOptions<LimitsOptions>().Services
                 .AddValidators()
                 .BuildServiceProvider()
                 .GetRequiredService<IEnumerable<IEventValidator>>();

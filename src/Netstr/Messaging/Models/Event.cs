@@ -1,4 +1,6 @@
-﻿using Netstr.Converters;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+using Netstr.Converters;
+using System.Numerics;
 using System.Text.Json.Serialization;
 
 namespace Netstr.Messaging.Models
@@ -43,6 +45,26 @@ namespace Netstr.Messaging.Models
             return IsParametrizedReplaceable()
                 ? $"{Id} | {Kind} | {PublicKey} | {GetDeduplicationValue()}"
                 : $"{Id} | {Kind} | {PublicKey}";
+        }
+
+        public int GetDifficulty()
+        {
+            var hash = Convert.FromHexString(Id);
+            var result = 0;
+
+            foreach (var b in hash)
+            {
+                // LeadingZeroCount works over int (32 bits) but "hash" is a byte[] (8 bits)
+                var zeroes = BitOperations.LeadingZeroCount(b) - 24;
+                result += Math.Max(0, zeroes);
+
+                if (zeroes != 8)
+                {
+                    break;
+                }
+            }
+
+            return result;
         }
 
         public string? GetDeduplicationValue()

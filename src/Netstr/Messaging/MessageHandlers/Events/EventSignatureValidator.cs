@@ -2,6 +2,9 @@
 
 namespace Netstr.Messaging.MessageHandlers.Events
 {
+    /// <summary>
+    /// <see cref="IEventValidator"/> which validates event's signature.
+    /// </summary>
     public class EventSignatureValidator : IEventValidator
     {
         public string? Validate(Event e)
