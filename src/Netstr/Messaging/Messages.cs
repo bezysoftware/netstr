@@ -6,6 +6,11 @@
         public const string ErrorProcessingEvent = "error: unable to process the event";
         public const string InvalidId = "invalid: event id does not match";
         public const string InvalidSignature = "invalid: event signature verification failed";
+        public const string InvalidCreatedAt = "invalid: event creation date is too far off from the current time";
+        public const string InvalidSubscriptionIdTooLong = "invalid: subscription id is too long";
+        public const string InvalidTooManyFilters = "invalid: too many filters";
+        public const string InvalidTooManySubscriptions = "invalid: too many subscriptions";
+        public const string InvalidLimitTooHigh = "invalid: filter limit is too high";
         public const string DuplicateEvent = "duplicate: already have this event";
         public const string DuplicateReplaceableEvent = "duplicate: already have a newer version of this event";
         public const string DuplicateDeletedEvent = "duplicate: future version of this event was already deleted";

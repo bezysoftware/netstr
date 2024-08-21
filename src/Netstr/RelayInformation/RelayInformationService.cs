@@ -24,6 +24,7 @@ namespace Netstr.RelayInformation
         {
             var version = GetType().Assembly.GetName().Version?.ToString();
             var opts = this.options.Value;
+            var limits = this.limits.Value;
 
             return new RelayInformationModel
             {
@@ -36,7 +37,14 @@ namespace Netstr.RelayInformation
                 SoftwareVersion = version,
                 Limits = new()
                 {
-                    MinPowDifficulty = this.limits.Value.MinPowDifficulty
+                    MinPowDifficulty = limits.MinPowDifficulty,
+                    CreatedAtLowerLimit = limits.MaxCreatedAtLowerOffset,
+                    CreatedAtUpperLimit = limits.MaxCreatedAtUpperOffset,
+                    MaxEventTags = limits.MaxEventTags,
+                    MaxLimit = limits.MaxInitialLimit,
+                    MaxFilters = limits.MaxFilters,
+                    MaxSubscriptionIdLength = limits.MaxSubscriptionIdLength,
+                    MaxSubscriptions = limits.MaxSubscriptions
                 }
             };
         }

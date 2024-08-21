@@ -120,7 +120,6 @@ namespace Netstr.Messaging.WebSockets
                     }
 
                     stream.Seek(0, SeekOrigin.Begin);
-
                     var message = await reader.ReadToEndAsync();
 
                     await this.dispatcher.DispatchMessageAsync(this, message);

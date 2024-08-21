@@ -14,12 +14,7 @@ namespace Netstr.Tests.NIPs.Steps
             var now = DateTimeOffset.UtcNow;
             var c = this.scenarioContext.Get<Clients>()[client];
 
-            await c.WebSocket.SendAsync([
-                "REQ",
-                subscriptionId,
-                ..filters
-            ]);
-
+            await c.WebSocket.SendReqAsync(subscriptionId, filters);
             await c.WaitForMessageAsync(now, ["EOSE", subscriptionId]);
         }
 
@@ -46,10 +41,7 @@ namespace Netstr.Tests.NIPs.Steps
 
             foreach (var e in events)
             {
-                await c.WebSocket.SendAsync([
-                    "EVENT",
-                    e
-                ]);
+                await c.WebSocket.SendEventAsync(e);
             }
 
             foreach (var e in events)
@@ -63,11 +55,7 @@ namespace Netstr.Tests.NIPs.Steps
         {
             var c = this.scenarioContext.Get<Clients>()[client];
 
-            await c.WebSocket.SendAsync([
-                "CLOSE",
-                subscriptionId
-            ]);
-
+            await c.WebSocket.SendCloseAsync(subscriptionId);
             await Task.Delay(500);
         }
 

@@ -1,9 +1,10 @@
 ﻿using Gherkin;
+using Netstr.Messaging.Models;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 
-namespace Netstr.Tests.NIPs
+namespace Netstr.Tests
 {
     public static class WebSocketExtensions
     {
@@ -13,11 +14,37 @@ namespace Netstr.Tests.NIPs
             await ws.SendAsync(JsonSerializer.SerializeToUtf8Bytes(message), WebSocketMessageType.Text, true, token);
         }
 
+        public static Task SendReqAsync(this WebSocket ws, string id, IEnumerable<SubscriptionFilterRequest> filters, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "REQ",
+                id,
+                ..filters
+            ], cancellationToken);
+        }
+
+        public static Task SendEventAsync(this WebSocket ws, Event e, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "EVENT",
+                e
+            ], cancellationToken);
+        }
+
+        public static Task SendCloseAsync(this WebSocket ws, string id, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "CLOSE",
+                id
+            ], cancellationToken);
+        }
+
         public static async Task ReceiveAsync(this WebSocket ws, Action<JsonElement[]> action, CancellationToken? cancellationToken = null)
         {
             var token = cancellationToken ?? CancellationToken.None;
 
-            try {
+            try
+            {
                 while (ws.State == WebSocketState.Open)
                 {
                     var buffer = new ArraySegment<byte>(new byte[65536]);
@@ -43,13 +70,27 @@ namespace Netstr.Tests.NIPs
                     }
 
                     action(obj);
-                } 
-            } 
+                }
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 throw;
             }
+        }
+
+        public static Task<JsonElement[]> ReceiveOnceAsync(this WebSocket ws, CancellationToken? cancellationToken = null)
+        {
+            var cancellation = new CancellationTokenSource();
+            var tcs = new TaskCompletionSource<JsonElement[]>();
+
+            _ = ws.ReceiveAsync(x =>
+            {
+                tcs.SetResult(x);
+                cancellation.Cancel();
+            }, cancellation.Token);
+
+            return tcs.Task;
         }
     }
 }
