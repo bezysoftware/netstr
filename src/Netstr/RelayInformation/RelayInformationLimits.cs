@@ -6,6 +6,9 @@ namespace Netstr.RelayInformation
     {
         [JsonPropertyName("min_pow_difficulty")]
         public required int MinPowDifficulty { get; init; }
+        
+        [JsonPropertyName("max_message_length")]
+        public required int MaxMessageLength { get; init; }
 
         [JsonPropertyName("max_limit")]
         public required int MaxLimit { get; init; }

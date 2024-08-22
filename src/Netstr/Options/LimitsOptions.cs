@@ -2,6 +2,7 @@
 {
     public class LimitsOptions
     {
+        public required int MaxPayloadSize { get; init; }
         public required int MaxInitialLimit { get; init; }
         public required int MinPowDifficulty { get; init; }
         public required int MaxFilters { get; init; }

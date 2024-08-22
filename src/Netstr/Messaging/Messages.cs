@@ -11,6 +11,7 @@
         public const string InvalidTooManyFilters = "invalid: too many filters";
         public const string InvalidTooManySubscriptions = "invalid: too many subscriptions";
         public const string InvalidLimitTooHigh = "invalid: filter limit is too high";
+        public const string InvalidPayloadTooLarge = "invalid: message is too large";
         public const string DuplicateEvent = "duplicate: already have this event";
         public const string DuplicateReplaceableEvent = "duplicate: already have a newer version of this event";
         public const string DuplicateDeletedEvent = "duplicate: future version of this event was already deleted";

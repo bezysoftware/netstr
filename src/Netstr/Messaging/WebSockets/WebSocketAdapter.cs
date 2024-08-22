@@ -12,7 +12,8 @@ namespace Netstr.Messaging.WebSockets
     public class WebSocketAdapter : IWebSocketListenerAdapter, IWebSocketAdapter, IWebSocketSubscriptionsAdapter
     {
         private readonly ILogger<WebSocketAdapter> logger;
-        private readonly IOptions<ConnectionOptions> options;
+        private readonly IOptions<ConnectionOptions> connection;
+        private readonly IOptions<LimitsOptions> limits;
         private readonly IMessageDispatcher dispatcher;
         private readonly WebSocket ws;
         private readonly Dictionary<string, Subscription> subscriptions;
@@ -22,14 +23,16 @@ namespace Netstr.Messaging.WebSockets
 
         public WebSocketAdapter(
             ILogger<WebSocketAdapter> logger,
-            IOptions<ConnectionOptions> options,
+            IOptions<ConnectionOptions> connection,
+            IOptions<LimitsOptions> limits,
             IMessageDispatcher dispatcher,
             CancellationToken cancellationToken,
             WebSocket ws,
             IHeaderDictionary headers)
         {
             this.logger = logger;
-            this.options = options;
+            this.connection = connection;
+            this.limits = limits;
             this.dispatcher = dispatcher;
             this.cancellationToken = cancellationToken;
             this.ws = ws;
@@ -96,31 +99,36 @@ namespace Netstr.Messaging.WebSockets
         {
             while (this.ws.State == WebSocketState.Open)
             {
-                var buffer = new ArraySegment<byte>(new byte[this.options.Value.WebSocketsReceiveBufferSize]);
+                var buffer = new ArraySegment<byte>(new byte[this.limits.Value.MaxPayloadSize]);
 
                 try
                 {
                     using var stream = new MemoryStream();
                     using var reader = new StreamReader(stream, Encoding.UTF8);
+                    
+                    var result = await this.ws.ReceiveAsync(buffer, cancellationToken);
 
-                    while (true)
+                    if (result.MessageType == WebSocketMessageType.Close)
                     {
-                        var result = await this.ws.ReceiveAsync(buffer, cancellationToken);
-
-                        if (result.MessageType == WebSocketMessageType.Close)
-                        {
-                            return;
-                        }
-
-#pragma warning disable CS8604 // Possible null reference argument.
-                        stream.Write(buffer.Array, buffer.Offset, result.Count);
-#pragma warning restore CS8604 // Possible null reference argument.
-
-                        if (result.EndOfMessage) break;
+                        return;
                     }
 
-                    stream.Seek(0, SeekOrigin.Begin);
-                    var message = await reader.ReadToEndAsync();
+                    if (!result.EndOfMessage)
+                    {
+                        // payload too large, disconnect
+                        await this.SendNoticeAsync(Messages.InvalidPayloadTooLarge);
+                        await this.ws.CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, Messages.InvalidPayloadTooLarge, CancellationToken.None);
+                        break;
+                    }
+
+#pragma warning disable CS8604 // Possible null reference argument.
+                    var message = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
+                    //                    stream.Write(buffer.Array, buffer.Offset, result.Count);
+#pragma warning restore CS8604 // Possible null reference argument.
+
+
+                    //                    stream.Seek(0, SeekOrigin.Begin);
+                    //                    var message = await reader.ReadToEndAsync();
 
                     await this.dispatcher.DispatchMessageAsync(this, message);
 

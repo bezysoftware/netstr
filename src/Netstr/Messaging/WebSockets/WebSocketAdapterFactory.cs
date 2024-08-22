@@ -8,20 +8,23 @@ namespace Netstr.Messaging.WebSockets
     public class WebSocketAdapterFactory
     {
         private readonly ILogger<WebSocketAdapter> logger;
-        private readonly IOptions<ConnectionOptions> options;
+        private readonly IOptions<ConnectionOptions> connection;
+        private readonly IOptions<LimitsOptions> limits;
         private readonly IMessageDispatcher dispatcher;
         private readonly IWebSocketAdapterCollection tracker;
         private readonly IHostApplicationLifetime lifetime;
 
         public WebSocketAdapterFactory(
             ILogger<WebSocketAdapter> logger,
-            IOptions<ConnectionOptions> options,
+            IOptions<ConnectionOptions> connection,
+            IOptions<LimitsOptions> limits,
             IMessageDispatcher dispatcher,
             IWebSocketAdapterCollection tracker,
             IHostApplicationLifetime lifetime)
         {
             this.logger = logger;
-            this.options = options;
+            this.connection = connection;
+            this.limits = limits;
             this.dispatcher = dispatcher;
             this.tracker = tracker;
             this.lifetime = lifetime;
@@ -31,7 +34,8 @@ namespace Netstr.Messaging.WebSockets
         {
             var adapter = new WebSocketAdapter(
                 this.logger,
-                this.options,
+                this.connection,
+                this.limits,
                 this.dispatcher,
                 this.lifetime.ApplicationStopping,
                 socket,

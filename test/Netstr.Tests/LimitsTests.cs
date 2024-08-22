@@ -2,7 +2,6 @@
 using Netstr.Messaging.Models;
 using Netstr.Options;
 using Netstr.Tests.NIPs;
-using Npgsql.Internal;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -17,6 +16,7 @@ namespace Netstr.Tests
         {
             factory.Limits = new LimitsOptions
             {
+                MaxPayloadSize = 1024,
                 MinPowDifficulty = 0, // covered by a NIP-13 test
                 MaxCreatedAtLowerOffset = 10,
                 MaxCreatedAtUpperOffset = 10,
@@ -140,6 +140,24 @@ namespace Netstr.Tests
             received[0].GetString()?.Should().BeEquivalentTo("OK");
             received[1].GetString()?.Should().BeEquivalentTo(id);
             received[2].GetBoolean().Should().Be(expected);
+        }
+
+
+        [Fact]
+        public async Task PayloadTooLargeTest()
+        {
+            using WebSocket ws = await ConnectWebSocketAsync();
+
+            var payload = new byte[1025];
+
+            await ws.SendAsync([payload]);
+            await ws.ReceiveOnceAsync();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+
+            await ws.ReceiveAsync(Memory<byte>.Empty, CancellationToken.None);
+
+            ws.State.Should().BeOneOf(WebSocketState.Closed, WebSocketState.CloseReceived);
+            ws.CloseStatus.Should().Be(WebSocketCloseStatus.MessageTooBig);
         }
 
         private async Task<WebSocket> ConnectWebSocketAsync()

@@ -37,6 +37,7 @@ namespace Netstr.RelayInformation
                 SoftwareVersion = version,
                 Limits = new()
                 {
+                    MaxMessageLength = limits.MaxPayloadSize,
                     MinPowDifficulty = limits.MinPowDifficulty,
                     CreatedAtLowerLimit = limits.MaxCreatedAtLowerOffset,
                     CreatedAtUpperLimit = limits.MaxCreatedAtUpperOffset,

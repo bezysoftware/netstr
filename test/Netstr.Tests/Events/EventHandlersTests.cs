@@ -41,6 +41,7 @@ namespace Netstr.Tests.Events
             this.adapter = new WebSocketAdapter(
                 Mock.Of<ILogger<WebSocketAdapter>>(),
                 Mock.Of<IOptions<ConnectionOptions>>(),
+                Mock.Of<IOptions<LimitsOptions>>(),
                 Mock.Of<IMessageDispatcher>(),
                 CancellationToken.None,
                 this.ws.Object,
