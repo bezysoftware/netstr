@@ -28,7 +28,7 @@ namespace Netstr.Extensions
             services.AddSingleton<IEventHandler, RegularEventHandler>();
             services.AddSingleton<IEventHandler, ReplaceableEventHandler>();
             services.AddSingleton<IEventHandler, EphemeralEventHandler>();
-            services.AddSingleton<IEventHandler, ParametrizedReplaceableEventHandler>();
+            services.AddSingleton<IEventHandler, AddressableEventHandler>();
 
             services.AddValidators();
 

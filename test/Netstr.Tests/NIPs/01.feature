@@ -83,7 +83,7 @@ Scenario: Events are treated differently based on their kind
 	Regular events are covered by other scenarios
 	Replaceable events have a unique combination of PublicKey+Kind and only the last version should be stored
 	Ephemeral events shouldn't be stored
-	Parametrized replaceable events have a unique combination of PublicKey+Kind+[d tag] and only the last version should be stored
+	Addressable events have a unique combination of PublicKey+Kind+[d tag] and only the last version should be stored
 	Relay should discard older versions of existing events
 	Events returned for initial subscription request should be ordered by CreatedAt (newer first), then by Id lexically
 	When Alice sends a subscription request abcd

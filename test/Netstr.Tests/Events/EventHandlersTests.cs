@@ -53,7 +53,7 @@ namespace Netstr.Tests.Events
                 new RegularEventHandler(Mock.Of<ILogger<RegularEventHandler>>(), this.clients, this.dbFactoryMock.Object),
                 new EphemeralEventHandler(Mock.Of<ILogger<EphemeralEventHandler>>(), this.clients),
                 new ReplaceableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), this.clients, this.dbFactoryMock.Object),
-                new ParametrizedReplaceableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), this.clients, this.dbFactoryMock.Object)
+                new AddressableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), this.clients, this.dbFactoryMock.Object)
             };
             this.dispatcher = new EventDispatcher(Mock.Of<ILogger<EventDispatcher>>(), handlers);
         }
@@ -244,7 +244,7 @@ namespace Netstr.Tests.Events
         }
 
         [Fact]
-        public async Task ParametrizedReplaceableEventHandlerTest()
+        public async Task AddressableEventHandlerTest()
         {
             var e1 = new Event
             {

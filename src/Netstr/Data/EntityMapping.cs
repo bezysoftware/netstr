@@ -15,7 +15,7 @@ namespace Netstr.Data
                 EventKind = e.Kind,
                 EventPublicKey = e.PublicKey,
                 EventSignature = e.Signature,
-                EventDeduplication = e.IsParametrizedReplaceable() 
+                EventDeduplication = e.IsAddressable() 
                     ? e.GetDeduplicationValue() 
                     : null,
                 Tags = e.Tags.Select(x => new TagEntity

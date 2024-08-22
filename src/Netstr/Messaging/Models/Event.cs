@@ -36,13 +36,13 @@ namespace Netstr.Messaging.Models
 
         public bool IsEphemeral() => Kind is >= 20000 and < 30000;
 
-        public bool IsParametrizedReplaceable() => Kind is >= 30000 and < 40000;
+        public bool IsAddressable() => Kind is >= 30000 and < 40000;
 
         public bool IsDelete() => Kind == EventKind.Delete;
 
         public string ToStringUnique()
         {
-            return IsParametrizedReplaceable()
+            return IsAddressable()
                 ? $"{Id} | {Kind} | {PublicKey} | {GetDeduplicationValue()}"
                 : $"{Id} | {Kind} | {PublicKey}";
         }
