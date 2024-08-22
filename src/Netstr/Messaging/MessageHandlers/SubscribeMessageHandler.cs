@@ -40,9 +40,22 @@ namespace Netstr.Messaging.MessageHandlers
                 .Select(GetSubscriptionFilter)
                 .ToArray();
 
+            if (!CanSubscribe(id, filters, out var error))
+            {
+                await adapter.SendClosedAsync(id, error ?? "");
+                return;
+            }
+
             // lock to make sure incoming events will have to wait until EOSE is sent
             await adapter.LockAsync(LockType.Write, async x =>
             {
+                var maxSubscriptions = this.limits.Value.MaxSubscriptions;
+                if (maxSubscriptions > 0 && x.GetSubscriptions().Where(x => x.Key != id).Count() >= maxSubscriptions)
+                {
+                    await adapter.SendClosedAsync(id, Messages.InvalidTooManySubscriptions);
+                    return;
+                }
+
                 using var context = this.db.CreateDbContext();
 
                 // get stored events
@@ -66,6 +79,27 @@ namespace Netstr.Messaging.MessageHandlers
                 // EOSE
                 await x.SendEndOfStoredEventsAsync(id);
             });
+        }
+
+        private bool CanSubscribe(string id, SubscriptionFilter[] filters, out string? error) 
+        {
+            error = null;
+            var limits = this.limits.Value;
+
+            if (limits.MaxSubscriptionIdLength > 0 && id.Length > limits.MaxSubscriptionIdLength)
+            {
+                error = Messages.InvalidSubscriptionIdTooLong;
+            }
+            else if (limits.MaxFilters > 0 && filters.Length > limits.MaxFilters)
+            {
+                error = Messages.InvalidTooManyFilters;
+            }
+            else if (limits.MaxInitialLimit > 0 && filters.Any(x => x.Limit > limits.MaxInitialLimit))
+            {
+                error = Messages.InvalidLimitTooHigh;
+            }
+
+            return error == null;
         }
 
         private SubscriptionFilter GetSubscriptionFilter(JsonDocument json) 
