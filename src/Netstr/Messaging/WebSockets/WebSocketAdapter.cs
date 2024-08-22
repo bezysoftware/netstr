@@ -123,12 +123,7 @@ namespace Netstr.Messaging.WebSockets
 
 #pragma warning disable CS8604 // Possible null reference argument.
                     var message = Encoding.UTF8.GetString(buffer.Array, 0, result.Count);
-                    //                    stream.Write(buffer.Array, buffer.Offset, result.Count);
 #pragma warning restore CS8604 // Possible null reference argument.
-
-
-                    //                    stream.Seek(0, SeekOrigin.Begin);
-                    //                    var message = await reader.ReadToEndAsync();
 
                     await this.dispatcher.DispatchMessageAsync(this, message);
 
