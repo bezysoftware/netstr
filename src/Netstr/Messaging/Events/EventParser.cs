@@ -2,7 +2,7 @@
 using Netstr.Messaging.Models;
 using System.Text.Json;
 
-namespace Netstr.Messaging.MessageHandlers.Events
+namespace Netstr.Messaging.Events
 {
     public static class EventParser
     {

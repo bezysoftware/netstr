@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Netstr.Data;
+using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Models;
 using System.Linq.Expressions;
 
-namespace Netstr.Messaging.EventHandlers.Replaceable
+namespace Netstr.Messaging.Events.Handlers.Replaceable
 {
     /// <summary>
     /// Replaceable are unique not with their Id, but with a custom combination of other properties (e.g. pubkey+kind).
@@ -53,9 +54,9 @@ namespace Netstr.Messaging.EventHandlers.Replaceable
                 // copy over original first seen
                 newEntity.FirstSeen = existing.FirstSeen;
             }
-            
+
             db.Add(newEntity);
-            
+
             // save 
             await db.SaveChangesAsync();
 

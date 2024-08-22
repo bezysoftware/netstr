@@ -3,7 +3,7 @@ using Netstr.Data;
 using Netstr.Messaging.Models;
 using System.Linq.Expressions;
 
-namespace Netstr.Messaging.EventHandlers.Replaceable
+namespace Netstr.Messaging.Events.Handlers.Replaceable
 {
     /// <summary>
     /// Replaceable events have a unique combination of pubkey+kind.

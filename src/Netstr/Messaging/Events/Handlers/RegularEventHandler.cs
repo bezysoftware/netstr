@@ -2,7 +2,7 @@
 using Netstr.Data;
 using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.EventHandlers
+namespace Netstr.Messaging.Events.Handlers
 {
     /// <summary>
     /// Regular events are stored by the relay. Duplicates are ignored.
@@ -13,7 +13,7 @@ namespace Netstr.Messaging.EventHandlers
 
         public RegularEventHandler(
             ILogger<RegularEventHandler> logger,
-            IWebSocketAdapterCollection adapters, 
+            IWebSocketAdapterCollection adapters,
             IDbContextFactory<NetstrDbContext> db)
             : base(logger, adapters)
         {
@@ -30,10 +30,10 @@ namespace Netstr.Messaging.EventHandlers
 
             // save 
             await db.SaveChangesAsync();
-            
+
             // reply
             await sender.SendOkAsync(e.Id);
-            
+
             // broadcast
             await BroadcastEventAsync(e);
         }

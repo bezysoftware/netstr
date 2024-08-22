@@ -1,6 +1,6 @@
 ﻿using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.EventHandlers
+namespace Netstr.Messaging.Events.Handlers
 {
     /// <summary>
     /// Ephemeral events are not stored by the relay.
@@ -9,7 +9,7 @@ namespace Netstr.Messaging.EventHandlers
     {
         public EphemeralEventHandler(
             ILogger<EphemeralEventHandler> logger,
-            IWebSocketAdapterCollection adapters) 
+            IWebSocketAdapterCollection adapters)
             : base(logger, adapters)
         {
         }

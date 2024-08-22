@@ -3,7 +3,7 @@ using Netstr.Data;
 using Netstr.Messaging.Matching;
 using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.EventHandlers
+namespace Netstr.Messaging.Events.Handlers
 {
     public abstract class EventHandlerBase : IEventHandler
     {

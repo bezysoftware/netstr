@@ -1,5 +1,6 @@
 ﻿using Netstr.Extensions;
-using Netstr.Messaging.MessageHandlers.Events;
+using Netstr.Messaging.Events;
+using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.Models;
 using System;
 using System.Security.Cryptography;

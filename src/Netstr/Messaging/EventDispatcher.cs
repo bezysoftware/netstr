@@ -1,4 +1,4 @@
-﻿using Netstr.Messaging.EventHandlers;
+﻿using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Models;
 
 namespace Netstr.Messaging
