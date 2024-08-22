@@ -205,7 +205,7 @@ this.FeatureBackground();
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Deletion removes referenced replaceable events and is itself broadcast", @"	Deletion event can contain ""a"" tags referencing (parametrized) replaceable events,
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Deletion removes referenced replaceable events and is itself broadcast", @"	Deletion event can contain ""a"" tags referencing replaceable or addressable events,
 	but only those which took place before the deletion event.
 	If a newer event arives after it was previously deleted, it is saved.
 	If a newer event which was created before the deleted event arrives, it is ignored.", tagsOfScenario, argumentsOfScenario, featureTags);

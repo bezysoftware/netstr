@@ -32,7 +32,7 @@ Scenario: Deletion removes referenced regular events and is itself broadcast
 
 
 Scenario: Deletion removes referenced replaceable events and is itself broadcast
-	Deletion event can contain "a" tags referencing (parametrized) replaceable events,
+	Deletion event can contain "a" tags referencing replaceable or addressable events,
 	but only those which took place before the deletion event.
 	If a newer event arives after it was previously deleted, it is saved.
 	If a newer event which was created before the deleted event arrives, it is ignored.

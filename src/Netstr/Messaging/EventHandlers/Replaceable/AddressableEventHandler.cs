@@ -6,11 +6,11 @@ using System.Linq.Expressions;
 namespace Netstr.Messaging.EventHandlers.Replaceable
 {
     /// <summary>
-    /// Parametrized replaceable events have a unique combination of pubkey+kind+"d" tag value.
+    /// Addressable events have a unique combination of pubkey+kind+"d" tag value.
     /// </summary>
-    public class ParametrizedReplaceableEventHandler : ReplaceableEventHandlerBase
+    public class AddressableEventHandler : ReplaceableEventHandlerBase
     {
-        public ParametrizedReplaceableEventHandler(
+        public AddressableEventHandler(
             ILogger<ReplaceableEventHandlerBase> logger,
             IWebSocketAdapterCollection adapters,
             IDbContextFactory<NetstrDbContext> db)
@@ -18,7 +18,7 @@ namespace Netstr.Messaging.EventHandlers.Replaceable
         {
         }
 
-        public override bool CanHandleEvent(Event e) => e.IsParametrizedReplaceable();
+        public override bool CanHandleEvent(Event e) => e.IsAddressable();
 
         protected override Expression<Func<EventEntity, bool>> GetUniqueEntityExpression(EventEntity newEntity)
         {
