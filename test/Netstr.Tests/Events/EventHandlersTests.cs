@@ -42,6 +42,7 @@ namespace Netstr.Tests.Events
                 Mock.Of<ILogger<WebSocketAdapter>>(),
                 Mock.Of<IOptions<ConnectionOptions>>(),
                 Mock.Of<IOptions<LimitsOptions>>(),
+                Mock.Of<IOptions<AuthOptions>>(),
                 Mock.Of<IMessageDispatcher>(),
                 CancellationToken.None,
                 this.ws.Object,

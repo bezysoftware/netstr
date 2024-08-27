@@ -35,7 +35,8 @@ namespace Netstr.Tests.NIPs
                     MessageType.Event => [MessageType.Event, row[1], row.GetString("EventId")],
                     MessageType.EndOfStoredEvents => [MessageType.EndOfStoredEvents, row[1]],
                     MessageType.Ok => [MessageType.Ok, row[1], row.GetBoolean("Success"), row.GetString("Message") ?? ""],
-                    MessageType.Closed => [MessageType.Ok, row[1], row.GetString("Message")],
+                    MessageType.Closed => [MessageType.Closed, row[1], row.GetString("Message") ?? ""],
+                    MessageType.Auth => [MessageType.Auth, row[1] ?? ""],
                     _ => throw new NotImplementedException(),
                 };
             });

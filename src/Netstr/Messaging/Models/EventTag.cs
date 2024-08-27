@@ -7,5 +7,7 @@
         public const string PublicKey = "p";
         public const string Deduplication = "d";
         public const string Nonce = "nonce";
+        public const string Challenge = "challenge";
+        public const string Relay = "relay";
     }
 }

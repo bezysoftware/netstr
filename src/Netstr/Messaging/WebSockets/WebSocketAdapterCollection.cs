@@ -18,7 +18,7 @@ namespace Netstr.Messaging.WebSockets
 
         public void Add(IWebSocketAdapter adapter)
         {
-            this.adapters.TryAdd(adapter.ClientId, adapter);
+            this.adapters.TryAdd(adapter.Context.ClientId, adapter);
         }
 
         public IEnumerable<IWebSocketAdapter> GetAll()

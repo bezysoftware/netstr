@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Netstr.Data;
-using Netstr.Messaging.Matching;
 using Netstr.Messaging.Models;
+using Netstr.Messaging.Subscriptions;
 
 namespace Netstr.Tests.Events
 {

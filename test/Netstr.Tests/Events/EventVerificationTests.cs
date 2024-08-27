@@ -22,7 +22,7 @@ namespace Netstr.Tests.Events
         {
             this.validators = new ServiceCollection()
                 .AddOptions<LimitsOptions>().Services
-                .AddValidators()
+                .AddEventValidators()
                 .BuildServiceProvider()
                 .GetRequiredService<IEnumerable<IEventValidator>>();
         }

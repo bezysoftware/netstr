@@ -1,7 +1,9 @@
-﻿using Netstr.Extensions;
+﻿using Microsoft.Extensions.Options;
+using Netstr.Extensions;
 using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.Models;
+using Netstr.Options;
 using System;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -17,15 +19,18 @@ namespace Netstr.Messaging.MessageHandlers
         private readonly ILogger<EventMessageHandler> logger;
         private readonly IEventDispatcher eventDispatcher;
         private readonly IEnumerable<IEventValidator> validators;
+        private readonly IOptions<AuthOptions> auth;
 
         public EventMessageHandler(
             ILogger<EventMessageHandler> logger,
             IEventDispatcher eventDispatcher,
-            IEnumerable<IEventValidator> validators)
+            IEnumerable<IEventValidator> validators,
+            IOptions<AuthOptions> auth)
         {
             this.logger = logger;
             this.eventDispatcher = eventDispatcher;
             this.validators = validators;
+            this.auth = auth;
         }
 
         public bool CanHandleMessage(string type) => type == MessageType.Event;
@@ -40,29 +45,23 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException(Messages.ErrorProcessingEvent);
             }
 
-            var validation = ValidateEvent(e);
+            var auth = this.auth.Value.Mode;
+
+            if (!sender.Context.IsAuthenticated() && (auth == AuthMode.Always || auth == AuthMode.Publishing))
+            {
+                this.logger.LogError("Auth required but client not authenticated");
+                throw new MessageProcessingException(e, Messages.AuthRequired);
+            }
+
+            var validation = this.validators.ValidateEvent(e);
 
             if (validation != null)
             {
-                this.logger.LogError(ex, $"Couldn't validate event: {e.ToStringUnique()}");
+                this.logger.LogError($"Couldn't validate event: {e.ToStringUnique()}");
                 throw new MessageProcessingException(e, validation);
             }
 
             await this.eventDispatcher.DispatchEventAsync(sender, e);
-        }
-
-        private string? ValidateEvent(Event e)
-        {
-            foreach (var validator in this.validators)
-            {
-                var error = validator.Validate(e);
-                if (error != null)
-                {
-                    return error;
-                }
-            }
-
-            return null;
         }
     }
 }

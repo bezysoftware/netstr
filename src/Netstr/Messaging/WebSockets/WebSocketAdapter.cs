@@ -14,6 +14,7 @@ namespace Netstr.Messaging.WebSockets
         private readonly ILogger<WebSocketAdapter> logger;
         private readonly IOptions<ConnectionOptions> connection;
         private readonly IOptions<LimitsOptions> limits;
+        private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
         private readonly WebSocket ws;
         private readonly Dictionary<string, Subscription> subscriptions;
@@ -25,6 +26,7 @@ namespace Netstr.Messaging.WebSockets
             ILogger<WebSocketAdapter> logger,
             IOptions<ConnectionOptions> connection,
             IOptions<LimitsOptions> limits,
+            IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
             CancellationToken cancellationToken,
             WebSocket ws,
@@ -33,22 +35,25 @@ namespace Netstr.Messaging.WebSockets
             this.logger = logger;
             this.connection = connection;
             this.limits = limits;
+            this.auth = auth;
             this.dispatcher = dispatcher;
             this.cancellationToken = cancellationToken;
             this.ws = ws;
             this.subscriptions = new();
             this.asyncLock = new();
 
-            ClientId = headers["sec-websocket-key"].ToString();
+            var id = headers["sec-websocket-key"].ToString();
+
+            Context = new ClientContext(id);
         }
 
-        public string ClientId { get; }
+        public ClientContext Context { get; }
 
         public void AddSubscription(string id, IEnumerable<SubscriptionFilter> filters)
         {
             this.logger.LogInformation(this.subscriptions.ContainsKey(id)
-                ? $"Adding a new subscription {id} for client {ClientId}"
-                : $"Replacing existing subscription {id} for client {ClientId}");
+                ? $"Adding a new subscription {id} for client {Context.ClientId}"
+                : $"Replacing existing subscription {id} for client {Context.ClientId}");
             this.subscriptions[id] = new Subscription(filters.ToArray(), DateTimeOffset.UtcNow);
         }
 
@@ -74,7 +79,7 @@ namespace Netstr.Messaging.WebSockets
 
         public void RemoveSubscription(string id)
         {
-            this.logger.LogInformation($"Removing subscription {id} for client {ClientId}");
+            this.logger.LogInformation($"Removing subscription {id} for client {Context.ClientId}");
             this.subscriptions.Remove(id);
         }
 
@@ -87,6 +92,13 @@ namespace Netstr.Messaging.WebSockets
         {
             try
             {
+                // send auth challenge when it's not disabled
+                if (this.auth.Value.Mode != AuthMode.Disabled)
+                {
+                    await this.SendAuthAsync(Context.Challenge);
+                }
+
+                // start receiving messages
                 await ReceiveAsync(this.cancellationToken);
             }
             finally

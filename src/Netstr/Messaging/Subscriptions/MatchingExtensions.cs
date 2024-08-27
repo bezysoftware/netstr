@@ -2,7 +2,7 @@
 using Netstr.Data;
 using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.Matching
+namespace Netstr.Messaging.Subscriptions
 {
     public static class MatchingExtensions
     {
@@ -18,7 +18,7 @@ namespace Netstr.Messaging.Matching
         /// Filters database events based on supplied filters.
         /// </summary>
         public static IQueryable<EventEntity> WhereAnyFilterMatches(
-            this DbSet<EventEntity> entities, 
+            this DbSet<EventEntity> entities,
             IEnumerable<SubscriptionFilter> filters,
             int maxLimit)
         {

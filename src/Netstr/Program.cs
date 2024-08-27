@@ -10,9 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddCors(x => x.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()))
+    .AddHttpContextAccessor()
     .AddApplicationOptions<ConnectionOptions>("Connection")
     .AddApplicationOptions<RelayInformationOptions>("RelayInformation")
     .AddApplicationOptions<LimitsOptions>("Limits")
+    .AddApplicationOptions<AuthOptions>("Auth")
     .AddMessaging()
     .AddScoped<IRelayInformationService, RelayInformationService>()
     .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("NetsrtDatabase")));

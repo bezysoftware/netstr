@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Netstr.Data;
-using Netstr.Messaging.Matching;
 using Netstr.Messaging.Models;
+using Netstr.Messaging.Subscriptions;
 
 namespace Netstr.Messaging.Events.Handlers
 {
