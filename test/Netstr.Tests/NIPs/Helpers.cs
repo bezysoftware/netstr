@@ -1,4 +1,6 @@
 ﻿using NBitcoin.Secp256k1;
+using Netstr.Messaging.Models;
+using System.Text.Json;
 
 namespace Netstr.Tests.NIPs
 {
@@ -29,6 +31,31 @@ namespace Netstr.Tests.NIPs
             ECPrivKey.Create(privkey).SignBIP340(hash).WriteToSpan(buf);
 
             return Convert.ToHexString(buf).ToLowerInvariant();
+        }
+
+        public static string GenerateId(Event e)
+        {
+            var obj = (object[])[
+                0,
+                e.PublicKey,
+                e.CreatedAt.ToUnixTimeSeconds(),
+                e.Kind,
+                e.Tags,
+                e.Content
+            ];
+
+            return Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(obj))).ToLower();
+        }
+
+        public static Event FinalizeEvent(Event e, string privateKey)
+        {
+            var id = GenerateId(e);
+
+            return e with
+            {
+                Id = id,
+                Signature = Sign(id, privateKey)
+            };
         }
     }
 }

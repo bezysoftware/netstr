@@ -31,6 +31,14 @@ namespace Netstr.Tests
             ], cancellationToken);
         }
 
+        public static Task SendAuthAsync(this WebSocket ws, Event e, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "AUTH",
+                e
+            ], cancellationToken);
+        }
+
         public static Task SendCloseAsync(this WebSocket ws, string id, CancellationToken? cancellationToken = null)
         {
             return ws.SendAsync([

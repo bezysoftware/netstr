@@ -1,6 +1,6 @@
 ﻿using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.EventHandlers
+namespace Netstr.Messaging.Events.Handlers
 {
     /// <summary>
     /// Handler of an EVENT message.

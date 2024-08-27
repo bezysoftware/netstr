@@ -38,7 +38,8 @@ namespace Netstr.Tests.NIPs
             {
                 MessageType.Event => [message[2].DeserializeRequired<EventId>().Id],
                 MessageType.Ok => [message[2].GetBoolean(), ""],
-                MessageType.Closed => [message[2].ToString()],
+                MessageType.Closed => [""],
+                MessageType.Auth => [],
                 _ => []
             };
 
@@ -50,17 +51,20 @@ namespace Netstr.Tests.NIPs
             this.responses.Add(response);
         }
 
-        public async Task WaitForMessageAsync(DateTimeOffset since, string[] value)
+        public async Task WaitForMessageAsync(DateTimeOffset since, params string[][] values)
         {
             var i = WaitMessageAttempts;
             while (i-- >= 0)
             {
-                if (this.messages.Any(x => x.Received > since && x.Data.Take(value.Length).SequenceEqual(value))) return;
+                foreach (var value in values)
+                {
+                    if (this.messages.Any(x => x.Received > since && x.Data.Take(value.Length).SequenceEqual(value))) return;
+                }
 
                 await Task.Delay(WaitMessageTimeoutMilis);
             }
 
-            throw new Exception($"Message {string.Join("|", value)} didn't arrive");
+            throw new Exception($"Message {string.Join(",", values.Select(x => string.Join("|", x)))} didn't arrive");
         }
     }
 

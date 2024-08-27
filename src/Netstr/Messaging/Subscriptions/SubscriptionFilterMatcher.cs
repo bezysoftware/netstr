@@ -1,7 +1,7 @@
 ﻿using Netstr.Extensions;
 using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.Matching
+namespace Netstr.Messaging.Subscriptions
 {
     public static class SubscriptionFilterMatcher
     {

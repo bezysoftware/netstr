@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Netstr.Messaging;
-using Netstr.Messaging.EventHandlers;
-using Netstr.Messaging.EventHandlers.Replaceable;
+using Netstr.Messaging.Events.Handlers;
+using Netstr.Messaging.Events.Handlers.Replaceable;
+using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.MessageHandlers;
-using Netstr.Messaging.MessageHandlers.Events;
+using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Messaging.WebSockets;
 using Netstr.Middleware;
 
@@ -21,6 +22,7 @@ namespace Netstr.Extensions
             services.AddSingleton<IMessageHandler, EventMessageHandler>();
             services.AddSingleton<IMessageHandler, SubscribeMessageHandler>();
             services.AddSingleton<IMessageHandler, UnsubscribeMessageHandler>();
+            services.AddSingleton<IMessageHandler, AuthMessageHandler>();
 
             // event
             services.AddSingleton<IEventDispatcher, EventDispatcher>();
@@ -30,17 +32,25 @@ namespace Netstr.Extensions
             services.AddSingleton<IEventHandler, EphemeralEventHandler>();
             services.AddSingleton<IEventHandler, AddressableEventHandler>();
 
-            services.AddValidators();
+            services.AddEventValidators();
+            services.AddSubscriptionValidators();
 
             return services;
         }
 
-        public static IServiceCollection AddValidators(this IServiceCollection services)
+        public static IServiceCollection AddEventValidators(this IServiceCollection services)
         {
             services.AddSingleton<IEventValidator, EventHashValidator>();
             services.AddSingleton<IEventValidator, EventSignatureValidator>();
             services.AddSingleton<IEventValidator, EventPowValidator>();
             services.AddSingleton<IEventValidator, EventCreatedAtValidator>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddSubscriptionValidators(this IServiceCollection services)
+        {
+            services.AddSingleton<ISubscriptionRequestValidator, SubscriptionLimitsValidator>();
 
             return services;
         }

@@ -5,8 +5,9 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Netstr.Extensions;
 using Netstr.Messaging;
+using Netstr.Messaging.Events;
+using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.MessageHandlers;
-using Netstr.Messaging.MessageHandlers.Events;
 using Netstr.Messaging.Models;
 using Netstr.Options;
 using System.Text.Json;
@@ -21,7 +22,7 @@ namespace Netstr.Tests.Events
         {
             this.validators = new ServiceCollection()
                 .AddOptions<LimitsOptions>().Services
-                .AddValidators()
+                .AddEventValidators()
                 .BuildServiceProvider()
                 .GetRequiredService<IEnumerable<IEventValidator>>();
         }

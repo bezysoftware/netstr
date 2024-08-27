@@ -5,7 +5,7 @@ namespace Netstr.Messaging
     public interface IWebSocketListenerAdapter
     {
         Task StartAsync();
-        string ClientId { get; }
+        ClientContext Context { get; }
     }
 
     public interface IWebSocketAdapter
@@ -14,7 +14,7 @@ namespace Netstr.Messaging
 
         Task SendAsync(object[] message);
 
-        string ClientId { get; }
+        ClientContext Context { get; }
     }
 
     public interface IWebSocketSubscriptionsAdapter : IWebSocketAdapter

@@ -38,7 +38,7 @@ namespace Netstr.Middleware
                 await adapter.StartAsync();
 
                 this.logger.LogInformation($"Closing websocket connection from {context.Connection.RemoteIpAddress}");
-                this.factory.DisposeAdapter(adapter.ClientId);
+                this.factory.DisposeAdapter(adapter.Context.ClientId);
             }
             else
             {

@@ -21,8 +21,8 @@ namespace Netstr.Tests
             
             this.handlers =
             [
-                new EventMessageHandler(Mock.Of<ILogger<EventMessageHandler>>(), eventDispatcher.Object, []),
-                new SubscribeMessageHandler(Mock.Of<IDbContextFactory<NetstrDbContext>>(), Mock.Of<IOptions<LimitsOptions>>()),
+                new EventMessageHandler(Mock.Of<ILogger<EventMessageHandler>>(), eventDispatcher.Object, [], Mock.Of<IOptions<AuthOptions>>()),
+                new SubscribeMessageHandler(Mock.Of<IDbContextFactory<NetstrDbContext>>(), [], Mock.Of<IOptions<LimitsOptions>>(), Mock.Of<IOptions<AuthOptions>>()),
                 new UnsubscribeMessageHandler(),
             ];
 

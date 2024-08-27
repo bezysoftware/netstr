@@ -1,6 +1,6 @@
 ﻿using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.MessageHandlers.Events
+namespace Netstr.Messaging.Events.Validators
 {
     public interface IEventValidator
     {

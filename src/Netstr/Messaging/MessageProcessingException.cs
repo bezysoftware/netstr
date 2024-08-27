@@ -18,6 +18,12 @@ namespace Netstr.Messaging
             this.reply = ["OK", e.Id, false, message];
         }
 
+        public MessageProcessingException(string id, string message)
+            : base($"Subscription request '{id}' failed: {message}")
+        {
+            this.reply = ["CLOSED", id, message];
+        }
+
         public MessageProcessingException(string message, Exception? innerException = null)
             : base(message, innerException)
         {

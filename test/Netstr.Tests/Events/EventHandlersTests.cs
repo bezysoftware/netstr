@@ -7,8 +7,8 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Netstr.Data;
 using Netstr.Messaging;
-using Netstr.Messaging.EventHandlers;
-using Netstr.Messaging.EventHandlers.Replaceable;
+using Netstr.Messaging.Events.Handlers;
+using Netstr.Messaging.Events.Handlers.Replaceable;
 using Netstr.Messaging.Models;
 using Netstr.Messaging.WebSockets;
 using Netstr.Options;
@@ -42,6 +42,7 @@ namespace Netstr.Tests.Events
                 Mock.Of<ILogger<WebSocketAdapter>>(),
                 Mock.Of<IOptions<ConnectionOptions>>(),
                 Mock.Of<IOptions<LimitsOptions>>(),
+                Mock.Of<IOptions<AuthOptions>>(),
                 Mock.Of<IMessageDispatcher>(),
                 CancellationToken.None,
                 this.ws.Object,

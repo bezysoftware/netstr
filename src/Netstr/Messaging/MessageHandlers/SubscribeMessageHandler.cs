@@ -2,8 +2,9 @@
 using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Extensions;
-using Netstr.Messaging.Matching;
 using Netstr.Messaging.Models;
+using Netstr.Messaging.Subscriptions;
+using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
 using System.Text.Json;
 
@@ -15,12 +16,20 @@ namespace Netstr.Messaging.MessageHandlers
     public class SubscribeMessageHandler : IMessageHandler
     {
         private readonly IDbContextFactory<NetstrDbContext> db;
+        private readonly IEnumerable<ISubscriptionRequestValidator> validators;
         private readonly IOptions<LimitsOptions> limits;
+        private readonly IOptions<AuthOptions> auth;
 
-        public SubscribeMessageHandler(IDbContextFactory<NetstrDbContext> db, IOptions<LimitsOptions> limits)
+        public SubscribeMessageHandler(
+            IDbContextFactory<NetstrDbContext> db,
+            IEnumerable<ISubscriptionRequestValidator> validators,
+            IOptions<LimitsOptions> limits,
+            IOptions<AuthOptions> auth)
         {
             this.db = db;
+            this.validators = validators;
             this.limits = limits;
+            this.auth = auth;
         }
 
         public bool CanHandleMessage(string type) => type == MessageType.Req;
@@ -33,17 +42,22 @@ namespace Netstr.Messaging.MessageHandlers
             }
 
             var start = DateTimeOffset.UtcNow;
-
             var id = parameters[1].DeserializeRequired<string>();
+
+            if (this.auth.Value.Mode == AuthMode.Always && !adapter.Context.IsAuthenticated())
+            {
+                throw new MessageProcessingException(id, Messages.AuthRequired);
+            }
+
             var filters = parameters
                 .Skip(2)
                 .Select(GetSubscriptionFilter)
                 .ToArray();
 
-            if (!CanSubscribe(id, filters, out var error))
+            var validationError = this.validators.CanSubscribe(id, adapter.Context, filters);
+            if (validationError != null)
             {
-                await adapter.SendClosedAsync(id, error ?? "");
-                return;
+                throw new MessageProcessingException(id, validationError);
             }
 
             // lock to make sure incoming events will have to wait until EOSE is sent
@@ -52,8 +66,7 @@ namespace Netstr.Messaging.MessageHandlers
                 var maxSubscriptions = this.limits.Value.MaxSubscriptions;
                 if (maxSubscriptions > 0 && x.GetSubscriptions().Where(x => x.Key != id).Count() >= maxSubscriptions)
                 {
-                    await adapter.SendClosedAsync(id, Messages.InvalidTooManySubscriptions);
-                    return;
+                    throw new MessageProcessingException(id, Messages.InvalidTooManySubscriptions);
                 }
 
                 using var context = this.db.CreateDbContext();
@@ -79,27 +92,6 @@ namespace Netstr.Messaging.MessageHandlers
                 // EOSE
                 await x.SendEndOfStoredEventsAsync(id);
             });
-        }
-
-        private bool CanSubscribe(string id, SubscriptionFilter[] filters, out string? error) 
-        {
-            error = null;
-            var limits = this.limits.Value;
-
-            if (limits.MaxSubscriptionIdLength > 0 && id.Length > limits.MaxSubscriptionIdLength)
-            {
-                error = Messages.InvalidSubscriptionIdTooLong;
-            }
-            else if (limits.MaxFilters > 0 && filters.Length > limits.MaxFilters)
-            {
-                error = Messages.InvalidTooManyFilters;
-            }
-            else if (limits.MaxInitialLimit > 0 && filters.Any(x => x.Limit > limits.MaxInitialLimit))
-            {
-                error = Messages.InvalidLimitTooHigh;
-            }
-
-            return error == null;
         }
 
         private SubscriptionFilter GetSubscriptionFilter(JsonDocument json) 

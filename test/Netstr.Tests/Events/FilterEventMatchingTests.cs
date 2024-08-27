@@ -1,6 +1,5 @@
-﻿using Netstr.Messaging.Matching;
-using Netstr.Messaging.Models;
-using System.Runtime.CompilerServices;
+﻿using Netstr.Messaging.Models;
+using Netstr.Messaging.Subscriptions;
 
 namespace Netstr.Tests.Events
 {

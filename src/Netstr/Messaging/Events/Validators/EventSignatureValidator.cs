@@ -1,6 +1,6 @@
 ﻿using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.MessageHandlers.Events
+namespace Netstr.Messaging.Events.Validators
 {
     /// <summary>
     /// <see cref="IEventValidator"/> which validates event's signature.

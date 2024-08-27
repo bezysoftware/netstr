@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Options;
 
@@ -21,10 +18,12 @@ namespace Netstr.Tests
             builder.ConfigureAppConfiguration((ctx, b) =>
             {
                 b.AddInMemoryObject(Limits, "Limits");
+                b.AddInMemoryCollection([ KeyValuePair.Create("Auth:Mode", AuthMode.ToString())]);
             });
         }
 
         public LimitsOptions? Limits { get; set; }
+        public AuthMode AuthMode { get; set; } = AuthMode.Disabled;
     }
 
     public class DbContextFactory : IDbContextFactory<NetstrDbContext>

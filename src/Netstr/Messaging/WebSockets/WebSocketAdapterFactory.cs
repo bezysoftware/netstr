@@ -10,6 +10,7 @@ namespace Netstr.Messaging.WebSockets
         private readonly ILogger<WebSocketAdapter> logger;
         private readonly IOptions<ConnectionOptions> connection;
         private readonly IOptions<LimitsOptions> limits;
+        private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
         private readonly IWebSocketAdapterCollection tracker;
         private readonly IHostApplicationLifetime lifetime;
@@ -18,6 +19,7 @@ namespace Netstr.Messaging.WebSockets
             ILogger<WebSocketAdapter> logger,
             IOptions<ConnectionOptions> connection,
             IOptions<LimitsOptions> limits,
+            IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
             IWebSocketAdapterCollection tracker,
             IHostApplicationLifetime lifetime)
@@ -25,6 +27,7 @@ namespace Netstr.Messaging.WebSockets
             this.logger = logger;
             this.connection = connection;
             this.limits = limits;
+            this.auth = auth;
             this.dispatcher = dispatcher;
             this.tracker = tracker;
             this.lifetime = lifetime;
@@ -36,6 +39,7 @@ namespace Netstr.Messaging.WebSockets
                 this.logger,
                 this.connection,
                 this.limits,
+                this.auth,
                 this.dispatcher,
                 this.lifetime.ApplicationStopping,
                 socket,

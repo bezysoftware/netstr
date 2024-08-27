@@ -71,5 +71,14 @@ namespace Netstr.Messaging
                 message
             ]);
         }
+
+        public static Task SendAuthAsync(this IWebSocketAdapter sender, string challenge)
+        {
+            return sender.SendAsync(
+            [
+                MessageType.Auth,
+                challenge
+            ]);
+        }
     }
 }

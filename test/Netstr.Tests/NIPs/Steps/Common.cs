@@ -32,7 +32,6 @@ namespace Netstr.Tests.NIPs.Steps
             this.factory.Limits = options;
         }
 
-
         [Given(@"(.*) is connected to relay")]
         public async Task GivenAliceIsConnectedToRelay(string name, Keys keys)
         {

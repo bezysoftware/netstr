@@ -4,7 +4,7 @@ using Netstr.Data;
 using Netstr.Extensions;
 using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging.EventHandlers
+namespace Netstr.Messaging.Events.Handlers
 {
     /// <summary>
     /// Delete events are special type of regular event which mark other events as deleted.
@@ -18,7 +18,7 @@ namespace Netstr.Messaging.EventHandlers
         public DeleteEventHandler(
             ILogger<DeleteEventHandler> logger,
             IWebSocketAdapterCollection adapters,
-            IDbContextFactory<NetstrDbContext> db) 
+            IDbContextFactory<NetstrDbContext> db)
             : base(logger, adapters)
         {
             this.db = db;
@@ -101,7 +101,7 @@ namespace Netstr.Messaging.EventHandlers
                 return null;
             }
 
-            return new (parsed[0], kind, parsed.Length > 2 ? parsed[2] : null);
+            return new(parsed[0], kind, parsed.Length > 2 ? parsed[2] : null);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Netstr.Tests.NIPs.Steps
             var c = this.scenarioContext.Get<Clients>()[client];
 
             await c.WebSocket.SendReqAsync(subscriptionId, filters);
-            await c.WaitForMessageAsync(now, ["EOSE", subscriptionId]);
+            await c.WaitForMessageAsync(now, ["EOSE", subscriptionId], ["CLOSED", subscriptionId]);
         }
 
         [When(@"(.*) publishes an event")]
@@ -66,7 +66,9 @@ namespace Netstr.Tests.NIPs.Steps
             return Helpers.VerifyWithDelayAsync(() =>
             {
                 var received = this.scenarioContext.Get<Clients>()[client].GetReceivedMessages();
-                received.Should().BeEquivalentTo(messages, opts => opts.WithStrictOrdering());
+                received.Should().BeEquivalentTo(messages, opts => opts
+                    .WithStrictOrdering()
+                    .Using<string>(x => x.Expectation.Should().Match(e => e == "*" || e == x.Subject)).WhenTypeIs<string>());
             });
         }
     }
