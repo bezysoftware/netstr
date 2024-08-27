@@ -111,12 +111,12 @@ namespace Netstr.Tests
                 Content = "",
                 CreatedAt = DateTimeOffset.UtcNow.AddSeconds(offset),
                 Kind = 10000,
-                PublicKey = "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75",
+                PublicKey = Alice.PublicKey,
                 Tags = [],
                 Signature = ""
             };
 
-            e = Helpers.FinalizeEvent(e, "512a14752ed58380496920da432f1c0cdad952cd4afda3d9bfa51c2051f91b02");
+            e = Helpers.FinalizeEvent(e, Alice.PrivateKey);
 
             // first sub succeeds
             await ws.SendEventAsync(e);

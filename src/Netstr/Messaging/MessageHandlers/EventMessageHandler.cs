@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Options;
-using Netstr.Extensions;
 using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.Models;
 using Netstr.Options;
-using System;
-using System.Security.Cryptography;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Netstr.Messaging.MessageHandlers
 {
@@ -50,7 +46,7 @@ namespace Netstr.Messaging.MessageHandlers
             if (!sender.Context.IsAuthenticated() && (auth == AuthMode.Always || auth == AuthMode.Publishing))
             {
                 this.logger.LogError("Auth required but client not authenticated");
-                throw new MessageProcessingException(e, Messages.AuthRequired);
+                throw new MessageProcessingException(e, auth == AuthMode.Always ? Messages.AuthRequired : Messages.AuthRequiredPublishing);
             }
 
             var validation = this.validators.ValidateEvent(e);
