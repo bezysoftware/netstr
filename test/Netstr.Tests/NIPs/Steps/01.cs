@@ -31,7 +31,7 @@ namespace Netstr.Tests.NIPs.Steps
                 {
                     Content = e.Content?.Replace("\\b", "\b").Replace("\\r", "\r").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\n", "\n") ?? "",
                     CreatedAt = DateTimeOffset.FromUnixTimeSeconds(table.Rows[i].GetInt64("CreatedAt")),
-                    PublicKey = c.Keys.PublicKey,
+                    PublicKey = string.IsNullOrEmpty(e.PublicKey) ? c.Keys.PublicKey : e.PublicKey,
                     Signature = string.IsNullOrEmpty(e.Signature) ? Helpers.Sign(e.Id, c.Keys.PrivateKey) : e.Signature,
                     Tags = string.IsNullOrWhiteSpace(tags)
                         ? []

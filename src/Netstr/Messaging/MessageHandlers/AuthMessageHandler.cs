@@ -50,7 +50,7 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException(Messages.ErrorProcessingEvent);
             }
 
-            var validation = this.validators.ValidateEvent(e);
+            var validation = this.validators.ValidateEvent(e, context);
 
             if (validation != null)
             {

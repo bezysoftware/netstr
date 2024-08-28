@@ -22,6 +22,7 @@ namespace Netstr.Tests.Events
         {
             this.validators = new ServiceCollection()
                 .AddOptions<LimitsOptions>().Services
+                .AddLogging()
                 .AddEventValidators()
                 .BuildServiceProvider()
                 .GetRequiredService<IEnumerable<IEventValidator>>();
@@ -41,7 +42,7 @@ namespace Netstr.Tests.Events
                 Signature = "44224ca5edd01161f617a7347d4f0b1c9a8ccf7bfb3f70bd74db3d6e26f44aa5318f3d39c93f5769d24fa5e56bd98eed7cd23a114cc3412650678a0280ed94f4"
             };
 
-            this.validators.ForEach(x => x.Validate(e).Should().BeNull());
+            this.validators.ForEach(x => x.Validate(e, new ClientContext("test")).Should().BeNull());
         }
 
         [Theory]
@@ -82,7 +83,7 @@ namespace Netstr.Tests.Events
                 Signature = signature
             };
 
-            var result = this.validators.Select(x => x.Validate(e)).FirstOrDefault(x => x != null);
+            var result = this.validators.Select(x => x.Validate(e, new ClientContext("test"))).FirstOrDefault(x => x != null);
 
             result.Should().Be(error);
         }

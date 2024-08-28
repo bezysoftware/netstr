@@ -15,7 +15,7 @@ namespace Netstr.Messaging.Events.Validators
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        public string? Validate(Event e)
+        public string? Validate(Event e, ClientContext context)
         {
             var obj = (object[])[
                 0,

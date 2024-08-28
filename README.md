@@ -20,5 +20,5 @@ NIPs with a relay-specific implementation are listed here.
 - [ ] NIP-40: [Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [x] NIP-42: [Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
 - [ ] NIP-45: [Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
-- [ ] NIP-70: [Protected events](https://github.com/nostr-protocol/nips/blob/master/70.md)
+- [x] NIP-70: [Protected events](https://github.com/nostr-protocol/nips/blob/master/70.md)
 - [ ] NIP-72: [Closed communities](https://github.com/nostr-protocol/nips/pull/875)
