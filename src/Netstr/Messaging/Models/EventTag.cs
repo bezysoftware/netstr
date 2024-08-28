@@ -9,5 +9,6 @@
         public const string Nonce = "nonce";
         public const string Challenge = "challenge";
         public const string Relay = "relay";
+        public const string Protected = "-";
     }
 }

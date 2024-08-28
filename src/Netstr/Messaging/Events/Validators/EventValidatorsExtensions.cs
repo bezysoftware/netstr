@@ -7,11 +7,11 @@ namespace Netstr.Messaging.Events.Validators
         /// <summary>
         /// Runs validations for the given event and returns the first error or null.
         /// </summary>
-        public static string? ValidateEvent(this IEnumerable<IEventValidator> validators, Event e)
+        public static string? ValidateEvent(this IEnumerable<IEventValidator> validators, Event e, ClientContext context)
         {
             foreach (var validator in validators)
             {
-                var error = validator.Validate(e);
+                var error = validator.Validate(e, context);
                 if (error != null)
                 {
                     return error;

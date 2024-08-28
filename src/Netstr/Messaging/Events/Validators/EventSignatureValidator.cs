@@ -7,7 +7,7 @@ namespace Netstr.Messaging.Events.Validators
     /// </summary>
     public class EventSignatureValidator : IEventValidator
     {
-        public string? Validate(Event e)
+        public string? Validate(Event e, ClientContext context)
         {
             try
             {

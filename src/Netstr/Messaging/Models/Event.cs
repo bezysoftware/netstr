@@ -40,6 +40,8 @@ namespace Netstr.Messaging.Models
 
         public bool IsDelete() => Kind == EventKind.Delete;
 
+        public bool IsProtected() => Tags.Any(x => x.Length >= 1 && x[0] == EventTag.Protected);
+
         public string ToStringUnique()
         {
             return IsAddressable()

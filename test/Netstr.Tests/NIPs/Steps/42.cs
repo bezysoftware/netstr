@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Netstr.Messaging.Models;
+﻿using Netstr.Messaging.Models;
 using Netstr.Options;
 using TechTalk.SpecFlow;
 
@@ -8,10 +6,16 @@ namespace Netstr.Tests.NIPs.Steps
 {
     public partial class Steps
     {
-        [Given(@"a relay is running with AUTH required")]
-        public void GivenARelayIsRunningWithAUTHRequired()
+        [Given(@"a relay is running with AUTH (.*)")]
+        public void GivenARelayIsRunningWithAUTHRequired(string mode)
         {
-            this.factory.AuthMode = AuthMode.Always;
+            this.factory.AuthMode = mode switch
+            {
+                "required" => AuthMode.Always,
+                "enabled" => AuthMode.WhenNeeded,
+                "disabled" => AuthMode.Disabled,
+                _ => AuthMode.Disabled,
+            };
         }
 
         [When(@"(.*) publishes an AUTH event with invalid challenge")]

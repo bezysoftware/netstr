@@ -49,7 +49,7 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException(e, auth == AuthMode.Always ? Messages.AuthRequired : Messages.AuthRequiredPublishing);
             }
 
-            var validation = this.validators.ValidateEvent(e);
+            var validation = this.validators.ValidateEvent(e, sender.Context);
 
             if (validation != null)
             {

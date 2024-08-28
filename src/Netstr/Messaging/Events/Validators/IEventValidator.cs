@@ -7,6 +7,6 @@ namespace Netstr.Messaging.Events.Validators
         /// <summary>
         /// Validates given event, returns null if validation passes, or error message.
         /// </summary>
-        string? Validate(Event e);
+        string? Validate(Event e, ClientContext context);
     }
 }

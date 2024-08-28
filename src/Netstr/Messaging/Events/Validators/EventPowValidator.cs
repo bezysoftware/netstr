@@ -16,7 +16,7 @@ namespace Netstr.Messaging.Events.Validators
             this.limits = limits;
         }
 
-        public string? Validate(Event e)
+        public string? Validate(Event e, ClientContext context)
         {
             if (this.limits.Value.MinPowDifficulty <= 0)
             {
