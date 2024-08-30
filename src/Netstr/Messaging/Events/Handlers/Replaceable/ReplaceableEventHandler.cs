@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Messaging.Models;
+using Netstr.Options;
 using System.Linq.Expressions;
 
 namespace Netstr.Messaging.Events.Handlers.Replaceable
@@ -12,9 +14,10 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
     {
         public ReplaceableEventHandler(
             ILogger<ReplaceableEventHandler> logger,
+            IOptions<AuthOptions> auth,
             IWebSocketAdapterCollection adapters,
             IDbContextFactory<NetstrDbContext> db)
-            : base(logger, adapters, db)
+            : base(logger, auth, adapters, db)
         {
         }
 

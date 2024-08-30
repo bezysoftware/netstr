@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Extensions;
 using Netstr.Messaging.Models;
+using Netstr.Options;
 
 namespace Netstr.Messaging.Events.Handlers
 {
@@ -17,9 +19,10 @@ namespace Netstr.Messaging.Events.Handlers
 
         public DeleteEventHandler(
             ILogger<DeleteEventHandler> logger,
+            IOptions<AuthOptions> auth,
             IWebSocketAdapterCollection adapters,
             IDbContextFactory<NetstrDbContext> db)
-            : base(logger, adapters)
+            : base(logger, auth, adapters)
         {
             this.db = db;
         }

@@ -52,6 +52,7 @@ namespace Netstr.Extensions
         public static IServiceCollection AddSubscriptionValidators(this IServiceCollection services)
         {
             services.AddSingleton<ISubscriptionRequestValidator, SubscriptionLimitsValidator>();
+            services.AddSingleton<ISubscriptionRequestValidator, AuthProtectedKindsValidator>();
 
             return services;
         }

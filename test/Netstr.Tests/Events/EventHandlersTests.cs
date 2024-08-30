@@ -49,12 +49,13 @@ namespace Netstr.Tests.Events
                 Mock.Of<IHeaderDictionary>());
 
             this.clients = new WebSocketAdapterCollection();
+            var auth = Microsoft.Extensions.Options.Options.Create(new AuthOptions());
             var handlers = new IEventHandler[]
             {
-                new RegularEventHandler(Mock.Of<ILogger<RegularEventHandler>>(), this.clients, this.dbFactoryMock.Object),
-                new EphemeralEventHandler(Mock.Of<ILogger<EphemeralEventHandler>>(), this.clients),
-                new ReplaceableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), this.clients, this.dbFactoryMock.Object),
-                new AddressableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), this.clients, this.dbFactoryMock.Object)
+                new RegularEventHandler(Mock.Of<ILogger<RegularEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object),
+                new EphemeralEventHandler(Mock.Of<ILogger<EphemeralEventHandler>>(), auth, this.clients),
+                new ReplaceableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object),
+                new AddressableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object)
             };
             this.dispatcher = new EventDispatcher(Mock.Of<ILogger<EventDispatcher>>(), handlers);
         }
