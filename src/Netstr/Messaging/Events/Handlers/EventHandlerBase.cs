@@ -1,18 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Messaging.Models;
 using Netstr.Messaging.Subscriptions;
+using Netstr.Options;
 
 namespace Netstr.Messaging.Events.Handlers
 {
     public abstract class EventHandlerBase : IEventHandler
     {
         protected readonly ILogger<EventHandlerBase> logger;
-        private readonly IWebSocketAdapterCollection adapters;
+        protected readonly IOptions<AuthOptions> auth;
+        protected readonly IWebSocketAdapterCollection adapters;
 
-        protected EventHandlerBase(ILogger<EventHandlerBase> logger, IWebSocketAdapterCollection adapters)
+        protected EventHandlerBase(
+            ILogger<EventHandlerBase> logger,
+            IOptions<AuthOptions> auth,
+            IWebSocketAdapterCollection adapters)
         {
             this.logger = logger;
+            this.auth = auth;
             this.adapters = adapters;
         }
 
@@ -42,6 +49,16 @@ namespace Netstr.Messaging.Events.Handlers
 
         private async Task BroadcastEventForAdapterAsync(IWebSocketAdapter adapter, Event e)
         {
+            if (
+                this.auth.Value.ProtectedKinds.Contains(e.Kind) &&
+                this.auth.Value.Mode != AuthMode.Disabled &&
+                adapter.Context.PublicKey != e.PublicKey &&
+                e.Tags.Any(x => x.Length >= 2 && x[0] == EventTag.PublicKey && x[1] != adapter.Context.PublicKey))
+            {
+                // not going to send the event to this client
+                return;
+            }
+
             await adapter.LockAsync(LockType.Read, async adapter =>
             {
                 var broadcast = adapter

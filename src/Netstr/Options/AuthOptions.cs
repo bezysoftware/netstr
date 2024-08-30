@@ -4,6 +4,6 @@
     {
         public AuthMode Mode { get; init; }
 
-        public long[]? ProtectedKinds { get; init; }
+        public long[] ProtectedKinds { get; init; } = [];
     }
 }

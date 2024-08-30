@@ -20,6 +20,8 @@ namespace Netstr.Messaging.Subscriptions
         public static IQueryable<EventEntity> WhereAnyFilterMatches(
             this DbSet<EventEntity> entities,
             IEnumerable<SubscriptionFilter> filters,
+            IEnumerable<long> protectedKinds,
+            string? authenticatedPublicKey,
             int maxLimit)
         {
             return filters
@@ -32,11 +34,24 @@ namespace Netstr.Messaging.Subscriptions
                         (filter.Since <= x.EventCreatedAt || !filter.Since.HasValue) &&
                         (filter.Until >= x.EventCreatedAt || !filter.Until.HasValue))
                     .WhereTags(filter.Tags)
+                    .Where(x => !protectedKinds.Contains(x.EventKind) || x.EventPublicKey == authenticatedPublicKey || x.Tags.Any(tag => tag.Name == EventTag.PublicKey && tag.Values[0] == authenticatedPublicKey))
                     .OrderByDescending(x => x.EventCreatedAt)
                     .ThenBy(x => x.EventId)
                     .Take(filter.Limit > 0 && filter.Limit < maxLimit ? filter.Limit : maxLimit))
                 .Aggregate((acc, x) => acc.Union(x))
                 .AsNoTracking();
+        }
+
+
+        /// <summary>
+        /// Filters database events based on supplied filters with no auth.
+        /// </summary>
+        public static IQueryable<EventEntity> WhereAnyFilterMatches(
+            this DbSet<EventEntity> entities,
+            IEnumerable<SubscriptionFilter> filters,
+            int maxLimit)
+        {
+            return WhereAnyFilterMatches(entities, filters, [], null, maxLimit);
         }
 
         private static IQueryable<EventEntity> WhereTags(this IQueryable<EventEntity> entities, IDictionary<string, string[]> tags)

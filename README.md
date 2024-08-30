@@ -12,10 +12,11 @@ NIPs with a relay-specific implementation are listed here.
 
 - [x] NIP-01: [Basic protocol flow description](https://github.com/nostr-protocol/nips/blob/master/01.md)
 - [x] NIP-02: [Follow list](https://github.com/nostr-protocol/nips/blob/master/02.md)
+- [x] NIP-04: [Encrypted Direct Message](https://github.com/nostr-protocol/nips/blob/master/04.md) (deprecated in favor of NIP-17)
 - [x] NIP-09: [Event deletion](https://github.com/nostr-protocol/nips/blob/master/09.md)
 - [x] NIP-11: [Relay information document](https://github.com/nostr-protocol/nips/blob/master/11.md)
 - [x] NIP-13: [Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md)
-- [ ] NIP-17: [Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
+- [x] NIP-17: [Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
 - [ ] NIP-28: [Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
 - [ ] NIP-40: [Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [x] NIP-42: [Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)

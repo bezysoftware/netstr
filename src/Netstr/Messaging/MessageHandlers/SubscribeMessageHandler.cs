@@ -71,9 +71,13 @@ namespace Netstr.Messaging.MessageHandlers
 
                 using var context = this.db.CreateDbContext();
 
+                // if auth is disabled ignore any set ProtectedKinds
+                var auth = this.auth.Value;
+                var protectedKinds = auth.Mode == AuthMode.Disabled ? [] : auth.ProtectedKinds;
+
                 // get stored events
                 var entities = await context.Events
-                    .WhereAnyFilterMatches(filters, this.limits.Value.MaxInitialLimit)
+                    .WhereAnyFilterMatches(filters, protectedKinds, adapter.Context.PublicKey, this.limits.Value.MaxInitialLimit)
                     .Where(x => x.FirstSeen < start)
                     .Where(x => !x.DeletedAt.HasValue)
                     .OrderByDescending(x => x.EventCreatedAt)
@@ -98,7 +102,7 @@ namespace Netstr.Messaging.MessageHandlers
         {
             var r = json.DeserializeRequired<SubscriptionFilterRequest>();
             var tags = r.AdditionalData?.ToDictionary(x => x.Key, x => x.Value.DeserializeRequired<string[]>()) ?? new();
-            
+
             return new SubscriptionFilter(
                 r.Ids.EmptyIfNull(), 
                 r.Authors.EmptyIfNull(), 

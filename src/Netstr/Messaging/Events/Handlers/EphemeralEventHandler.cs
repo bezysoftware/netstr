@@ -1,4 +1,6 @@
-﻿using Netstr.Messaging.Models;
+﻿using Microsoft.Extensions.Options;
+using Netstr.Messaging.Models;
+using Netstr.Options;
 
 namespace Netstr.Messaging.Events.Handlers
 {
@@ -9,8 +11,9 @@ namespace Netstr.Messaging.Events.Handlers
     {
         public EphemeralEventHandler(
             ILogger<EphemeralEventHandler> logger,
+            IOptions<AuthOptions> auth,
             IWebSocketAdapterCollection adapters)
-            : base(logger, adapters)
+            : base(logger, auth, adapters)
         {
         }
 

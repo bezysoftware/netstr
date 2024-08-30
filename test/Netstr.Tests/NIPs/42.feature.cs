@@ -83,14 +83,14 @@ namespace Netstr.Tests.NIPs
 #line 5
  testRunner.Given("a relay is running with AUTH required", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table56 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table78 = new TechTalk.SpecFlow.Table(new string[] {
                         "PublicKey",
                         "PrivateKey"});
-            table56.AddRow(new string[] {
+            table78.AddRow(new string[] {
                         "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75",
                         "512a14752ed58380496920da432f1c0cdad952cd4afda3d9bfa51c2051f91b02"});
 #line 6
- testRunner.And("Alice is connected to relay", ((string)(null)), table56, "And ");
+ testRunner.And("Alice is connected to relay", ((string)(null)), table78, "And ");
 #line hidden
         }
         
@@ -120,46 +120,46 @@ this.ScenarioInitialize(scenarioInfo);
 #line 4
 this.FeatureBackground();
 #line hidden
-                TechTalk.SpecFlow.Table table57 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table79 = new TechTalk.SpecFlow.Table(new string[] {
                             "Kinds"});
-                table57.AddRow(new string[] {
+                table79.AddRow(new string[] {
                             "1"});
 #line 11
- testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table57, "When ");
+ testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table79, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table58 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table80 = new TechTalk.SpecFlow.Table(new string[] {
                             "Id",
                             "Content",
                             "Kind",
                             "Tags",
                             "CreatedAt"});
-                table58.AddRow(new string[] {
+                table80.AddRow(new string[] {
                             "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
                             "Hello",
                             "1",
                             "",
                             "1722337838"});
 #line 14
- testRunner.And("Alice publishes events", ((string)(null)), table58, "And ");
+ testRunner.And("Alice publishes events", ((string)(null)), table80, "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table59 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table81 = new TechTalk.SpecFlow.Table(new string[] {
                             "Type",
                             "Id",
                             "Success"});
-                table59.AddRow(new string[] {
+                table81.AddRow(new string[] {
                             "AUTH",
                             "*",
                             ""});
-                table59.AddRow(new string[] {
+                table81.AddRow(new string[] {
                             "CLOSED",
                             "abcd",
                             ""});
-                table59.AddRow(new string[] {
+                table81.AddRow(new string[] {
                             "OK",
                             "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
                             "false"});
 #line 17
- testRunner.Then("Alice receives messages", ((string)(null)), table59, "Then ");
+ testRunner.Then("Alice receives messages", ((string)(null)), table81, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -189,50 +189,50 @@ this.FeatureBackground();
 #line 24
  testRunner.When("Alice publishes an AUTH event for the challenge sent by relay", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table60 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table82 = new TechTalk.SpecFlow.Table(new string[] {
                             "Kinds"});
-                table60.AddRow(new string[] {
+                table82.AddRow(new string[] {
                             "2"});
 #line 25
- testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table60, "And ");
+ testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table82, "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table61 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table83 = new TechTalk.SpecFlow.Table(new string[] {
                             "Id",
                             "Content",
                             "Kind",
                             "Tags",
                             "CreatedAt"});
-                table61.AddRow(new string[] {
+                table83.AddRow(new string[] {
                             "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
                             "Hello",
                             "1",
                             "",
                             "1722337838"});
 #line 28
- testRunner.And("Alice publishes events", ((string)(null)), table61, "And ");
+ testRunner.And("Alice publishes events", ((string)(null)), table83, "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table62 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table84 = new TechTalk.SpecFlow.Table(new string[] {
                             "Type",
                             "Id",
                             "Success"});
-                table62.AddRow(new string[] {
+                table84.AddRow(new string[] {
                             "AUTH",
                             "*",
                             ""});
-                table62.AddRow(new string[] {
+                table84.AddRow(new string[] {
                             "OK",
                             "*",
                             "true"});
-                table62.AddRow(new string[] {
+                table84.AddRow(new string[] {
                             "EOSE",
                             "abcd",
                             ""});
-                table62.AddRow(new string[] {
+                table84.AddRow(new string[] {
                             "OK",
                             "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
                             "true"});
 #line 31
- testRunner.Then("Alice receives messages", ((string)(null)), table62, "Then ");
+ testRunner.Then("Alice receives messages", ((string)(null)), table84, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -262,50 +262,50 @@ this.FeatureBackground();
 #line 39
  testRunner.When("Alice publishes an AUTH event with invalid challenge", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table63 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table85 = new TechTalk.SpecFlow.Table(new string[] {
                             "Kinds"});
-                table63.AddRow(new string[] {
+                table85.AddRow(new string[] {
                             "1"});
 #line 40
- testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table63, "When ");
+ testRunner.When("Alice sends a subscription request abcd", ((string)(null)), table85, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table64 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table86 = new TechTalk.SpecFlow.Table(new string[] {
                             "Id",
                             "Content",
                             "Kind",
                             "Tags",
                             "CreatedAt"});
-                table64.AddRow(new string[] {
+                table86.AddRow(new string[] {
                             "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
                             "Hello",
                             "1",
                             "",
                             "1722337838"});
 #line 43
- testRunner.And("Alice publishes events", ((string)(null)), table64, "And ");
+ testRunner.And("Alice publishes events", ((string)(null)), table86, "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table65 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table87 = new TechTalk.SpecFlow.Table(new string[] {
                             "Type",
                             "Id",
                             "Success"});
-                table65.AddRow(new string[] {
+                table87.AddRow(new string[] {
                             "AUTH",
                             "*",
                             ""});
-                table65.AddRow(new string[] {
+                table87.AddRow(new string[] {
                             "OK",
                             "*",
                             "false"});
-                table65.AddRow(new string[] {
+                table87.AddRow(new string[] {
                             "CLOSED",
                             "abcd",
                             ""});
-                table65.AddRow(new string[] {
+                table87.AddRow(new string[] {
                             "OK",
                             "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5",
                             "false"});
 #line 46
- testRunner.Then("Alice receives messages", ((string)(null)), table65, "Then ");
+ testRunner.Then("Alice receives messages", ((string)(null)), table87, "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
