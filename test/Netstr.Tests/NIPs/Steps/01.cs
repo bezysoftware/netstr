@@ -24,20 +24,7 @@ namespace Netstr.Tests.NIPs.Steps
         {
             var start = DateTimeOffset.UtcNow;
             var c = this.scenarioContext.Get<Clients>()[client];
-            var events = table.CreateSet<Event>().Select((e, i) =>
-            {
-                var tags = table.Rows[i].GetString("Tags");
-                return e with
-                {
-                    Content = e.Content?.Replace("\\b", "\b").Replace("\\r", "\r").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\n", "\n") ?? "",
-                    CreatedAt = DateTimeOffset.FromUnixTimeSeconds(table.Rows[i].GetInt64("CreatedAt")),
-                    PublicKey = string.IsNullOrEmpty(e.PublicKey) ? c.Keys.PublicKey : e.PublicKey,
-                    Signature = string.IsNullOrEmpty(e.Signature) ? Helpers.Sign(e.Id, c.Keys.PrivateKey) : e.Signature,
-                    Tags = string.IsNullOrWhiteSpace(tags)
-                        ? []
-                        : JsonSerializer.Deserialize<string[][]>(tags) ?? []
-                };
-            });
+            var events = Transforms.CreateEvents(table, c);
 
             foreach (var e in events)
             {

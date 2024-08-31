@@ -18,7 +18,7 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-13: [Proof of Work](https://github.com/nostr-protocol/nips/blob/master/13.md)
 - [x] NIP-17: [Private Direct Messages](https://github.com/nostr-protocol/nips/blob/master/17.md)
 - [ ] NIP-28: [Public Chat](https://github.com/nostr-protocol/nips/blob/master/28.md)
-- [ ] NIP-40: [Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
+- [x] NIP-40: [Expiration Timestamp](https://github.com/nostr-protocol/nips/blob/master/40.md)
 - [x] NIP-42: [Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
 - [ ] NIP-45: [Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
 - [x] NIP-70: [Protected events](https://github.com/nostr-protocol/nips/blob/master/70.md)
