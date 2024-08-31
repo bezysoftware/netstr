@@ -15,6 +15,7 @@ namespace Netstr.Data
                 EventKind = e.Kind,
                 EventPublicKey = e.PublicKey,
                 EventSignature = e.Signature,
+                EventExpiration = e.GetExpirationValue(),
                 EventDeduplication = e.IsAddressable() 
                     ? e.GetDeduplicationValue() 
                     : null,

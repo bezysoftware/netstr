@@ -71,7 +71,22 @@ namespace Netstr.Messaging.Models
 
         public string? GetDeduplicationValue()
         {
-            return Tags.FirstOrDefault(x => x.Length > 1 && x.FirstOrDefault() == EventTag.Deduplication)?[1];
+            return GetTagValue(EventTag.Deduplication);
+        }
+
+        public DateTimeOffset? GetExpirationValue()
+        {
+            if (long.TryParse(GetTagValue(EventTag.Expiration), out var exp) && exp > 0)
+            {
+                return DateTimeOffset.FromUnixTimeSeconds(exp);
+            }
+
+            return null;
+        }
+
+        public string? GetTagValue(string tag)
+        {
+            return Tags.FirstOrDefault(x => x.Length > 1 && x.FirstOrDefault() == tag)?[1];
         }
     }
 }

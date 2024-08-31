@@ -42,7 +42,6 @@ namespace Netstr.Messaging.Subscriptions
                 .AsNoTracking();
         }
 
-
         /// <summary>
         /// Filters database events based on supplied filters with no auth.
         /// </summary>

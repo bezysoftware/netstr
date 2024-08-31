@@ -10,5 +10,6 @@
         public const string Challenge = "challenge";
         public const string Relay = "relay";
         public const string Protected = "-";
+        public const string Expiration = "expiration";
     }
 }

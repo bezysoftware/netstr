@@ -78,8 +78,10 @@ namespace Netstr.Messaging.MessageHandlers
                 // get stored events
                 var entities = await context.Events
                     .WhereAnyFilterMatches(filters, protectedKinds, adapter.Context.PublicKey, this.limits.Value.MaxInitialLimit)
-                    .Where(x => x.FirstSeen < start)
-                    .Where(x => !x.DeletedAt.HasValue)
+                    .Where(x => 
+                        x.FirstSeen < start &&
+                        !x.DeletedAt.HasValue &&
+                        (!x.EventExpiration.HasValue || x.EventExpiration.Value > start))
                     .OrderByDescending(x => x.EventCreatedAt)
                     .ThenBy(x => x.EventId)
                     .ToArrayAsync();

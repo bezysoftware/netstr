@@ -2,6 +2,7 @@
 using Netstr.Messaging.Models;
 using Netstr.Options;
 using System.Reflection;
+using System.Text.Json;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -58,6 +59,24 @@ namespace Netstr.Tests.NIPs
         public LimitsOptions GetLimits(Table table)
         {
             return table.CreateInstance<LimitsOptions>();
+        }
+
+        public static IEnumerable<Event> CreateEvents(Table table, Client c)
+        {
+            return table.CreateSet<Event>().Select((e, i) =>
+            {
+                var tags = table.Rows[i].GetString("Tags");
+                return e with
+                {
+                    Content = e.Content?.Replace("\\b", "\b").Replace("\\r", "\r").Replace("\\t", "\t").Replace("\\\"", "\"").Replace("\\n", "\n") ?? "",
+                    CreatedAt = DateTimeOffset.FromUnixTimeSeconds(table.Rows[i].GetInt64("CreatedAt")),
+                    PublicKey = string.IsNullOrEmpty(e.PublicKey) ? c.Keys.PublicKey : e.PublicKey,
+                    Signature = string.IsNullOrEmpty(e.Signature) ? Helpers.Sign(e.Id, c.Keys.PrivateKey) : e.Signature,
+                    Tags = string.IsNullOrWhiteSpace(tags)
+                        ? []
+                        : JsonSerializer.Deserialize<string[][]>(tags) ?? []
+                };
+            });
         }
     }
 }
