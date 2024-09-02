@@ -20,6 +20,7 @@ namespace Netstr.Tests.NIPs
                 var until = table.Rows[i].GetInt64("Until");
                 return x with
                 {
+                    AdditionalData = table.Rows[i].Where(x => x.Key.StartsWith("#")).ToDictionary(x => x.Key, x => JsonSerializer.Deserialize<JsonElement>($"[\"{x.Value}\"]")),
                     Since = since > 0 ? DateTimeOffset.FromUnixTimeSeconds(since) : null,
                     Until = since > 0 ? DateTimeOffset.FromUnixTimeSeconds(until) : null,
                 };
@@ -38,6 +39,7 @@ namespace Netstr.Tests.NIPs
                     MessageType.Ok => [MessageType.Ok, row[1], row.GetBoolean("Success"), row.GetString("Message") ?? ""],
                     MessageType.Closed => [MessageType.Closed, row[1], row.GetString("Message") ?? ""],
                     MessageType.Auth => [MessageType.Auth, row[1] ?? ""],
+                    MessageType.Count => [MessageType.Count, row[1], row.GetInt32("Count")],
                     _ => throw new NotImplementedException(),
                 };
             });

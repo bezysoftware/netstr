@@ -80,5 +80,17 @@ namespace Netstr.Messaging
                 challenge
             ]);
         }
+
+        public static Task SendCountAsync(this IWebSocketAdapter sender, string id, int count)
+        {
+            return sender.SendAsync(
+            [
+                MessageType.Count,
+                id,
+                new {
+                    count
+                }
+            ]);
+        }
     }
 }
