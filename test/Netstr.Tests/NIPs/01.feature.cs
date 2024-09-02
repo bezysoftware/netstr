@@ -680,22 +680,38 @@ this.FeatureBackground();
                             "Id",
                             "Content",
                             "Kind",
-                            "CreatedAt"});
+                            "CreatedAt",
+                            "Tags"});
                 table28.AddRow(new string[] {
                             "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346",
                             "Hello 1",
                             "1",
-                            "1722337838"});
+                            "1722337838",
+                            ""});
                 table28.AddRow(new string[] {
                             "0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c",
                             "",
                             "0",
-                            "1722337850"});
+                            "1722337850",
+                            ""});
                 table28.AddRow(new string[] {
                             "cb952d0ab727c3fcaf94e6809a64d1a27ff87cae5be583398ee7f0f1381d6b66",
                             "Hello MD",
                             "30023",
-                            "1722337839"});
+                            "1722337839",
+                            ""});
+                table28.AddRow(new string[] {
+                            "dca906744526bef1de5fa0e9f58d0d09a0a79ccf281c3c91c0e36007ee724ba3",
+                            "Tagged",
+                            "1",
+                            "1722337839",
+                            "[[\"q\",\"q1\"],[\"q\",\"q2\"],[\"r\",\"r1\"]]"});
+                table28.AddRow(new string[] {
+                            "7f5657422743e4aac914ded6ad09bcdd3fb6f078cced67ca6c684ea38ee14989",
+                            "Tagged",
+                            "1",
+                            "1722337839",
+                            "[[\"q\",\"q1\"],[\"q\",\"q3\"]]"});
 #line 150
  testRunner.When("Bob publishes events", ((string)(null)), table28, "When ");
 #line hidden
@@ -719,35 +735,39 @@ this.FeatureBackground();
                             "Hello again",
                             "1",
                             "1722337837"});
-#line 155
+#line 157
  testRunner.When("Charlie publishes events", ((string)(null)), table29, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table30 = new TechTalk.SpecFlow.Table(new string[] {
                             "Ids",
                             "Authors",
                             "Kinds",
-                            "Tags",
                             "Since",
                             "Until",
-                            "Limit"});
+                            "Limit",
+                            "#q",
+                            "#r"});
                 table30.AddRow(new string[] {
                             "",
                             "",
                             "",
                             "",
                             "",
+                            "1",
                             "",
-                            "1"});
+                            ""});
                 table30.AddRow(new string[] {
                             "",
                             "fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614",
                             "1,2",
-                            "",
                             "1722337830",
                             "1722337836",
+                            "",
+                            "",
                             ""});
                 table30.AddRow(new string[] {
                             "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346",
+                            "",
                             "",
                             "",
                             "",
@@ -761,8 +781,18 @@ this.FeatureBackground();
                             "",
                             "",
                             "",
+                            "",
                             ""});
-#line 160
+                table30.AddRow(new string[] {
+                            "",
+                            "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627",
+                            "1",
+                            "",
+                            "",
+                            "",
+                            "q4,q1",
+                            "r1"});
+#line 162
  testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table30, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table31 = new TechTalk.SpecFlow.Table(new string[] {
@@ -780,6 +810,10 @@ this.FeatureBackground();
                 table31.AddRow(new string[] {
                             "EVENT",
                             "abcd",
+                            "dca906744526bef1de5fa0e9f58d0d09a0a79ccf281c3c91c0e36007ee724ba3"});
+                table31.AddRow(new string[] {
+                            "EVENT",
+                            "abcd",
                             "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346"});
                 table31.AddRow(new string[] {
                             "EVENT",
@@ -789,7 +823,7 @@ this.FeatureBackground();
                             "EOSE",
                             "abcd",
                             ""});
-#line 166
+#line 169
  testRunner.Then("Alice receives messages", ((string)(null)), table31, "Then ");
 #line hidden
             }

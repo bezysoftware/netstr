@@ -1,118 +1,57 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Netstr.Data;
-using Netstr.Extensions;
 using Netstr.Messaging.Models;
-using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
-using System.Text.Json;
 
 namespace Netstr.Messaging.MessageHandlers
 {
     /// <summary>
     /// Handler which processes REQ messages.
     /// </summary>
-    public class SubscribeMessageHandler : IMessageHandler
+    public class SubscribeMessageHandler : FilterMessageHandlerBase
     {
         private readonly IDbContextFactory<NetstrDbContext> db;
-        private readonly IEnumerable<ISubscriptionRequestValidator> validators;
-        private readonly IOptions<LimitsOptions> limits;
-        private readonly IOptions<AuthOptions> auth;
 
         public SubscribeMessageHandler(
             IDbContextFactory<NetstrDbContext> db,
             IEnumerable<ISubscriptionRequestValidator> validators,
             IOptions<LimitsOptions> limits,
             IOptions<AuthOptions> auth)
+            : base(validators, limits, auth)
         {
             this.db = db;
-            this.validators = validators;
-            this.limits = limits;
-            this.auth = auth;
         }
 
-        public bool CanHandleMessage(string type) => type == MessageType.Req;
+        protected override string AcceptedMessageType => MessageType.Req;
 
-        public async Task HandleMessageAsync(IWebSocketAdapter adapter, JsonDocument[] parameters)
+        protected override async Task HandleMessageCoreAsync(DateTimeOffset processingStart, IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
         {
-            if (parameters.Length < 3)
-            {
-                throw new MessageProcessingException("REQ message should be an array with at least 2 elements");
-            }
-
-            var start = DateTimeOffset.UtcNow;
-            var id = parameters[1].DeserializeRequired<string>();
-
-            if (this.auth.Value.Mode == AuthMode.Always && !adapter.Context.IsAuthenticated())
-            {
-                throw new MessageProcessingException(id, Messages.AuthRequired);
-            }
-
-            var filters = parameters
-                .Skip(2)
-                .Select(GetSubscriptionFilter)
-                .ToArray();
-
-            var validationError = this.validators.CanSubscribe(id, adapter.Context, filters);
-            if (validationError != null)
-            {
-                throw new MessageProcessingException(id, validationError);
-            }
-
             // lock to make sure incoming events will have to wait until EOSE is sent
             await adapter.LockAsync(LockType.Write, async x =>
             {
                 var maxSubscriptions = this.limits.Value.MaxSubscriptions;
-                if (maxSubscriptions > 0 && x.GetSubscriptions().Where(x => x.Key != id).Count() >= maxSubscriptions)
+                if (maxSubscriptions > 0 && x.GetSubscriptions().Where(x => x.Key != subscriptionId).Count() >= maxSubscriptions)
                 {
-                    throw new MessageProcessingException(id, Messages.InvalidTooManySubscriptions);
+                    throw new MessageProcessingException(subscriptionId, Messages.InvalidTooManySubscriptions);
                 }
 
                 using var context = this.db.CreateDbContext();
 
-                // if auth is disabled ignore any set ProtectedKinds
-                var auth = this.auth.Value;
-                var protectedKinds = auth.Mode == AuthMode.Disabled ? [] : auth.ProtectedKinds;
-
                 // get stored events
-                var entities = await context.Events
-                    .WhereAnyFilterMatches(filters, protectedKinds, adapter.Context.PublicKey, this.limits.Value.MaxInitialLimit)
-                    .Where(x => 
-                        x.FirstSeen < start &&
-                        !x.DeletedAt.HasValue &&
-                        (!x.EventExpiration.HasValue || x.EventExpiration.Value > start))
-                    .OrderByDescending(x => x.EventCreatedAt)
-                    .ThenBy(x => x.EventId)
-                    .ToArrayAsync();
-
+                var entities = await GetFilteredEvents(context, filters, adapter.Context.PublicKey, processingStart).ToArrayAsync();
                 var events = entities.Select(CreateEvent).ToArray();
-                var maxFirstSeen = entities.MaxOrDefault(x => x.FirstSeen);
 
                 // add sub
-                x.AddSubscription(id, filters);
+                x.AddSubscription(subscriptionId, filters);
 
                 // send back
-                await adapter.SendEventsAsync(id, events);
+                await adapter.SendEventsAsync(subscriptionId, events);
 
                 // EOSE
-                await x.SendEndOfStoredEventsAsync(id);
+                await x.SendEndOfStoredEventsAsync(subscriptionId);
             });
-        }
-
-        private SubscriptionFilter GetSubscriptionFilter(JsonDocument json) 
-        {
-            var r = json.DeserializeRequired<SubscriptionFilterRequest>();
-            var tags = r.AdditionalData?.ToDictionary(x => x.Key, x => x.Value.DeserializeRequired<string[]>()) ?? new();
-
-            return new SubscriptionFilter(
-                r.Ids.EmptyIfNull(), 
-                r.Authors.EmptyIfNull(), 
-                r.Kinds.EmptyIfNull(),
-                r.Since, 
-                r.Until, 
-                r.Limit, 
-                tags);
         }
 
         private Event CreateEvent(EventEntity e)

@@ -10,5 +10,6 @@
         public const string Notice = "NOTICE";
         public const string EndOfStoredEvents = "EOSE";
         public const string Ok = "OK";
+        public const string Count = "COUNT";
     }
 }

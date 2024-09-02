@@ -23,6 +23,7 @@ namespace Netstr.Extensions
             services.AddSingleton<IMessageHandler, SubscribeMessageHandler>();
             services.AddSingleton<IMessageHandler, UnsubscribeMessageHandler>();
             services.AddSingleton<IMessageHandler, AuthMessageHandler>();
+            services.AddSingleton<IMessageHandler, CountMessageHandler>();
 
             // event
             services.AddSingleton<IEventDispatcher, EventDispatcher>();

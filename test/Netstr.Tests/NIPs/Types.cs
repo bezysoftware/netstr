@@ -40,6 +40,7 @@ namespace Netstr.Tests.NIPs
                 MessageType.Ok => [message[2].GetBoolean(), ""],
                 MessageType.Closed => [""],
                 MessageType.Auth => [],
+                MessageType.Count => [message[2].DeserializeRequired<CountValue>().Count],
                 _ => []
             };
 
@@ -71,4 +72,6 @@ namespace Netstr.Tests.NIPs
     public record Keys(string PublicKey, string PrivateKey) { }
 
     public record EventId([property: JsonPropertyName("id")] string Id) { }
+
+    public record CountValue([property: JsonPropertyName("count")] int Count) { }
 }

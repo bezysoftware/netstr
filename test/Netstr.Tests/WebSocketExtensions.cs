@@ -23,6 +23,16 @@ namespace Netstr.Tests
             ], cancellationToken);
         }
 
+
+        public static Task SendCountAsync(this WebSocket ws, string id, IEnumerable<SubscriptionFilterRequest> filters, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "COUNT",
+                id,
+                ..filters
+            ], cancellationToken);
+        }
+
         public static Task SendEventAsync(this WebSocket ws, Event e, CancellationToken? cancellationToken = null)
         {
             return ws.SendAsync([

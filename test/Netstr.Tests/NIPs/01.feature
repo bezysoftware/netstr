@@ -148,25 +148,29 @@ Scenario: Sending a subscription request with the same name restarts it
 Scenario: Relay can handle complex filters
 	Subscription requests can contain multiple filter objects which are interpreted as || conditions
 	When Bob publishes events
-	| Id                                                               | Content  | Kind  | CreatedAt  |
-	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1  | 1     | 1722337838 |
-	| 0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c |          | 0     | 1722337850 |
-	| cb952d0ab727c3fcaf94e6809a64d1a27ff87cae5be583398ee7f0f1381d6b66 | Hello MD | 30023 | 1722337839 |
+	| Id                                                               | Content  | Kind  | CreatedAt  | Tags                               |
+	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1  | 1     | 1722337838 |                                    |
+	| 0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c |          | 0     | 1722337850 |                                    |
+	| cb952d0ab727c3fcaf94e6809a64d1a27ff87cae5be583398ee7f0f1381d6b66 | Hello MD | 30023 | 1722337839 |                                    |
+	| dca906744526bef1de5fa0e9f58d0d09a0a79ccf281c3c91c0e36007ee724ba3 | Tagged   | 1     | 1722337839 | [["q","q1"],["q","q2"],["r","r1"]] |
+	| 7f5657422743e4aac914ded6ad09bcdd3fb6f078cced67ca6c684ea38ee14989 | Tagged   | 1     | 1722337839 | [["q","q1"],["q","q3"]]            |
 	When Charlie publishes events
 	| Id                                                               | Content     | Kind  | CreatedAt  |
 	| 4a173b1eaaf881eccaf28d943d4d028a652603d0718282a9d877a8dbbff02965 | Hello       | 30023 | 1722337835 |
 	| 5138028d66a909d302d8283319eb2c0830b42694f6137f71c47c64b4bdab3ad1 | Hello       | 1     | 1722337836 |
 	| a56ce3b0684d78d3ebe3d6d3e06d3a82317b8f7fdde9830727ee914b582a6091 | Hello again | 1     | 1722337837 |
 	And Alice sends a subscription request abcd
-	| Ids                                                              | Authors                                                          | Kinds | Tags                 | Since      | Until      | Limit |
-	|                                                                  |                                                                  |       |                      |            |            | 1     |
-	|                                                                  | fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614 | 1,2   |                      | 1722337830 | 1722337836 |       |
-	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 |                                                                  |       |                      |            |            |       |
-	|                                                                  |                                                                  | 30023 |                      |            |            |       |
+	| Ids                                                              | Authors                                                          | Kinds | Since      | Until      | Limit | #q    | #r |
+	|                                                                  |                                                                  |       |            |            | 1     |       |    |
+	|                                                                  | fe8d7a5726ea97ce6140f9fb06b1fe7d3259bcbf8de42c2a5d2ec9f8f0e2f614 | 1,2   | 1722337830 | 1722337836 |       |       |    |
+	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 |                                                                  |       |            |            |       |       |    |
+	|                                                                  |                                                                  | 30023 |            |            |       |       |    |
+	|                                                                  | 5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627 | 1     |            |            |       | q4,q1 | r1 |
 	Then Alice receives messages
 	| Type  | Id   | EventId                                                          |
 	| EVENT | abcd | 0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c |
 	| EVENT | abcd | cb952d0ab727c3fcaf94e6809a64d1a27ff87cae5be583398ee7f0f1381d6b66 |
+	| EVENT | abcd | dca906744526bef1de5fa0e9f58d0d09a0a79ccf281c3c91c0e36007ee724ba3 |
 	| EVENT | abcd | a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 |
 	| EVENT | abcd | 5138028d66a909d302d8283319eb2c0830b42694f6137f71c47c64b4bdab3ad1 |
 	| EOSE  | abcd |                                                                  |
