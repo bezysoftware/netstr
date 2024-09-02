@@ -20,7 +20,9 @@ namespace Netstr.Tests.NIPs
                 var until = table.Rows[i].GetInt64("Until");
                 return x with
                 {
-                    AdditionalData = table.Rows[i].Where(x => x.Key.StartsWith("#")).ToDictionary(x => x.Key, x => JsonSerializer.Deserialize<JsonElement>($"[\"{x.Value}\"]")),
+                    AdditionalData = table.Rows[i]
+                        .Where(x => x.Key.StartsWith("#") && !string.IsNullOrEmpty(x.Value))
+                        .ToDictionary(x => x.Key, x => JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(x.Value.Split(",")))),
                     Since = since > 0 ? DateTimeOffset.FromUnixTimeSeconds(since) : null,
                     Until = since > 0 ? DateTimeOffset.FromUnixTimeSeconds(until) : null,
                 };
