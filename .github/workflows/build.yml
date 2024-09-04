@@ -59,7 +59,6 @@ jobs:
           tags: ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-          platforms: linux/arm64,linux/amd64
 
       - name: Image digest
         run: |
