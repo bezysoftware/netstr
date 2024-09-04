@@ -5,6 +5,7 @@ using Netstr.Data;
 using Netstr.Extensions;
 using Netstr.Options;
 using Netstr.RelayInformation;
+using System.Xml.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,10 +31,19 @@ application
     .EnsureDbContextMigrations<NetstrDbContext>();
 
 // Relay Information Document
-application.UseRouting();
-application.MapWhen(
-    ctx => ctx.Request.Headers["Accept"] == "application/nostr+json", 
-    app => app.UseEndpoints(x => x.MapGet(options.Value.WebSocketsPath, ([FromServices] IRelayInformationService service) => service.GetDocument())));
+application.MapGet(
+    options.Value.WebSocketsPath, 
+    (HttpRequest request, [FromServices] IRelayInformationService service) =>
+    {
+        if (request.Headers["Accept"] == "application/nostr+json")
+        {
+            return Results.Ok(service.GetDocument());
+        } 
+        else
+        {
+            return Results.Text("Welcome to Netstr");
+        }
+    });
 
 // Start the application
 application.Run();
