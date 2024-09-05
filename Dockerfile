@@ -23,7 +23,7 @@ WORKDIR "/test/Netstr.Tests"
 RUN dotnet test -c Release -o /app/build
 
 # publish
-FROM test as publish
+FROM test AS publish
 WORKDIR "/src/Netstr"
 RUN dotnet publish "Netstr.csproj" -c Release -o /app/publish
 
