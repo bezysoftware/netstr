@@ -42,14 +42,14 @@ jobs:
             if [[ "${GITHUB_REF##*/}" == "main" ]]; then
                 echo "IMAGE_TAG=latest" >> $GITHUB_ENV
             else
-                echo "IMAGE_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+                echo "IMAGE_TAG=${GITHUB_REF##*/}-${GITHUB_SHA}" >> $GITHUB_ENV
             fi
 
       - name: Get docker tag (PR)
         if: github.event_name == 'pull_request'
         run: |
             echo "${GITHUB_HEAD_REF##*/}"
-            echo "IMAGE_TAG=${GITHUB_HEAD_REF##*/}" >> $GITHUB_ENV
+            echo "IMAGE_TAG=${GITHUB_HEAD_REF##*/}-${GITHUB_SHA}" >> $GITHUB_ENV
 
       - name: Build and push
         id: docker_build
