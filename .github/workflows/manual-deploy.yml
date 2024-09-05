@@ -29,4 +29,4 @@ jobs:
       - name: Deploy
         run: | 
           echo "environment is ${{ inputs.environment }}"
-          echo "version is ${{ inputs.version }} 
+          echo "version is ${{ inputs.version }}"
