@@ -15,7 +15,6 @@ on:
         options:
         - dev
         - prod 
-  push:
 
 run-name: ${{ format('Manual deploy of {0} to {1}', inputs.environment, inputs.version) }}
 
