@@ -36,7 +36,6 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Get docker tag
-        if: github.event_name != 'pull_request'
         run: |
             echo "${GITHUB_REF##*/}"
             if [[ "${GITHUB_REF##*/}" == "main" ]]; then
