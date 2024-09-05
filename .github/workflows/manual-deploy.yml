@@ -1,0 +1,31 @@
+name: Manual Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        description: Environment to deploy to
+        options:
+        - dev
+        - prod
+      version:
+        description: Version to deploy
+        required: true
+        options:
+        - dev
+        - prod 
+
+run-name: ${{ format('Manual deploy of {0} to {1}', inputs.environment, inputs.version) }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy
+        run: | 
+          echo "environment is ${{ inputs.environment }}"
+          echo "version is ${{ inputs.version }}"

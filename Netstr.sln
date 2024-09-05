@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{B51E10A8
 		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		compose.yaml = compose.yaml
+		Dockerfile = Dockerfile
 		LICENSE = LICENSE
 		README.md = README.md
 		.github\stale.yml = .github\stale.yml
@@ -20,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{320F094E-4B63-40D7-8D8B-AB5B01F6FCB0}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\manual-deploy.yml = .github\workflows\manual-deploy.yml
 	EndProjectSection
 EndProject
 Global
