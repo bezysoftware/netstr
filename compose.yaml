@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      ConnectionStrings__NetsrtDatabase: Host=db;Database=Netsrt;Username=Netstr;Password=Netstr
+      ConnectionStrings__NetstrDatabase: Host=db;Database=Netsrt;Username=Netstr;Password=Netstr
     depends_on: 
       - db
   db:
