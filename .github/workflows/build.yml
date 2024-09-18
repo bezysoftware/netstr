@@ -5,13 +5,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-    
-permissions:
-  packages: write
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     outputs:
       image-tag: ${{ steps.tag.outputs.IMAGE_TAG }}
     steps:
@@ -63,19 +62,24 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build ]
     environment: dev
+    permissions:
+      packages: read
     env:
       IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
+      - name: Docker test
+        run: docker ps
+      
       - name: 'Setup SSH and docker remote host'
         uses: nightstory/setup-docker-remote@v1
         with:
           ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_host_user: ${{ secrets.SSH_USER }}
           ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
-      
+
       - name: 'Execute docker ps via remote host'
         run: docker compose up -d
         env:
