@@ -5,7 +5,6 @@ using Netstr.Data;
 using Netstr.Extensions;
 using Netstr.Options;
 using Netstr.RelayInformation;
-using System.Xml.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("NetstrDatabase");

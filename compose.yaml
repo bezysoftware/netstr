@@ -1,18 +1,20 @@
-version: '3.9'
+name: netstr-relay-${NETSTR_ENVIRONMENT:-Prod}
 
 services:
-  web:
-    build: .
+  app:
+    image: "${NETSTR_IMAGE?:Image must be set}"
     ports:
-      - "8080:8080"
+      - "80:8080"
     environment:
-      ConnectionStrings__NetstrDatabase: Host=db;Database=Netsrt;Username=Netstr;Password=Netstr
+      ConnectionStrings__NetstrDatabase: Host=db:5432;Database=Netsrt;Username=Netstr;Password=${NETSTR_DB_PASSWORD:?Password must be set}
     depends_on: 
       - db
   db:
     image: "postgres:16-alpine"
     restart: always
     environment:
-      POSTGRES_PASSWORD: Netstr
+      POSTGRES_PASSWORD: ${NETSTR_DB_PASSWORD:?Password must be set}
       POSTGRES_USER: Netstr
       POSTGRES_DB: Netstr
+    volumes:
+      - /data/postgres:/var/lib/postgresql/data

@@ -1,5 +1,7 @@
 name: Manual Deployment
 
+run-name: ${{ format('Manual deploy of {0} to {1}', inputs.environment, inputs.version) }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -7,16 +9,22 @@ on:
         type: choice
         description: Environment to deploy to
         options:
-        - dev
-        - prod
+        - Dev
+        - Prod
+      source:
+        type: choice
+        description: Source repository
+        options:
+        - dockerhub
+        - ghcr
       version:
         description: Version to deploy
         required: true
-        options:
-        - dev
-        - prod 
 
-run-name: ${{ format('Manual deploy of {0} to {1}', inputs.environment, inputs.version) }}
+env:
+  dockerhub: ""
+  ghcr: "ghcr.io/"
+
 
 jobs:
   deploy:
@@ -29,3 +37,18 @@ jobs:
         run: | 
           echo "environment is ${{ inputs.environment }}"
           echo "version is ${{ inputs.version }}"
+          echo "source is ${{ env[inputs.source] }}"
+
+      - name: 'Setup SSH and docker remote host'
+        uses: nightstory/setup-docker-remote@v1
+        with:
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_host_user: ${{ secrets.SSH_USER }}
+          ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
+      
+      - name: 'Execute docker ps via remote host'
+        run: docker compose up -d
+        env:
+          NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
+          NETSTR_IMAGE: "${{ env[inputs.source] }}bezysoftware/netstr:${{ inputs.version }}"
+          NETSTR_ENVIRONMENT: ${{ inputs.environment }}
