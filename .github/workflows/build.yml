@@ -69,9 +69,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Docker test
-        run: docker ps
       
       - name: 'Setup SSH and docker remote host'
         uses: nightstory/setup-docker-remote@v1
@@ -80,8 +77,11 @@ jobs:
           ssh_host_user: ${{ secrets.SSH_USER }}
           ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
 
-      - name: 'Execute docker ps via remote host'
-        run: docker compose up -d
+      - name: Create docker context
+        run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
+
+      - name: Docker compose up
+        run: docker --context remote compose up -d
         env:
           NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
           NETSTR_IMAGE: "ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}"
