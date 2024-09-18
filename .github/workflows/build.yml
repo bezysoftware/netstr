@@ -70,12 +70,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: 'Setup SSH and docker remote host'
-        uses: nightstory/setup-docker-remote@v1
+      - name: Setup SSH
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_host_user: ${{ secrets.SSH_USER }}
-          ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Create docker context
         run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
