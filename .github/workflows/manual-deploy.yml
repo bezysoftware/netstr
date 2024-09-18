@@ -9,8 +9,8 @@ on:
         type: choice
         description: Environment to deploy to
         options:
-        - Dev
-        - Prod
+        - dev
+        - prod
       source:
         type: choice
         description: Source repository
@@ -24,7 +24,6 @@ on:
 env:
   dockerhub: ""
   ghcr: "ghcr.io/"
-
 
 jobs:
   deploy:
