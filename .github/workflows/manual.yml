@@ -1,6 +1,6 @@
 name: Manual Deployment
 
-run-name: ${{ format('Manual deploy of {0} to {1}', inputs.environment, inputs.version) }}
+run-name: ${{ format('Manual deploy of {0} to {1}', inputs.version, inputs.environment) }}
 
 on:
   workflow_dispatch:
@@ -27,6 +27,7 @@ env:
 
 jobs:
   deploy:
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

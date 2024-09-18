@@ -1,17 +1,19 @@
-name: Build and Push
+name: Build
 
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+    
 permissions:
   packages: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.build.outputs.IMAGE_TAG }}
     steps:
       - name: Check Out Repo 
         uses: actions/checkout@v4
@@ -39,9 +41,9 @@ jobs:
         run: |
             echo "${GITHUB_REF##*/}"
             if [[ "${GITHUB_REF##*/}" == "main" ]]; then
-                echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+                echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
             else
-                echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+                echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
             fi
 
       - name: Build and push
@@ -52,11 +54,30 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}
+          tags: ghcr.io/bezysoftware/netstr:${{ outputs.IMAGE_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
-      - name: Image digest
-        run: |
-            echo ${{ steps.docker_build.outputs.digest }}
-            echo ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    environment: dev
+    env:
+      IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 'Setup SSH and docker remote host'
+        uses: nightstory/setup-docker-remote@v1
+        with:
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_host_user: ${{ secrets.SSH_USER }}
+          ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
+      
+      - name: 'Execute docker ps via remote host'
+        run: docker compose up -d
+        env:
+          NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
+          NETSTR_IMAGE: "ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}"
+          NETSTR_ENVIRONMENT: dev
