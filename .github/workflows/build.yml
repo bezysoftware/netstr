@@ -55,7 +55,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/bezysoftware/netstr:${{ steps.tags.outputs.IMAGE_TAG }}
+          tags: ghcr.io/bezysoftware/netstr:${{ steps.tag.outputs.IMAGE_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
