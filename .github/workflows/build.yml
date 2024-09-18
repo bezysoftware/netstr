@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      image-tag: ${{ steps.build.outputs.IMAGE_TAG }}
+      image-tag: ${{ steps.tag.outputs.IMAGE_TAG }}
     steps:
       - name: Check Out Repo 
         uses: actions/checkout@v4
@@ -38,6 +38,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Get docker tag
+        id: tag
         run: |
             echo "${GITHUB_REF##*/}"
             if [[ "${GITHUB_REF##*/}" == "main" ]]; then
@@ -54,7 +55,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ghcr.io/bezysoftware/netstr:${{ outputs.IMAGE_TAG }}
+          tags: ghcr.io/bezysoftware/netstr:${{ steps.tags.outputs.IMAGE_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
