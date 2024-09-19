@@ -79,6 +79,9 @@ jobs:
       - name: Create docker context
         run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+
       - name: Docker compose up
         run: docker --context remote compose up -d
         env:
