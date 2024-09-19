@@ -17,6 +17,11 @@ sudo apt-get update
 # Install docker & nginx
 sudo apt-get --yes install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin nginx
 
+# Setup docker
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+
 # Install certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
