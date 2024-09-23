@@ -5,9 +5,13 @@ using Netstr.Data;
 using Netstr.Extensions;
 using Netstr.Options;
 using Netstr.RelayInformation;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("NetstrDatabase");
+
+// Setup Serilog logging
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
 builder.Services
     .AddCors(x => x.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()))
