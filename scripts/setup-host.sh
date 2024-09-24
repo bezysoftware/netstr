@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ -z "$1" ]; then
+	echo "Username parameter is required"
+	exit 1
+fi
+
+username=$1
+
 # Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg
@@ -17,26 +24,31 @@ sudo apt-get update
 # Install docker & nginx
 sudo apt-get --yes install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin nginx
 
-# Setup docker
-sudo groupadd docker
-sudo usermod -aG docker $USER
+# Remove default nginx page
+sudo rm /etc/nginx/sites-enabled/default
+
+# Setup docker for given user to run without sudo
+sudo usermod -aG docker $username
 newgrp docker
 
 # Install certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
-# Partition data disk - this assumes the data drive is named "sda"
-sudo parted /dev/sda --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo mkfs.xfs /dev/sda1
-sudo partprobe /dev/sda1
+# Partition data disk - this assumes the data drive is named "sdc"
+sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo mkfs.xfs /dev/sdc1
+sudo partprobe /dev/sdc1
 
 # Create mount folder
-sudo mkdir /data
-sudo mkdir /data/postgres
+sudo mkdir -p /data/postgres
+sudo mkdir -p /data/netstr/logs
 
 # Mount
-sudo mount /dev/sda1 /data/postgres
+sudo mount /dev/sdc1 /data/postgres
+
+sudo chown -R $username: /data
 
 # Append to fstab to mount after reboot
-grep data/postgres /etc/mtab | sudo tee -a /etc/fstab
+#grep data/postgres /etc/mtab | sudo tee -a /etc/fstab
+

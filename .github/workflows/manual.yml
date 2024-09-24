@@ -24,6 +24,8 @@ on:
 env:
   dockerhub: ""
   ghcr: "ghcr.io/"
+  port_dev: 8081
+  port_prod: 8080  
 
 jobs:
   deploy:
@@ -38,6 +40,7 @@ jobs:
           echo "environment is ${{ inputs.environment }}"
           echo "version is ${{ inputs.version }}"
           echo "source is ${{ env[inputs.source] }}"
+          echo "port is ${{ env['port_' + inputs.source] }}"
 
       - name: 'Setup SSH and docker remote host'
         uses: nightstory/setup-docker-remote@v1
@@ -52,3 +55,4 @@ jobs:
           NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
           NETSTR_IMAGE: "${{ env[inputs.source] }}bezysoftware/netstr:${{ inputs.version }}"
           NETSTR_ENVIRONMENT: ${{ inputs.environment }}
+          NETSTR_PORT: ${{ env['port_' + inputs.source] }}
