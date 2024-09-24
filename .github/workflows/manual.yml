@@ -40,7 +40,7 @@ jobs:
           echo "environment is ${{ inputs.environment }}"
           echo "version is ${{ inputs.version }}"
           echo "source is ${{ env[inputs.source] }}"
-          echo "port is ${{ env['port_' + inputs.source] }}"
+          echo "port is ${{ env[format('port_{0}', inputs.source)] }}"
 
       - name: 'Setup SSH and docker remote host'
         uses: nightstory/setup-docker-remote@v1
