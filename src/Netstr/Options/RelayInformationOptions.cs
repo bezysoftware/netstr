@@ -11,5 +11,7 @@
         public string? PublicKey { get; init; }
 
         public int[]? SupportedNips { get; init; }
+
+        public string? Version { get; init; }
     }
 }

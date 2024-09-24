@@ -5,9 +5,13 @@ using Netstr.Data;
 using Netstr.Extensions;
 using Netstr.Options;
 using Netstr.RelayInformation;
-using System.Xml.Linq;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("NetstrDatabase");
+
+// Setup Serilog logging
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration));
 
 builder.Services
     .AddCors(x => x.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()))
@@ -18,10 +22,12 @@ builder.Services
     .AddApplicationOptions<AuthOptions>("Auth")
     .AddMessaging()
     .AddScoped<IRelayInformationService, RelayInformationService>()
-    .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(builder.Configuration.GetConnectionString("NetsrtDatabase")));
+    .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(connectionString));
 
 var application = builder.Build();
 var options = application.Services.GetRequiredService<IOptions<ConnectionOptions>>();
+
+application.Logger.LogInformation($"DB connection string: {connectionString}");
 
 // Setup pipeline + init DB
 application

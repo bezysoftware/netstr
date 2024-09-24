@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.tag.outputs.IMAGE_TAG }}
+    steps:
+      - name: Check Out Repo 
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: bezysoftware
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Get docker tag
+        id: tag
+        run: echo "IMAGE_TAG=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./Dockerfile.Release
+          builder: ${{ steps.buildx.outputs.name }}
+          build-args: |
+            APP_VERSION=${{ steps.tag.outputs.IMAGE_TAG }}
+          push: true
+          tags: bezysoftware/netstr:${{ steps.tag.outputs.IMAGE_TAG }},bezysoftware/netstr:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    environment: prod
+    env:
+      IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 'Setup SSH and docker remote host'
+        uses: nightstory/setup-docker-remote@v1
+        with:
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_host_user: ${{ secrets.SSH_USER }}
+          ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
+      
+      - name: 'Execute docker ps via remote host'
+        run: docker compose up -d
+        env:
+          NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
+          NETSTR_IMAGE: "bezysoftware/netstr:${{ env.IMAGE_TAG }}"
+          NETSTR_ENVIRONMENT: prod
+          NETSTR_PORT: 8080

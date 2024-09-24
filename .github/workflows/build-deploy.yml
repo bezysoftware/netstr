@@ -1,10 +1,8 @@
-name: Build
+name: Build & Deploy
 
 on:
   push:
-    branches:
-      - '!main'
-  pull_request:
+    branches: [ main ]
   
 jobs:
   build:
@@ -38,7 +36,7 @@ jobs:
 
       - name: Get docker tag
         id: tag
-        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+        run: echo "IMAGE_TAG=latest" >> $GITHUB_OUTPUT
 
       - name: Build and push
         id: docker_build
@@ -51,3 +49,32 @@ jobs:
           tags: ghcr.io/bezysoftware/netstr:${{ steps.tag.outputs.IMAGE_TAG }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    environment: dev
+    permissions:
+      packages: read
+    env:
+      IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup SSH
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Create docker context
+        run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
+        
+      - name: Docker compose up
+        run: docker --context remote compose up -d
+        env:
+          NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
+          NETSTR_IMAGE: "ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}"
+          NETSTR_ENVIRONMENT: dev
+          NETSTR_PORT: 8081

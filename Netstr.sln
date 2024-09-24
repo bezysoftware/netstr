@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{B51E10A8
 		.gitignore = .gitignore
 		compose.yaml = compose.yaml
 		Dockerfile = Dockerfile
+		Dockerfile.Release = Dockerfile.Release
 		LICENSE = LICENSE
 		README.md = README.md
 		.github\stale.yml = .github\stale.yml
@@ -19,10 +20,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{B51E10A8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Netstr.Tests", "test\Netstr.Tests\Netstr.Tests.csproj", "{1884912E-54C0-4879-9E1B-C6EE633D1E20}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{320F094E-4B63-40D7-8D8B-AB5B01F6FCB0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{320F094E-4B63-40D7-8D8B-AB5B01F6FCB0}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
-		.github\workflows\manual-deploy.yml = .github\workflows\manual-deploy.yml
+		.github\workflows\build-deploy.yml = .github\workflows\build-deploy.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\manual.yml = .github\workflows\manual.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{BAE2098C-BE3E-48DD-A8C9-0A2B654EF059}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\deploy-azure.ps1 = scripts\deploy-azure.ps1
+		scripts\nginx-config-dev = scripts\nginx-config-dev
+		scripts\nginx-config-prod = scripts\nginx-config-prod
+		scripts\setup-host.sh = scripts\setup-host.sh
 	EndProjectSection
 EndProject
 Global

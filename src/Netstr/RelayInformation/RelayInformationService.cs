@@ -22,7 +22,6 @@ namespace Netstr.RelayInformation
 
         public RelayInformationModel GetDocument()
         {
-            var version = GetType().Assembly.GetName().Version?.ToString();
             var opts = this.options.Value;
             var limits = this.limits.Value;
 
@@ -34,7 +33,7 @@ namespace Netstr.RelayInformation
                 Contact = opts.Contact,
                 SupportedNips = opts.SupportedNips ?? [],
                 Software = RelayInformationDefaults.Software,
-                SoftwareVersion = version,
+                SoftwareVersion = opts.Version,
                 Limits = new()
                 {
                     MaxMessageLength = limits.MaxPayloadSize,

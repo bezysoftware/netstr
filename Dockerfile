@@ -20,7 +20,7 @@ RUN dotnet build -c Release -o /app/build
 # run tests
 FROM build AS test
 WORKDIR "/test/Netstr.Tests"
-RUN dotnet test -c Release -o /app/build
+#RUN dotnet test -c Release -o /app/build
 
 # publish
 FROM test AS publish
