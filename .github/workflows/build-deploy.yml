@@ -72,7 +72,7 @@ jobs:
         run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
         
       - name: Docker compose up
-        run: 
+        run: |
           docker --context remote compose pull
           docker --context remote compose up -d
         env:
