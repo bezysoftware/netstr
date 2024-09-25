@@ -22,18 +22,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Netstr.Tests", "test\Netstr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{320F094E-4B63-40D7-8D8B-AB5B01F6FCB0}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\build-deploy.yml = .github\workflows\build-deploy.yml
-		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\build.yml = .github\workflows\build.yml
 		.github\workflows\manual.yml = .github\workflows\manual.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{BAE2098C-BE3E-48DD-A8C9-0A2B654EF059}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\deploy-azure.ps1 = scripts\deploy-azure.ps1
-		scripts\nginx-config-dev = scripts\nginx-config-dev
-		scripts\nginx-config-prod = scripts\nginx-config-prod
 		scripts\setup-host.sh = scripts\setup-host.sh
+		scripts\setup-nginx.sh = scripts\setup-nginx.sh
 	EndProjectSection
 EndProject
 Global

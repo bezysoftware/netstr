@@ -40,7 +40,7 @@ jobs:
           echo "environment is ${{ inputs.environment }}"
           echo "version is ${{ inputs.version }}"
           echo "source is ${{ env[inputs.source] }}"
-          echo "port is ${{ env['port_' + inputs.source] }}"
+          echo "port is ${{ env[format('port_{0}', inputs.environment)] }}"
 
       - name: 'Setup SSH and docker remote host'
         uses: nightstory/setup-docker-remote@v1
@@ -55,4 +55,4 @@ jobs:
           NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
           NETSTR_IMAGE: "${{ env[inputs.source] }}bezysoftware/netstr:${{ inputs.version }}"
           NETSTR_ENVIRONMENT: ${{ inputs.environment }}
-          NETSTR_PORT: ${{ env['port_' + inputs.source] }}
+          NETSTR_PORT: ${{ env[format('port_{0}', inputs.environment)] }}

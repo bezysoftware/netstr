@@ -47,8 +47,5 @@ sudo mkdir -p /data/netstr/logs
 # Mount
 sudo mount /dev/sdc1 /data/postgres
 
+# Make $username the owner of data folder (would be root otherwise)
 sudo chown -R $username: /data
-
-# Append to fstab to mount after reboot
-#grep data/postgres /etc/mtab | sudo tee -a /etc/fstab
-

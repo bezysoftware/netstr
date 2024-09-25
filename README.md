@@ -22,3 +22,15 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-45: [Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
 - [ ] NIP-50: [Search Capability](https://github.com/nostr-protocol/nips/blob/master/50.md)
 - [x] NIP-70: [Protected events](https://github.com/nostr-protocol/nips/blob/master/70.md)
+
+## Setup
+
+Netstr is c# app backed by a Postgres database. You have several options to get up and running:
+
+* Using dotnet tools
+* Using docker run
+* Using docker compose
+* Deploying to Azure
+
+https://learn.microsoft.com/en-us/cli/azure/
+https://dotnet.microsoft.com/en-us/download
