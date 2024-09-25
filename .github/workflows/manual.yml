@@ -25,7 +25,8 @@ env:
   dockerhub: ""
   ghcr: "ghcr.io/"
   port_dev: 8081
-  port_prod: 8080  
+  port_prod: 8080
+  long_env_dev: Development
 
 jobs:
   deploy:
@@ -41,6 +42,7 @@ jobs:
           echo "version is ${{ inputs.version }}"
           echo "source is ${{ env[inputs.source] }}"
           echo "port is ${{ env[format('port_{0}', inputs.environment)] }}"
+          echo "long environment is is ${{ env[format('long_env_{0}', inputs.environment)] }}"
 
       - name: Setup SSH
         uses: shimataro/ssh-key-action@v2
@@ -60,3 +62,4 @@ jobs:
           NETSTR_IMAGE: "${{ env[inputs.source] }}bezysoftware/netstr:${{ inputs.version }}"
           NETSTR_ENVIRONMENT: ${{ inputs.environment }}
           NETSTR_PORT: ${{ env[format('port_{0}', inputs.environment)] }}
+          NETSTR_ENVIRONMENT_LONG: ${{ env[format('long_env_{0}', inputs.environment)] }}

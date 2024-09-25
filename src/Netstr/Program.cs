@@ -27,8 +27,6 @@ builder.Services
 var application = builder.Build();
 var options = application.Services.GetRequiredService<IOptions<ConnectionOptions>>();
 
-application.Logger.LogInformation($"DB connection string: {connectionString}");
-
 // Setup pipeline + init DB
 application
     .UseCors()
