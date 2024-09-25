@@ -1,14 +1,25 @@
-﻿az login
-
+﻿[CmdletBinding()]
 param (
-  [switch] $dev = $false
+  [Parameter(Mandatory=$true, HelpMessage="Your top level domain, e.g. 'myrelay.com'. The actual relay will be setup at 'relay.myrelay.com'")]
+  [String] $domain,
+
+  [Parameter(Mandatory=$true, HelpMessage="Your email will be used for SSL certificate renewal notifications (used by certbot)")]
+  [String] $email,
+
+  [Parameter(Mandatory=$true, HelpMessage="Admin username for your new VM (also used for SSH access)")]
+  [String] $username,
+
+  [String] $location = "northeurope",
+  [Switch] $dev = $false
 )
 
-$group = "netstr"
-$vm = "netstr-vm"
-$dns = $group
-$username = "bezysoftware"
-$location = "northeurope"
+$dns = $domain -replace '\.','-'
+$group = $dns
+$vm = "$dns-vm"
+
+Write-Output "You will be able to SSH into your VM ($vm) by 'ssh $username@$dns.$location.cloudapp.azure.com'"
+
+az login
 
 # create resource group
 az group create `
@@ -49,32 +60,21 @@ az vm run-command invoke `
     --scripts @setup-host.sh `
     --parameters "$username"
 
-# wait for SSH to become available
-sleep 30s
-
 # setup nginx prod
-cat .\nginx-config-prod | ssh "$username@$dns.$location.cloudapp.azure.com" "sudo tee /etc/nginx/sites-available/netstr-prod"
-
 az vm run-command invoke `
     --resource-group "$group" `
     --name "$vm" `
     --command-id RunShellScript `
-    --scripts "sudo ln -s /etc/nginx/sites-available/netstr-prod /etc/nginx/sites-enabled/netstr-prod" `
+    --scripts @setup-nginx.sh `
+    --parameters "relay-$dns relay.$domain 8080 $email"
 
 # optionally setup nginx dev
 if ($dev -eq $true) {
-    cat .\nginx-config-dev | ssh "$username@$dns.$location.cloudapp.azure.com" "sudo tee /etc/nginx/sites-available/netstr-dev"
-    
-    az vm run-command invoke `
-        --resource-group "$group" `
-        --name "$vm" `
-        --command-id RunShellScript `
-        --scripts "sudo ln -s /etc/nginx/sites-available/netstr-dev /etc/nginx/sites-enabled/netstr-dev" `
-}
-
-# reload nginx config
-az vm run-command invoke `
+  az vm run-command invoke `
     --resource-group "$group" `
     --name "$vm" `
     --command-id RunShellScript `
-    --scripts "sudo nginx -s reload"`
+    --scripts @setup-nginx.sh `
+    --parameters "relay-dev-$dns relay-dev.$domain 8081 $email"
+}
+
