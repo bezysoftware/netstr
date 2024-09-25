@@ -72,7 +72,9 @@ jobs:
         run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
         
       - name: Docker compose up
-        run: docker --context remote compose up -d
+        run: 
+          docker --context remote compose pull
+          docker --context remote compose up -d
         env:
           NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
           NETSTR_IMAGE: "ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}"

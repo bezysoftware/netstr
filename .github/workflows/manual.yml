@@ -35,22 +35,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy
+      - name: Print variables
         run: | 
           echo "environment is ${{ inputs.environment }}"
           echo "version is ${{ inputs.version }}"
           echo "source is ${{ env[inputs.source] }}"
           echo "port is ${{ env[format('port_{0}', inputs.environment)] }}"
 
-      - name: 'Setup SSH and docker remote host'
-        uses: nightstory/setup-docker-remote@v1
+      - name: Setup SSH
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_host_user: ${{ secrets.SSH_USER }}
-          ssh_host: ${{ secrets.SSH_REMOTE_HOST }}
-      
-      - name: 'Execute docker ps via remote host'
-        run: docker compose up -d
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: Create docker context
+        run: docker context create remote --docker "host=ssh://${{ secrets.SSH_USER }}@${{ secrets.SSH_REMOTE_HOST }}"
+        
+      - name: Docker compose up
+        run: |
+          docker --context remote compose pull
+          docker --context remote compose up -d
         env:
           NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
           NETSTR_IMAGE: "${{ env[inputs.source] }}bezysoftware/netstr:${{ inputs.version }}"
