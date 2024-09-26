@@ -79,4 +79,5 @@ jobs:
           NETSTR_DB_PASSWORD: ${{ secrets.NETSTR_DB_PASSWORD }}
           NETSTR_IMAGE: "ghcr.io/bezysoftware/netstr:${{ env.IMAGE_TAG }}"
           NETSTR_ENVIRONMENT: dev
+          NETSTR_ENVIRONMENT_LONG: Development
           NETSTR_PORT: 8081

@@ -40,12 +40,12 @@ sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
 sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
 
-# Create mount folder
-sudo mkdir -p /data/postgres
-sudo mkdir -p /data/netstr/logs
+# Create data folder
+sudo mkdir -p /data/{dev,prod}/postgres
+sudo mkdir -p /data/{dev,prod}/netstr/logs
 
 # Mount
-sudo mount /dev/sdc1 /data/postgres
+sudo mount /dev/sdc1 /data
 
 # Make $username the owner of data folder (would be root otherwise)
 sudo chown -R $username: /data

@@ -93,6 +93,7 @@ Docker compose contains a Postgres DB service so no need to install it manually.
 Optionally you can also set following variables:
  * NETSTR_PORT - port on which the relay will be accessible (default 8080)
  * NETSTR_ENVIRONMENT - will be used to name the compose instance (default 'prod')
+ * NETSTR_ENVIRONMENT_LONG - will be used inside the application to load specific configuration (default 'Production')
 
 ### Deploying to Azure
 
