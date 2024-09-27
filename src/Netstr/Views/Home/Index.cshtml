@@ -29,7 +29,7 @@
                 <td>
                     @foreach (var nip in @Model.RelayInformation.SupportedNips)
                     {
-                        <a href="https://github.com/nostr-protocol/nips/blob/master/@(nip).md" target="_blank">@nip</a>   
+                        <a href="https://github.com/nostr-protocol/nips/blob/master/@(nip.ToString("D2")).md" target="_blank">@nip</a>   
                     }
                 </td>
             </tr>
@@ -40,6 +40,10 @@
             <tr>
                 <td>Software</td>
                 <td><a href="@Model.RelayInformation.Software" target="_blank">@Model.RelayInformation.Software</a></td>
+            </tr>
+            <tr>
+                <td>Environment</td>
+                <td>@Model.Environment</td>
             </tr>
         </table>
 
