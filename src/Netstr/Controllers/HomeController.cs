@@ -8,10 +8,12 @@ namespace Netstr.Controllers
     public class HomeController : Controller
     {
         private readonly IRelayInformationService service;
+        private readonly IHostEnvironment environment;
 
-        public HomeController(IRelayInformationService service)
+        public HomeController(IRelayInformationService service, IHostEnvironment environment)
         {
             this.service = service;
+            this.environment = environment;
         }
 
         [HttpGet]
@@ -23,7 +25,7 @@ namespace Netstr.Controllers
             }
             else
             {
-                var vm = new HomeViewModel(this.service.GetDocument(), $"wss://{Request.Host}");
+                var vm = new HomeViewModel(this.service.GetDocument(), $"wss://{Request.Host}", this.environment.EnvironmentName);
                 return View(vm);
             }
         }

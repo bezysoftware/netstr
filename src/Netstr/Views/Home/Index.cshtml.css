@@ -28,7 +28,7 @@ table {
 }
 
 tr:hover td:nth-child(2) {
-    opacity: 0.5;
+    opacity: 0.8;
 }
 
 td {
@@ -46,6 +46,7 @@ td a {
 td:first-child {
     background-color: #6A1B9A;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .connect-box {
@@ -57,4 +58,12 @@ td:first-child {
 
 .connect-box strong {
     font-weight: bold;
+}
+
+/*Dark mode*/
+@media (prefers-color-scheme: dark) {
+    .container {
+        background: linear-gradient(313deg, #2e2e2e 0%, #5e5e5e 100%);
+        color: white;
+    }
 }
