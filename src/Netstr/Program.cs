@@ -32,6 +32,7 @@ var options = application.Services.GetRequiredService<IOptions<ConnectionOptions
 application
     .UseCors()
     .UseWebSockets()
+    .UseStaticFiles()
     .UseRouting()
     .AcceptWebSocketsConnections()
     .EnsureDbContextMigrations<NetstrDbContext>();
