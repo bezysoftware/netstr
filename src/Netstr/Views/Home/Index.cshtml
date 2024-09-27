@@ -1,0 +1,50 @@
+﻿@model Netstr.ViewModels.HomeViewModel
+
+<div class="container">
+    <div class="box">
+        <img src="https://raw.githubusercontent.com/bezysoftware/netstr/refs/heads/main/art/transparent.png" />
+
+        <table>
+            <tr>
+                <td>Name</td>
+                <td>@Model.RelayInformation.Name</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>@Model.RelayInformation.Description</td>
+            </tr>
+            @if (!string.IsNullOrEmpty(@Model.RelayInformation.Contact))
+            {
+                <tr>
+                    <td>Contact</td>
+                    <td><a href="mailto:@Model.RelayInformation.Contact" target="_blank">@Model.RelayInformation.Contact</a></td>
+                </tr>
+            }
+            <tr>
+                <td>Pubkey</td>
+                <td>@Model.RelayInformation.PublicKey</td>
+            </tr>
+            <tr>
+                <td>Supported NIPs</td>
+                <td>
+                    @foreach (var nip in @Model.RelayInformation.SupportedNips)
+                    {
+                        <a href="https://github.com/nostr-protocol/nips/blob/master/@(nip).md" target="_blank">@nip</a>   
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>Version</td>
+                <td>@Model.RelayInformation.SoftwareVersion</td>
+            </tr>
+            <tr>
+                <td>Software</td>
+                <td><a href="@Model.RelayInformation.Software" target="_blank">@Model.RelayInformation.Software</a></td>
+            </tr>
+        </table>
+
+        <div class="connect-box">
+            Connect to this relay using the following address: <strong>@Model.ConnectionLink</strong>
+        </div>
+    </div>
+</div>
