@@ -27,7 +27,7 @@ namespace Netstr.RelayInformation
 
             return new RelayInformationModel
             {
-                Name = opts.Description ?? RelayInformationDefaults.Name,
+                Name = opts.Name ?? RelayInformationDefaults.Name,
                 Description = opts.Description ?? RelayInformationDefaults.Description,
                 PublicKey = opts.PublicKey,
                 Contact = opts.Contact,

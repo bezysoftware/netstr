@@ -15,6 +15,7 @@ builder.Host.UseSerilog((hostingContext, loggerConfiguration) => loggerConfigura
 
 builder.Services
     .AddCors(x => x.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()))
+    .AddControllersWithViews().Services
     .AddHttpContextAccessor()
     .AddApplicationOptions<ConnectionOptions>("Connection")
     .AddApplicationOptions<RelayInformationOptions>("RelayInformation")
@@ -31,23 +32,12 @@ var options = application.Services.GetRequiredService<IOptions<ConnectionOptions
 application
     .UseCors()
     .UseWebSockets()
+    .UseRouting()
     .AcceptWebSocketsConnections()
     .EnsureDbContextMigrations<NetstrDbContext>();
 
-// Relay Information Document
-application.MapGet(
-    options.Value.WebSocketsPath, 
-    (HttpRequest request, [FromServices] IRelayInformationService service) =>
-    {
-        if (request.Headers["Accept"] == "application/nostr+json")
-        {
-            return Results.Ok(service.GetDocument());
-        } 
-        else
-        {
-            return Results.Text("Welcome to Netstr");
-        }
-    });
+// Controllers maps
+application.MapDefaultControllerRoute();
 
 // Start the application
 application.Run();
