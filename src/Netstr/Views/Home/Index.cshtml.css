@@ -46,6 +46,7 @@ td a {
 td:first-child {
     background-color: #6A1B9A;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .connect-box {
