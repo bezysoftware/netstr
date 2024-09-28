@@ -17,7 +17,12 @@ namespace Netstr.Messaging.Events
                     return null;
                 }
 
-                return parameters[1].DeserializeRequired<Event>();
+                var e = parameters[1].DeserializeRequired<Event>();
+
+                return e with
+                {
+                    Tags = e.Tags.Where(x => x.Length > 0).ToArray()
+                };
             }
             catch (Exception ex)
             {
