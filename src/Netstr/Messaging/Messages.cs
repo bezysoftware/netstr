@@ -24,6 +24,7 @@
         public const string DuplicateDeletedEvent = "duplicate: future version of this event was already deleted";
         public const string PowNotEnough = "pow: difficulty {0} is less than {1}";
         public const string PowNoMatch = "pow: difficulty {0} doesn't match target of {1}";
+        public const string UnsupportedFilter = "unsupported: filter contains unknown elements";
 
         public const string CannotParseMessage = "unable to parse the message";
         public const string CannotProcessMessageType = "unknown message type";
