@@ -33,7 +33,7 @@ tr:hover td:nth-child(2) {
 
 td {
     position: relative;
-    padding: 15px;
+    padding: 10px 15px;
     background-color: #9C27B0;
     color: #fff;
     word-break: break-all;
