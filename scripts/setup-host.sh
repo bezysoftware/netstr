@@ -49,3 +49,6 @@ sudo mount /dev/sdc1 /data
 
 # Make $username the owner of data folder (would be root otherwise)
 sudo chown -R $username: /data
+
+# Add permissions so serilog can write to folder
+sudo chmod 777 /data/{dev,prod}/netstr/logs
