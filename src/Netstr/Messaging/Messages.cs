@@ -13,6 +13,8 @@
         public const string InvalidLimitTooHigh = "invalid: filter limit is too high";
         public const string InvalidPayloadTooLarge = "invalid: message is too large";
         public const string InvalidEventExpired = "invalid: event is expired";
+        public const string InvalidTooFewTagFields = "invalid: too few fields in tag";
+        public const string InvalidTooManyTags = "invalid: too many tags";
         public const string AuthRequired = "auth-required: we only allow publishing and subscribing to authenticated clients";
         public const string AuthRequiredProtected = "auth-required: this event may only be published by its author";
         public const string AuthRequiredPublishing = "auth-required: we only allow publishing to authenticated clients";

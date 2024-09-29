@@ -47,6 +47,7 @@ namespace Netstr.Extensions
             services.AddSingleton<IEventValidator, EventCreatedAtValidator>();
             services.AddSingleton<IEventValidator, ProtectedEventValidator>();
             services.AddSingleton<IEventValidator, ExpiredEventValidator>();
+            services.AddSingleton<IEventValidator, EventTagsValidator>();
 
             return services;
         }

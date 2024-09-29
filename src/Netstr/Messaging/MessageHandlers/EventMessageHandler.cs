@@ -57,13 +57,7 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException(e, validation);
             }
 
-            // remove empty tags
-            var stripped = e with
-            {
-                Tags = e.Tags.Where(x => x.Length > 0).ToArray()
-            };
-
-            await this.eventDispatcher.DispatchEventAsync(sender, stripped);
+            await this.eventDispatcher.DispatchEventAsync(sender, e);
         }
     }
 }

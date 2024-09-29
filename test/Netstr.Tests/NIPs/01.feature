@@ -30,12 +30,11 @@ Scenario: Invalid messages are discarded, valid ones accepted
  	| OK   | ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff | false   |
  	| OK   | a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | false   |
  	| OK   | 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 | true    |
- 	| OK   | 50ed63c449df67d89e9964a27a26abbf214ca155b03915067a5a0f75618802bb | true    |
+ 	| OK   | 50ed63c449df67d89e9964a27a26abbf214ca155b03915067a5a0f75618802bb | false   |
 	And Alice receives a message
  	| Type  | Id   | EventId                                                          |
  	| EOSE  | abcd |                                                                  |
  	| EVENT | abcd | 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 |
- 	| EVENT | abcd | 50ed63c449df67d89e9964a27a26abbf214ca155b03915067a5a0f75618802bb |
 
 Scenario: Newly subscribed client receives matching events, EOSE and future events
 	Bob publishes events which are stored by the relay before any subscription exists. 
