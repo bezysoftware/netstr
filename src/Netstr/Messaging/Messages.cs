@@ -13,6 +13,8 @@
         public const string InvalidLimitTooHigh = "invalid: filter limit is too high";
         public const string InvalidPayloadTooLarge = "invalid: message is too large";
         public const string InvalidEventExpired = "invalid: event is expired";
+        public const string InvalidTooFewTagFields = "invalid: too few fields in tag";
+        public const string InvalidTooManyTags = "invalid: too many tags";
         public const string AuthRequired = "auth-required: we only allow publishing and subscribing to authenticated clients";
         public const string AuthRequiredProtected = "auth-required: this event may only be published by its author";
         public const string AuthRequiredPublishing = "auth-required: we only allow publishing to authenticated clients";
@@ -24,6 +26,7 @@
         public const string DuplicateDeletedEvent = "duplicate: future version of this event was already deleted";
         public const string PowNotEnough = "pow: difficulty {0} is less than {1}";
         public const string PowNoMatch = "pow: difficulty {0} doesn't match target of {1}";
+        public const string UnsupportedFilter = "unsupported: filter contains unknown elements";
 
         public const string CannotParseMessage = "unable to parse the message";
         public const string CannotProcessMessageType = "unknown message type";

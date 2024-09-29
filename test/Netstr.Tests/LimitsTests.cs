@@ -8,13 +8,14 @@ using System.Text.Json;
 
 namespace Netstr.Tests
 {
-    public class LimitsTests : IClassFixture<WebApplicationFactory>
+    public class LimitsTests
     {
         private readonly WebApplicationFactory factory;
 
-        public LimitsTests(WebApplicationFactory factory)
+        public LimitsTests()
         {
-            factory.Limits = new LimitsOptions
+            this.factory = new WebApplicationFactory();
+            this.factory.Limits = new LimitsOptions
             {
                 MaxPayloadSize = 1024,
                 MinPowDifficulty = 0, // covered by a NIP-13 test
@@ -26,7 +27,6 @@ namespace Netstr.Tests
                 MaxSubscriptionIdLength = 5,
                 MaxSubscriptions = 1
             };
-            this.factory = factory;
         }
 
         [Theory]
@@ -142,6 +142,32 @@ namespace Netstr.Tests
 
             ws.State.Should().BeOneOf(WebSocketState.Closed, WebSocketState.CloseReceived);
             ws.CloseStatus.Should().Be(WebSocketCloseStatus.MessageTooBig);
+        }
+
+        [Fact]
+        public async Task TooManyTagsTest()
+        {
+            using WebSocket ws = await ConnectWebSocketAsync();
+
+            var e = new Event
+            {
+                Id = "",
+                Content = "",
+                CreatedAt = DateTimeOffset.UtcNow,
+                Kind = 1,
+                PublicKey = Alice.PublicKey,
+                Tags = [["a"],["b"],["c"]],
+                Signature = ""
+            };
+
+            e = Helpers.FinalizeEvent(e, Alice.PrivateKey);
+
+            await ws.SendEventAsync(e);
+            var received = await ws.ReceiveOnceAsync();
+
+            received[0].GetString()?.Should().BeEquivalentTo("OK");
+            received[1].GetString()?.Should().BeEquivalentTo(e.Id);
+            received[2].GetBoolean().Should().Be(false);
         }
 
         private async Task<WebSocket> ConnectWebSocketAsync()
