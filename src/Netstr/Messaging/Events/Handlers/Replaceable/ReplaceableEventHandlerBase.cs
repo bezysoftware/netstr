@@ -29,6 +29,13 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
         {
             using var db = this.db.CreateDbContext();
 
+            if (await db.Events.IsDeleted(e.Id))
+            {
+                this.logger.LogInformation($"Event {e.Id} was already deleted");
+                await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                return;
+            }
+
             var newEntity = e.ToEntity(DateTimeOffset.UtcNow);
             var existing = await db.Events
                 .AsNoTracking()

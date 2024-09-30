@@ -84,14 +84,14 @@ namespace Netstr.Tests.NIPs
 #line 6
  testRunner.Given("a relay is running", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-            TechTalk.SpecFlow.Table table63 = new TechTalk.SpecFlow.Table(new string[] {
+            TechTalk.SpecFlow.Table table68 = new TechTalk.SpecFlow.Table(new string[] {
                         "PublicKey",
                         "PrivateKey"});
-            table63.AddRow(new string[] {
+            table68.AddRow(new string[] {
                         "5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75",
                         "nsec12y4pgafw6kpcqjtfyrdyxtcupnddj5kdft768kdl55wzq50ervpqauqnw4"});
 #line 7
- testRunner.And("Alice is connected to relay", ((string)(null)), table63, "And ");
+ testRunner.And("Alice is connected to relay", ((string)(null)), table68, "And ");
 #line hidden
         }
         
@@ -122,50 +122,50 @@ this.ScenarioInitialize(scenarioInfo);
 #line 5
 this.FeatureBackground();
 #line hidden
-                TechTalk.SpecFlow.Table table64 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table69 = new TechTalk.SpecFlow.Table(new string[] {
                             "Header",
                             "Value"});
-                table64.AddRow(new string[] {
+                table69.AddRow(new string[] {
                             "Accept",
                             "application/nostr+json"});
 #line 14
- testRunner.When("Alice sends a GET HTTP request to its websockets endpoint", ((string)(null)), table64, "When ");
+ testRunner.When("Alice sends a GET HTTP request to its websockets endpoint", ((string)(null)), table69, "When ");
 #line hidden
-                TechTalk.SpecFlow.Table table65 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table70 = new TechTalk.SpecFlow.Table(new string[] {
                             "Header",
                             "Value"});
-                table65.AddRow(new string[] {
+                table70.AddRow(new string[] {
                             "Access-Control-Allow-Origin",
                             "*"});
 #line 17
- testRunner.Then("Alice receives a response with headers", ((string)(null)), table65, "Then ");
+ testRunner.Then("Alice receives a response with headers", ((string)(null)), table70, "Then ");
 #line hidden
-                TechTalk.SpecFlow.Table table66 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table71 = new TechTalk.SpecFlow.Table(new string[] {
                             "Field",
                             "Type"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "name",
                             "string"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "description",
                             "string"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "contact",
                             "string"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "pubkey",
                             "string"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "software",
                             "string"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "version",
                             "string"});
-                table66.AddRow(new string[] {
+                table71.AddRow(new string[] {
                             "supported_nips",
                             "int[]"});
 #line 20
- testRunner.And("Alice receives a response with json content", ((string)(null)), table66, "And ");
+ testRunner.And("Alice receives a response with json content", ((string)(null)), table71, "And ");
 #line hidden
             }
             this.ScenarioCleanup();

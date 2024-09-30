@@ -63,24 +63,38 @@ Scenario: Deletion removes referenced replaceable events and is itself broadcast
 Scenario: It's not allowed to delete someone else's events
 	Deletion event might reference someone else's events, those shouldn't be deleted
 	If the deletion references other events which belong to the author, those should be deleted
+	This also verifies that multi deletion events where even a single deletion fails (e.g. wrong Author) then the whole deletion fails
 	When Alice publishes events
-	| Id                                                               | Content | Kind | Tags | CreatedAt  |
-	| 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 | Hello   | 1    |      | 1722337838 |
-	| 86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927 | Later   | 1    |      | 1722337848 |
-	And Bob publishes an event
-	| Id                                                               | Content | Kind | Tags                                                                                                                                                  | CreatedAt  |
-	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1 | 1    |                                                                                                                                                       | 1722337838 |
-	| 06f7797468cf1fde45dc438288d44418f416302e94dba22e31b8ef60b74f44bc |         | 5    | [["e", "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346"],["e", "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5"]] | 1722337845 |
+	| Id                                                               | Content | Kind  | Tags         | CreatedAt  |
+	| 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 | Hello   | 1     |              | 1722337838 |
+	| 86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927 | Later   | 1     |              | 1722337848 |
+	| da4e33af3793fd4f9d5487a116ee1a03142599e9b1115af38838e469473a8c6b | Tags    | 30000 | [["d", "a"]] | 1722337848 |
+	And Bob publishes events
+	| Id                                                               | Content | Kind  | Tags                                                                                                                                                  | CreatedAt  |
+	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1 | 1     |                                                                                                                                                       | 1722337838 |
+	| 3abeb55eb9e6a58acf06269f5e93dabd4c91d1e51d08beeab884917180b9248f | Tags    | 30000 | [["d", "a"]]                                                                                                                                          | 1722337848 |
+	| 06f7797468cf1fde45dc438288d44418f416302e94dba22e31b8ef60b74f44bc |         | 5     | [["e", "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346"],["e", "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5"]] | 1722337845 |
+	| b644d0e9b646df95eee0fba09fd7b742df1a6c878ae752112639302ef0aa2da1 |         | 5     | [["e", "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346"]]                                                                           | 1722337845 |
+	| 9b061a1d369cae854f8d518f0cedceb7ea0169cf9736a92e5362b0535dfa96fb |         | 5     | [["a", "30000:5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:a"]]                                                                   | 1722337849 |
 	And Charlie sends a subscription request abcd
 	| Authors                                                                                                                           |
 	| 5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75,5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627 |
 	Then Charlie receives messages
 	| Type  | Id   | EventId                                                          |
+	| EVENT | abcd | 9b061a1d369cae854f8d518f0cedceb7ea0169cf9736a92e5362b0535dfa96fb |
 	| EVENT | abcd | 86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927 |
-	| EVENT | abcd | 06f7797468cf1fde45dc438288d44418f416302e94dba22e31b8ef60b74f44bc |
+	| EVENT | abcd | da4e33af3793fd4f9d5487a116ee1a03142599e9b1115af38838e469473a8c6b |
+	| EVENT | abcd | b644d0e9b646df95eee0fba09fd7b742df1a6c878ae752112639302ef0aa2da1 |
 	| EVENT | abcd | 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 |
 	| EOSE  | abcd |                                                                  |
-	
+	And Bob receives messages
+	| Type | Id                                                               | Success |
+	| OK   | a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | true    |
+	| OK   | 3abeb55eb9e6a58acf06269f5e93dabd4c91d1e51d08beeab884917180b9248f | true    |
+	| OK   | 06f7797468cf1fde45dc438288d44418f416302e94dba22e31b8ef60b74f44bc | false   |
+	| OK   | b644d0e9b646df95eee0fba09fd7b742df1a6c878ae752112639302ef0aa2da1 | true    |
+	| OK   | 9b061a1d369cae854f8d518f0cedceb7ea0169cf9736a92e5362b0535dfa96fb | true    |
+
 Scenario: Deleting a deletion has no affect
 	Clients and relays are not obliged to support "undelete" functionality
 	When Alice publishes events
@@ -95,6 +109,23 @@ Scenario: Deleting a deletion has no affect
 	Then Charlie receives messages
 	| Type  | Id   | EventId                                                          |
 	| EVENT | abcd | 86aa1ac011362326d5fdda20645fffb9de853b5c315143ea3d4df0bcb6dec927 |
-	| EVENT | abcd | 254ab6e975fc906256f9f318e50c450cd745745031459bddb027c655124302a7 |
 	| EVENT | abcd | 367ca4fcb31777b20fffc7057ca10e3f251322022b57fc4c123ecbf423f3b529 |
 	| EOSE  | abcd |                                                                  |
+
+Scenario: Resubmission of deleted event is rejected
+	When Alice publishes events
+	| Id                                                               | Content | Kind | Tags                                                                        | CreatedAt  |
+	| 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 | Hello   | 1    |                                                                             | 1722337838 |
+	| 367ca4fcb31777b20fffc7057ca10e3f251322022b57fc4c123ecbf423f3b529 |         | 5    | [["e", "8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5"]] | 1722337845 |
+	| 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 | Hello   | 1    |                                                                             | 1722337838 |
+	And Bob sends a subscription request abcd
+	| Authors                                                          | Kinds |
+	| 5758137ec7f38f3d6c3ef103e28cd9312652285dab3497fe5e5f6c5c0ef45e75 | 1     |
+	Then Bob receives messages
+	| Type | Id   | 
+	| EOSE | abcd |
+	And Alice receives messages
+	| Type | Id                                                               | Success |
+	| OK   | 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 | true    |
+	| OK   | 367ca4fcb31777b20fffc7057ca10e3f251322022b57fc4c123ecbf423f3b529 | true    |
+	| OK   | 8ed8cc390eaf6db9e0ae8f3bf720a80d81ae49f95f953a9a4e26a72dc7f4a2c5 | false   |

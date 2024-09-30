@@ -40,7 +40,7 @@ namespace Netstr.Messaging.Models
         Dictionary<string, string[]> Tags)
     {
         public SubscriptionFilter()
-            : this([], [], [], null, null, 0, [])
+            : this([], [], [], null, null, null, [])
         {
         }
     }

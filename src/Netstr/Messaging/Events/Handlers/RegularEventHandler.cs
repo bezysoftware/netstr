@@ -29,6 +29,13 @@ namespace Netstr.Messaging.Events.Handlers
         {
             using var db = this.db.CreateDbContext();
 
+            if (await db.Events.IsDeleted(e.Id))
+            {
+                this.logger.LogInformation($"Event {e.Id} was already deleted");
+                await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                return;
+            }
+
             db.Add(e.ToEntity(DateTimeOffset.UtcNow));
 
             // save 
