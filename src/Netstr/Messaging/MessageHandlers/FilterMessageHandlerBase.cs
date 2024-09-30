@@ -49,7 +49,7 @@ namespace Netstr.Messaging.MessageHandlers
 
             var filters = parameters
                 .Skip(2)
-                .Select(GetSubscriptionFilter)
+                .Select(x => GetSubscriptionFilter(id, x))
                 .ToArray();
 
             var validationError = this.validators.CanSubscribe(id, adapter.Context, filters);
@@ -79,9 +79,15 @@ namespace Netstr.Messaging.MessageHandlers
                 .ThenBy(x => x.EventId);
         }
 
-        private SubscriptionFilter GetSubscriptionFilter(JsonDocument json)
+        private SubscriptionFilter GetSubscriptionFilter(string subscriptionId, JsonDocument json)
         {
             var r = json.DeserializeRequired<SubscriptionFilterRequest>();
+
+            if (r.AdditionalData?.Any(x => !x.Key.StartsWith("#") || x.Key.Length != 2) ?? false)
+            {
+                throw new MessageProcessingException(subscriptionId, Messages.UnsupportedFilter);
+            }
+
             var tags = r.AdditionalData?.ToDictionary(x => x.Key.TrimStart('#'), x => x.Value.DeserializeRequired<string[]>()) ?? new();
 
             return new SubscriptionFilter(
