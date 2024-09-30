@@ -24,7 +24,7 @@ namespace Netstr.Messaging.Models
         public DateTimeOffset? Until { get; init; }
 
         [JsonPropertyName("limit")]
-        public int Limit { get; init; }
+        public int? Limit { get; init; }
 
         [JsonExtensionData]
         public Dictionary<string, JsonElement>? AdditionalData { get; set; }
@@ -36,7 +36,7 @@ namespace Netstr.Messaging.Models
         long[] Kinds,
         DateTimeOffset? Since,
         DateTimeOffset? Until,
-        int Limit,
+        int? Limit,
         Dictionary<string, string[]> Tags)
     {
         public SubscriptionFilter()

@@ -37,7 +37,7 @@ namespace Netstr.Messaging.Subscriptions
                     .Where(x => !protectedKinds.Contains(x.EventKind) || x.EventPublicKey == authenticatedPublicKey || x.Tags.Any(tag => tag.Name == EventTag.PublicKey && tag.Values[0] == authenticatedPublicKey))
                     .OrderByDescending(x => x.EventCreatedAt)
                     .ThenBy(x => x.EventId)
-                    .Take(filter.Limit > 0 && filter.Limit < maxLimit ? filter.Limit : maxLimit))
+                    .Take(filter.Limit.HasValue && filter.Limit.Value < maxLimit ? filter.Limit.Value : maxLimit))
                 .Aggregate((acc, x) => acc.Union(x))
                 .AsNoTracking();
         }

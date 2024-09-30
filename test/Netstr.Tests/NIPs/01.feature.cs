@@ -845,6 +845,81 @@ this.FeatureBackground();
             this.ScenarioCleanup();
         }
         
+        [Xunit.SkippableFactAttribute(DisplayName="Zero limit returns EOSE and future events")]
+        [Xunit.TraitAttribute("FeatureTitle", "NIP-01")]
+        [Xunit.TraitAttribute("Description", "Zero limit returns EOSE and future events")]
+        public void ZeroLimitReturnsEOSEAndFutureEvents()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Zero limit returns EOSE and future events", "\tSetting filter\'s limit to 0 skips ", tagsOfScenario, argumentsOfScenario, featureTags);
+#line 180
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 4
+this.FeatureBackground();
+#line hidden
+                TechTalk.SpecFlow.Table table32 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Content",
+                            "Kind",
+                            "CreatedAt"});
+                table32.AddRow(new string[] {
+                            "a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346",
+                            "Hello 1",
+                            "1",
+                            "1722337838"});
+#line 182
+ testRunner.When("Bob publishes an event", ((string)(null)), table32, "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table33 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Authors",
+                            "Limit"});
+                table33.AddRow(new string[] {
+                            "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627",
+                            "0"});
+#line 185
+ testRunner.And("Alice sends a subscription request abcd", ((string)(null)), table33, "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table34 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Id",
+                            "Content",
+                            "Kind",
+                            "CreatedAt"});
+                table34.AddRow(new string[] {
+                            "0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c",
+                            "",
+                            "0",
+                            "1722337850"});
+#line 188
+ testRunner.When("Bob publishes an event", ((string)(null)), table34, "When ");
+#line hidden
+                TechTalk.SpecFlow.Table table35 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Type",
+                            "Id",
+                            "EventId"});
+                table35.AddRow(new string[] {
+                            "EOSE",
+                            "abcd",
+                            ""});
+                table35.AddRow(new string[] {
+                            "EVENT",
+                            "abcd",
+                            "0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c"});
+#line 191
+ testRunner.Then("Alice receives messages", ((string)(null)), table35, "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable
