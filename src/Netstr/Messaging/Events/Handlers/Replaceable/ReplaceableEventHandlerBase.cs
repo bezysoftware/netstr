@@ -47,7 +47,7 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
                 if (newEntity.EventCreatedAt < existing.EventCreatedAt)
                 {
                     this.logger.LogInformation($"Newer event {e.ToStringUnique()} already exists, ignoring");
-                    await sender.SendOkAsync(e.Id, Messages.DuplicateReplaceableEvent);
+                    await sender.SendNotOkAsync(e.Id, Messages.DuplicateReplaceableEvent);
                     return;
                 }
 
@@ -55,7 +55,7 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
                 if (existing.DeletedAt.HasValue && newEntity.EventCreatedAt < existing.DeletedAt)
                 {
                     this.logger.LogInformation($"Newer event {e.ToStringUnique()} already exists, ignoring");
-                    await sender.SendOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                    await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
                     return;
                 }
 

@@ -23,7 +23,7 @@ namespace Netstr.Messaging.Events.Handlers
             this.db = db;
         }
 
-        public override bool CanHandleEvent(Event e) => e.IsRegular() && !e.IsDelete();
+        public override bool CanHandleEvent(Event e) => (e.IsRegular() || e.IsUnknown()) && !e.IsDelete();
 
         protected override async Task HandleEventCoreAsync(IWebSocketAdapter sender, Event e)
         {

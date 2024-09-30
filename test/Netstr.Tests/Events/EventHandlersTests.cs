@@ -231,7 +231,7 @@ namespace Netstr.Tests.Events
             // verify send OK 2x, duplicate for the last one
             var expected1 = JsonSerializer.SerializeToUtf8Bytes(new object[] { MessageType.Ok, e1.Id, true, "" });
             var expected2 = JsonSerializer.SerializeToUtf8Bytes(new object[] { MessageType.Ok, e2.Id, true, "" });
-            var expected3 = JsonSerializer.SerializeToUtf8Bytes(new object[] { MessageType.Ok, e3.Id, true, Messages.DuplicateReplaceableEvent });
+            var expected3 = JsonSerializer.SerializeToUtf8Bytes(new object[] { MessageType.Ok, e3.Id, false, Messages.DuplicateReplaceableEvent });
             
             this.ws.Verify(x => x.SendAsync(expected1, WebSocketMessageType.Text, true, CancellationToken.None), Times.Once());
             this.ws.Verify(x => x.SendAsync(expected2, WebSocketMessageType.Text, true, CancellationToken.None), Times.Once());
