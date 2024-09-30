@@ -13,7 +13,7 @@ namespace Netstr.Messaging.Events.Handlers
     /// </summary>
     public class DeleteEventHandler : EventHandlerBase
     {
-        private record ReplaceableEventRef(string PublicKey, int Kind, string? Deduplication) { }
+        private record ReplaceableEventRef(int Kind, string PublicKey, string? Deduplication) { }
 
         private readonly IDbContextFactory<NetstrDbContext> db;
 
@@ -40,11 +40,32 @@ namespace Netstr.Messaging.Events.Handlers
             var regularEventIds = GetRegularEventIds(e.Tags);
             var replaceableQuery = GetReplaceableQuery(db, e, now);
 
-            await db.Events
-                .Where(x => x.EventPublicKey == e.PublicKey) // only delete own events
-                .Where(x => x.EventKind != EventKind.Delete) // cannnot delete a delete event
-                .Where(x => !x.DeletedAt.HasValue)           // not deleted yet
+            var events = await db.Events
                 .Where(x => regularEventIds.Contains(x.EventId) || replaceableQuery.Contains(x.EventId))
+                .Select(x => new
+                {
+                    x.Id,
+                    WrongKey = x.EventPublicKey != e.PublicKey,  // only delete own events
+                    WrongKind = x.EventKind == EventKind.Delete, // cannnot delete a delete event
+                    AlreadyDeleted = x.DeletedAt.HasValue        // was previously deleted
+                })
+                .ToArrayAsync();
+            
+            if (events.Any(x => x.WrongKey || x.WrongKind))
+            {
+                this.logger.LogWarning("Someone's trying to delete someone else's event or a deletion.");
+                await sender.SendNotOkAsync(e.Id, Messages.InvalidCannotDelete);
+                return;
+            }
+
+            // do not "re-delete" already deleted events
+            var eventsToDelete = events
+                .Where(x => !x.AlreadyDeleted)
+                .Select(x => x.Id)
+                .ToArray();
+
+            await db.Events
+                .Where(x => eventsToDelete.Contains(x.Id))
                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.DeletedAt, now));
 
             db.Add(e.ToEntity(now));
@@ -81,7 +102,7 @@ namespace Netstr.Messaging.Events.Handlers
 
             foreach (var re in replacableEvents)
             {
-                var query = db.Events.Where(x => x.EventKind == re.Kind);
+                var query = db.Events.Where(x => x.EventKind == re.Kind && x.EventDeduplication == re.Deduplication && x.EventPublicKey == re.PublicKey);
                 replaceableQuery = replaceableQuery.Union(query);
             }
 
@@ -99,12 +120,12 @@ namespace Netstr.Messaging.Events.Handlers
                 return null;
             }
 
-            if (!int.TryParse(parsed[1], out var kind))
+            if (!int.TryParse(parsed[0], out var kind))
             {
                 return null;
             }
 
-            return new(parsed[0], kind, parsed.Length > 2 ? parsed[2] : null);
+            return new(kind, parsed[1], parsed.Length > 2 ? parsed[2] : null);
         }
     }
 }

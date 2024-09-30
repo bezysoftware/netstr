@@ -176,3 +176,19 @@ Scenario: Relay can handle complex filters
 	| EVENT | abcd | a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 |
 	| EVENT | abcd | 5138028d66a909d302d8283319eb2c0830b42694f6137f71c47c64b4bdab3ad1 |
 	| EOSE  | abcd |                                                                  |
+
+Scenario: Zero limit returns EOSE and future events
+	Setting filter's limit to 0 skips 
+	When Bob publishes an event
+	| Id                                                               | Content | Kind | CreatedAt  |
+	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1 | 1    | 1722337838 |
+	And Alice sends a subscription request abcd
+	| Authors                                                          | Limit |
+	| 5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627 | 0     |
+	When Bob publishes an event
+	| Id                                                               | Content  | Kind  | CreatedAt  |
+	| 0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c |          | 0     | 1722337850 |
+	Then Alice receives messages
+	| Type  | Id   | EventId                                                          |
+	| EOSE  | abcd |                                                                  |
+	| EVENT | abcd | 0f5ba539c8ebb386336bc259ddc5d268a4959b012f56e3a2dcc1f9ea48d3591c |

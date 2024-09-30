@@ -23,11 +23,18 @@ namespace Netstr.Messaging.Events.Handlers
             this.db = db;
         }
 
-        public override bool CanHandleEvent(Event e) => e.IsRegular() && !e.IsDelete();
+        public override bool CanHandleEvent(Event e) => (e.IsRegular() || e.IsUnknown()) && !e.IsDelete();
 
         protected override async Task HandleEventCoreAsync(IWebSocketAdapter sender, Event e)
         {
             using var db = this.db.CreateDbContext();
+
+            if (await db.Events.IsDeleted(e.Id))
+            {
+                this.logger.LogInformation($"Event {e.Id} was already deleted");
+                await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                return;
+            }
 
             db.Add(e.ToEntity(DateTimeOffset.UtcNow));
 

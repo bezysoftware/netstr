@@ -37,6 +37,8 @@ namespace Netstr.Messaging.Models
         public bool IsEphemeral() => Kind is >= 20000 and < 30000;
 
         public bool IsAddressable() => Kind is >= 30000 and < 40000;
+        
+        public bool IsUnknown() => Kind is >= 40000;
 
         public bool IsDelete() => Kind == EventKind.Delete;
 

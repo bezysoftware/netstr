@@ -29,6 +29,13 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
         {
             using var db = this.db.CreateDbContext();
 
+            if (await db.Events.IsDeleted(e.Id))
+            {
+                this.logger.LogInformation($"Event {e.Id} was already deleted");
+                await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                return;
+            }
+
             var newEntity = e.ToEntity(DateTimeOffset.UtcNow);
             var existing = await db.Events
                 .AsNoTracking()
@@ -40,7 +47,7 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
                 if (newEntity.EventCreatedAt < existing.EventCreatedAt)
                 {
                     this.logger.LogInformation($"Newer event {e.ToStringUnique()} already exists, ignoring");
-                    await sender.SendOkAsync(e.Id, Messages.DuplicateReplaceableEvent);
+                    await sender.SendNotOkAsync(e.Id, Messages.DuplicateReplaceableEvent);
                     return;
                 }
 
@@ -48,7 +55,7 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
                 if (existing.DeletedAt.HasValue && newEntity.EventCreatedAt < existing.DeletedAt)
                 {
                     this.logger.LogInformation($"Newer event {e.ToStringUnique()} already exists, ignoring");
-                    await sender.SendOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                    await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
                     return;
                 }
 
