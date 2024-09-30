@@ -13,7 +13,7 @@ namespace Netstr.Messaging.Events.Handlers
     /// </summary>
     public class DeleteEventHandler : EventHandlerBase
     {
-        private record ReplaceableEventRef(string PublicKey, int Kind, string? Deduplication) { }
+        private record ReplaceableEventRef(int Kind, string PublicKey, string? Deduplication) { }
 
         private readonly IDbContextFactory<NetstrDbContext> db;
 
@@ -99,12 +99,12 @@ namespace Netstr.Messaging.Events.Handlers
                 return null;
             }
 
-            if (!int.TryParse(parsed[1], out var kind))
+            if (!int.TryParse(parsed[0], out var kind))
             {
                 return null;
             }
 
-            return new(parsed[0], kind, parsed.Length > 2 ? parsed[2] : null);
+            return new(kind, parsed[1], parsed.Length > 2 ? parsed[2] : null);
         }
     }
 }

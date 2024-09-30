@@ -42,10 +42,10 @@ Scenario: Deletion removes referenced replaceable events and is itself broadcast
 	| 37b30f773a1a7ba1615f34482194a531eca4b3a353e7c73a8f0e08985f6a09e4 | 10000 |                                                                                     | 1722337840 |
 	| a23d28af8e9395478f297bd649d71a80b3d6c6c2af2c1dc1c9036ac4f451263d | 30000 | [[ "d", "a" ]]                                                                      | 1722337835 |
 	| 8a75f74fe8798771c98c4c17b847f95e7ef28c7822b57e399bca41dc911f8baf | 30000 | [[ "d", "b" ]]                                                                      | 1722337840 |
-	| 9ead3323b0e26292d96b01bd6ed24cfea1973eceea878ad19c8d56e8916c625d | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:0:"]]      | 1722337839 |
-	| 753a8fc529a44a82097d54012fd7a5c8d5d201cdb41ef1f77e3a7ff8cf70ab36 | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:10000:"]]  | 1722337839 |
-	| 6101fb0b269a4e3c0bfa79c853c07c081fbbcc9ed562a93359ad443a757183c4 | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:30000:a"]] | 1722337839 |
-	| 5842861d68412d6fd994e7e11b1ddac08bfd84fdd4e82100b14c2dbc41739308 | 5     | [["a", "5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:30000:b"]] | 1722337839 |
+	| dd593bc09c98e958eab2414912ad097df6efdef8b99768915d2361aac4c4ceac | 5     | [["a", "0:5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:"]]      | 1722337839 |
+	| fa740ac70b991cd3955945d9799d881cd15971f37bf71902f271b00c6aa8f7f7 | 5     | [["a", "10000:5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:"]]  | 1722337839 |
+	| 8f1dbc29af4b5c96c26ee5c8932409017a1af538dbbf5207d1dc6470b488580e | 5     | [["a", "30000:5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:a"]] | 1722337839 |
+	| b74adc27515ad9fa78a86acfbc03375b1ab8fc63822c826cad7564b7d23c8051 | 5     | [["a", "30000:5bc683a5d12133a96ac5502c15fe1c2287986cff7baf6283600360e6bb01f627:b"]] | 1722337839 |
 	| 4a2a7d1fe9ea53ba1604eab98523f26eaee750a86983aa5fbe86614f9c5a2318 | 30000 | [[ "d", "a" ]]                                                                      | 1722337836 |
 	And Alice sends a subscription request abcd
 	| Authors                                                          |
@@ -54,10 +54,10 @@ Scenario: Deletion removes referenced replaceable events and is itself broadcast
 	| Type  | Id   | EventId                                                          |
 	| EVENT | abcd | 37b30f773a1a7ba1615f34482194a531eca4b3a353e7c73a8f0e08985f6a09e4 |
 	| EVENT | abcd | 8a75f74fe8798771c98c4c17b847f95e7ef28c7822b57e399bca41dc911f8baf |
-	| EVENT | abcd | 5842861d68412d6fd994e7e11b1ddac08bfd84fdd4e82100b14c2dbc41739308 |
-	| EVENT | abcd | 6101fb0b269a4e3c0bfa79c853c07c081fbbcc9ed562a93359ad443a757183c4 |
-	| EVENT | abcd | 753a8fc529a44a82097d54012fd7a5c8d5d201cdb41ef1f77e3a7ff8cf70ab36 |
-	| EVENT | abcd | 9ead3323b0e26292d96b01bd6ed24cfea1973eceea878ad19c8d56e8916c625d |
+	| EVENT | abcd | 8f1dbc29af4b5c96c26ee5c8932409017a1af538dbbf5207d1dc6470b488580e |
+	| EVENT | abcd | b74adc27515ad9fa78a86acfbc03375b1ab8fc63822c826cad7564b7d23c8051 |
+	| EVENT | abcd | dd593bc09c98e958eab2414912ad097df6efdef8b99768915d2361aac4c4ceac |
+	| EVENT | abcd | fa740ac70b991cd3955945d9799d881cd15971f37bf71902f271b00c6aa8f7f7 |
 	| EOSE  | abcd |                                                                  |
 	
 Scenario: It's not allowed to delete someone else's events
