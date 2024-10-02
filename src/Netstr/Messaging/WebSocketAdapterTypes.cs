@@ -1,4 +1,5 @@
 ﻿using Netstr.Messaging.Models;
+using Netstr.Messaging.Subscriptions;
 
 namespace Netstr.Messaging
 {
@@ -10,20 +11,15 @@ namespace Netstr.Messaging
 
     public interface IWebSocketAdapter
     {
-        Task LockAsync(LockType type, Func<IWebSocketSubscriptionsAdapter, Task> func);
+        Task SendAsync(MessageBatch batch);
 
-        Task SendAsync(object[] message);
-
-        ClientContext Context { get; }
-    }
-
-    public interface IWebSocketSubscriptionsAdapter : IWebSocketAdapter
-    {
-        void AddSubscription(string id, IEnumerable<SubscriptionFilter> filters);
+        SubscriptionAdapter AddSubscription(string id, IEnumerable<SubscriptionFilter> filters);
 
         void RemoveSubscription(string id);
 
-        IDictionary<string, Subscription> GetSubscriptions();
+        IDictionary<string, SubscriptionAdapter> GetSubscriptions();
+
+        ClientContext Context { get; }
     }
 
     public interface IWebSocketAdapterCollection
@@ -33,12 +29,5 @@ namespace Netstr.Messaging
         IEnumerable<IWebSocketAdapter> GetAll();
 
         void Remove(string id);
-    }
-
-
-    public enum LockType
-    {
-        Read,
-        Write
     }
 }

@@ -1,15 +1,16 @@
 ﻿using System.Net.WebSockets;
-using System.Text.Json;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Netstr.Options;
 using Netstr.Messaging.Models;
 using System.Collections.Immutable;
-using DotNext.Threading;
+using System.Threading.Channels;
+using Netstr.Messaging.Subscriptions;
+using System.Text.Json;
 
 namespace Netstr.Messaging.WebSockets
 {
-    public class WebSocketAdapter : IWebSocketListenerAdapter, IWebSocketAdapter, IWebSocketSubscriptionsAdapter
+    public class WebSocketAdapter : IWebSocketListenerAdapter, IWebSocketAdapter
     {
         private readonly ILogger<WebSocketAdapter> logger;
         private readonly IOptions<ConnectionOptions> connection;
@@ -17,9 +18,8 @@ namespace Netstr.Messaging.WebSockets
         private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
         private readonly WebSocket ws;
-        private readonly Dictionary<string, Subscription> subscriptions;
-        private readonly AsyncReaderWriterLock asyncLock;
-
+        private readonly Dictionary<string, SubscriptionAdapter> subscriptions;
+        private readonly Channel<MessageBatch> sendChannel;
         private CancellationToken cancellationToken;
 
         public WebSocketAdapter(
@@ -40,7 +40,9 @@ namespace Netstr.Messaging.WebSockets
             this.cancellationToken = cancellationToken;
             this.ws = ws;
             this.subscriptions = new();
-            this.asyncLock = new();
+            this.sendChannel = Channel.CreateBounded<MessageBatch>(
+                new BoundedChannelOptions(limits.Value.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
+                e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
 
             var id = headers["sec-websocket-key"].ToString();
 
@@ -49,32 +51,20 @@ namespace Netstr.Messaging.WebSockets
 
         public ClientContext Context { get; }
 
-        public void AddSubscription(string id, IEnumerable<SubscriptionFilter> filters)
+        public SubscriptionAdapter AddSubscription(string id, IEnumerable<SubscriptionFilter> filters)
         {
-            this.logger.LogInformation(this.subscriptions.ContainsKey(id)
-                ? $"Adding a new subscription {id} for client {Context.ClientId}"
-                : $"Replacing existing subscription {id} for client {Context.ClientId}");
-            this.subscriptions[id] = new Subscription(filters.ToArray(), DateTimeOffset.UtcNow);
+            if (this.subscriptions.TryGetValue(id, out var existing))
+            {
+                this.logger.LogInformation($"Disposing existing subscription {id} for client {Context.ClientId}");
+                existing.Dispose();
+            }
+
+            return this.subscriptions[id] = new SubscriptionAdapter(this, id, filters.ToArray());
         }
 
-        public IDictionary<string, Subscription> GetSubscriptions()
+        public IDictionary<string, SubscriptionAdapter> GetSubscriptions()
         {
             return this.subscriptions.ToImmutableDictionary(x => x.Key, x => x.Value);
-        }
-
-        public async Task LockAsync(LockType type, Func<IWebSocketSubscriptionsAdapter, Task> func)
-        {
-            var lockHolder = type switch
-            {
-                LockType.Read => this.asyncLock.AcquireReadLockAsync(),
-                LockType.Write => this.asyncLock.AcquireWriteLockAsync(),
-                _ => throw new NotImplementedException()
-            };
-
-            using (await lockHolder)
-            {
-                await func(this);
-            }
         }
 
         public void RemoveSubscription(string id)
@@ -83,9 +73,9 @@ namespace Netstr.Messaging.WebSockets
             this.subscriptions.Remove(id);
         }
 
-        public Task SendAsync(object[] message)
+        public async Task SendAsync(MessageBatch batch)
         {
-            return this.ws.SendAsync(JsonSerializer.SerializeToUtf8Bytes(message), WebSocketMessageType.Text, true, this.cancellationToken);
+            await this.sendChannel.Writer.WriteAsync(batch);
         }
 
         public async Task StartAsync()
@@ -98,11 +88,15 @@ namespace Netstr.Messaging.WebSockets
                     await this.SendAuthAsync(Context.Challenge);
                 }
 
-                // start receiving messages
-                await ReceiveAsync(this.cancellationToken);
+                // start sending & receiving messages
+                await Task.WhenAny([
+                    ReceiveAsync(this.cancellationToken),
+                    SendAsync(this.cancellationToken)
+                ]);
             }
             finally
             {
+                this.sendChannel.Writer.Complete();
                 this.subscriptions.Clear();
             }
         }
@@ -142,11 +136,36 @@ namespace Netstr.Messaging.WebSockets
                 }
                 catch (WebSocketException e)
                 {
-                    this.logger.LogError(e, "WebSocket exception");
+                    this.logger.LogError(e, $"WebSocket exception in ReceiveAsync, ClientId: {this.Context.ClientId}");
 
                     if (e.WebSocketErrorCode == WebSocketError.ConnectionClosedPrematurely)
                     {
                         this.ws.Abort();
+                    }
+                }
+            }
+        }
+
+        private async Task SendAsync(CancellationToken cancellationToken)
+        {
+            while (this.ws.State == WebSocketState.Open)
+            {
+                var batch = await this.sendChannel.Reader.ReadAsync(cancellationToken);
+
+                foreach (var message in batch.Messages)
+                {
+                    if (batch.IsCancelled)
+                    {
+                        break;
+                    }
+
+                    try
+                    {
+                        await this.ws.SendAsync(message, WebSocketMessageType.Text, true, cancellationToken);
+                    }
+                    catch (WebSocketException ex)
+                    {
+                        this.logger.LogWarning(ex, $"WebSocket exception in SemdAsync, ClientId: {this.Context.ClientId}");
                     }
                 }
             }

@@ -59,16 +59,13 @@ namespace Netstr.Messaging.Events.Handlers
                 return;
             }
 
-            await adapter.LockAsync(LockType.Read, async adapter =>
-            {
-                var broadcast = adapter
-                    .GetSubscriptions()
-                    .Where(x => x.Value.Filters.IsAnyMatch(e))
-                    .Select(x => adapter.SendEventAsync(x.Key, e))
-                    .ToArray();
+            var broadcast = adapter
+                .GetSubscriptions()
+                .Where(x => x.Value.Filters.IsAnyMatch(e))
+                .Select(x => x.Value.SendEventAsync(e))
+                .ToArray();
 
-                await Task.WhenAll(broadcast);
-            });
+            await Task.WhenAll(broadcast);
         }
     }
 }

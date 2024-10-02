@@ -36,20 +36,31 @@ namespace Netstr.Tests.Events
             context.Dispose();
 
             this.ws = new Mock<WebSocket>();
+            this.ws.Setup(x => x.State).Returns(WebSocketState.Open);
+            this.ws.Setup(x => x.ReceiveAsync(It.IsAny<ArraySegment<byte>>(), It.IsAny<CancellationToken>())).Returns(new TaskCompletionSource<WebSocketReceiveResult>().Task);
+
+            var auth = Microsoft.Extensions.Options.Options.Create(new AuthOptions());
+            var limits = Microsoft.Extensions.Options.Options.Create(new LimitsOptions
+            {
+                MaxCreatedAtLowerOffset = 10,
+                MaxCreatedAtUpperOffset = 10,
+                MaxSubscriptions = 5,
+                MaxPendingEvents = 10
+            });
 
             // receiver is a client with 2 registered subscriptions
             this.adapter = new WebSocketAdapter(
                 Mock.Of<ILogger<WebSocketAdapter>>(),
                 Mock.Of<IOptions<ConnectionOptions>>(),
-                Mock.Of<IOptions<LimitsOptions>>(),
-                Mock.Of<IOptions<AuthOptions>>(),
+                limits,
+                auth,
                 Mock.Of<IMessageDispatcher>(),
                 CancellationToken.None,
                 this.ws.Object,
                 Mock.Of<IHeaderDictionary>());
 
             this.clients = new WebSocketAdapterCollection();
-            var auth = Microsoft.Extensions.Options.Options.Create(new AuthOptions());
+            
             var handlers = new IEventHandler[]
             {
                 new RegularEventHandler(Mock.Of<ILogger<RegularEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object),
@@ -58,6 +69,7 @@ namespace Netstr.Tests.Events
                 new AddressableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object)
             };
             this.dispatcher = new EventDispatcher(Mock.Of<ILogger<EventDispatcher>>(), handlers);
+            _ = Task.Run(this.adapter.StartAsync);
         }
 
         public void Dispose()
@@ -71,8 +83,9 @@ namespace Netstr.Tests.Events
             var sender = Mock.Of<IWebSocketAdapter>();
             var receiver = this.adapter;
 
-            receiver.AddSubscription("sub1", [new SubscriptionFilter { Ids = ["blah"] }]);
-            receiver.AddSubscription("sub2", [new SubscriptionFilter { Ids = ["904559949fe0a7dcc43166545c765b4af823a63ef9f8177484596972478b662c"] }]);
+            await receiver.AddSubscription("sub1", [new SubscriptionFilter { Ids = ["blah"] }]).SendStoredEventsAsync([]);
+            await receiver.AddSubscription("sub2", [new SubscriptionFilter { Ids = ["904559949fe0a7dcc43166545c765b4af823a63ef9f8177484596972478b662c"] }]).SendStoredEventsAsync([]);
+            
             this.clients.Add(receiver);
 
             var e = new Event
@@ -91,6 +104,8 @@ namespace Netstr.Tests.Events
 
             var expected = JsonSerializer.SerializeToUtf8Bytes(new object[] { MessageType.Event, "sub2", e });
             var unexpected = JsonSerializer.SerializeToUtf8Bytes(new object[] { MessageType.Event, "sub1", e });
+
+            await Task.Delay(500);
 
             this.ws.Verify(x => x.SendAsync(expected, WebSocketMessageType.Text, true, CancellationToken.None), Times.Once());
             this.ws.Verify(x => x.SendAsync(unexpected, WebSocketMessageType.Text, true, CancellationToken.None), Times.Never());
