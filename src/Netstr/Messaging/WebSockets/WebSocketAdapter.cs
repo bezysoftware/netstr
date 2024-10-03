@@ -70,7 +70,9 @@ namespace Netstr.Messaging.WebSockets
         public void RemoveSubscription(string id)
         {
             this.logger.LogInformation($"Removing subscription {id} for client {Context.ClientId}");
-            this.subscriptions.Remove(id);
+            this.subscriptions.Remove(id, out var subscription);
+
+            subscription?.Dispose();
         }
 
         public async Task SendAsync(MessageBatch batch)
@@ -156,16 +158,18 @@ namespace Netstr.Messaging.WebSockets
                 {
                     if (batch.IsCancelled)
                     {
+                        this.logger.LogInformation($"Batch '{batch.Id}' closed mid-flight, stopping it");
                         break;
                     }
 
                     try
                     {
                         await this.ws.SendAsync(message, WebSocketMessageType.Text, true, cancellationToken);
+                        await Task.Delay(100);
                     }
                     catch (WebSocketException ex)
                     {
-                        this.logger.LogWarning(ex, $"WebSocket exception in SemdAsync, ClientId: {this.Context.ClientId}");
+                        this.logger.LogWarning(ex, $"WebSocket exception in SendAsync, ClientId: {this.Context.ClientId}");
                     }
                 }
             }

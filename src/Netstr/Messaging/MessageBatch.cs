@@ -11,6 +11,14 @@ namespace Netstr.Messaging
                 .ToArray();
         }
 
+        public MessageBatch(string id, IEnumerable<object[]> messages)
+            : this(messages)
+        {
+            Id = id;
+        }
+
+        public string? Id { get; }
+
         public IEnumerable<byte[]> Messages { get; set; }
 
         public bool IsCancelled { get; private set; }

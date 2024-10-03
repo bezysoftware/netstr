@@ -48,7 +48,7 @@ namespace Netstr.Messaging.Subscriptions
             this.eventsQueue.Clear();
 
             // stored events, EOSE, queue events
-            var batch = new MessageBatch([
+            var batch = new MessageBatch(this.subscriptionId, [
                 ..storedMessages,
                 [
                     MessageType.EndOfStoredEvents,
@@ -66,7 +66,7 @@ namespace Netstr.Messaging.Subscriptions
             if (!batch.IsCancelled && this.eventsQueue.Count > 0)
             {
                 var messages = this.eventsQueue.Select(EventToMessage).ToArray();
-                await this.webSocketAdapter.SendAsync(new MessageBatch([ messages ]));
+                await this.webSocketAdapter.SendAsync(new MessageBatch(this.subscriptionId, [ messages ]));
             }
         }
 
