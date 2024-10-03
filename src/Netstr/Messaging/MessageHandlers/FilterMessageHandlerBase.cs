@@ -39,7 +39,6 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException($"{AcceptedMessageType} message should be an array with at least 2 elements");
             }
 
-            var start = DateTimeOffset.UtcNow;
             var id = parameters[1].DeserializeRequired<string>();
 
             if (this.auth.Value.Mode == AuthMode.Always && !adapter.Context.IsAuthenticated())
@@ -58,23 +57,23 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException(id, validationError);
             }
 
-            await HandleMessageCoreAsync(start, adapter, id, filters);
+            await HandleMessageCoreAsync(adapter, id, filters);
         }
 
-        protected abstract Task HandleMessageCoreAsync(DateTimeOffset processingStart, IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters);
+        protected abstract Task HandleMessageCoreAsync(IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters);
 
-        protected IQueryable<EventEntity> GetFilteredEvents(NetstrDbContext db, IEnumerable<SubscriptionFilter> filters, string? clientPublicKey, DateTimeOffset start)
+        protected IQueryable<EventEntity> GetFilteredEvents(NetstrDbContext db, IEnumerable<SubscriptionFilter> filters, string? clientPublicKey)
         {
             // if auth is disabled ignore any set ProtectedKinds
             var auth = this.auth.Value;
             var protectedKinds = auth.Mode == AuthMode.Disabled ? [] : auth.ProtectedKinds;
+            var now = DateTimeOffset.UtcNow;
 
             return db.Events
                 .WhereAnyFilterMatches(filters, protectedKinds, clientPublicKey, this.limits.Value.MaxInitialLimit)
                 .Where(x =>
-                    x.FirstSeen < start &&
                     !x.DeletedAt.HasValue &&
-                    (!x.EventExpiration.HasValue || x.EventExpiration.Value > start))
+                    (!x.EventExpiration.HasValue || x.EventExpiration.Value > now))
                 .OrderByDescending(x => x.EventCreatedAt)
                 .ThenBy(x => x.EventId);
         }

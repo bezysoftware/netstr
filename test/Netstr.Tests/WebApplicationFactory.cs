@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Netstr.Data;
 using Netstr.Options;
+using System.Net.WebSockets;
 
 namespace Netstr.Tests
 {
@@ -24,6 +25,12 @@ namespace Netstr.Tests
 
         public LimitsOptions? Limits { get; set; }
         public AuthMode AuthMode { get; set; } = AuthMode.Disabled;
+
+        public async Task<WebSocket> ConnectWebSocketAsync(AuthMode authMode = AuthMode.Disabled)
+        {
+            this.AuthMode = authMode;
+            return await Server.CreateWebSocketClient().ConnectAsync(new Uri($"ws://localhost"), CancellationToken.None);
+        }
     }
 
     public class DbContextFactory : IDbContextFactory<NetstrDbContext>

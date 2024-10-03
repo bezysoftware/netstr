@@ -26,12 +26,12 @@ namespace Netstr.Messaging.MessageHandlers
 
         protected override string AcceptedMessageType => MessageType.Count;
 
-        protected override async Task HandleMessageCoreAsync(DateTimeOffset processingStart, IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
+        protected override async Task HandleMessageCoreAsync(IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
         {
             using var context = this.db.CreateDbContext();
 
             // get stored events count
-            var count = await GetFilteredEvents(context, filters, adapter.Context.PublicKey, processingStart).CountAsync();
+            var count = await GetFilteredEvents(context, filters, adapter.Context.PublicKey).CountAsync();
 
             // send count back
             await adapter.SendCountAsync(subscriptionId, count);

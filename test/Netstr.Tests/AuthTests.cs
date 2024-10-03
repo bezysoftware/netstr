@@ -22,7 +22,7 @@ namespace Netstr.Tests
         [Fact]
         public async Task PublishAuthModeTest()
         {
-            using WebSocket ws = await ConnectWebSocketAsync(AuthMode.Publishing);
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync(AuthMode.Publishing);
 
             var auth = await ws.ReceiveOnceAsync();
 
@@ -70,7 +70,7 @@ namespace Netstr.Tests
         [Fact]
         public async Task DisabledAuthModeDoesntSendAuth()
         {
-            using WebSocket ws = await ConnectWebSocketAsync(AuthMode.Disabled);
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync(AuthMode.Disabled);
 
             await ws.SendReqAsync("test", [new() { Kinds = [1] }]);
             
@@ -82,7 +82,7 @@ namespace Netstr.Tests
         [Fact]
         public async Task WrongAuthEventKindTest()
         {
-            using WebSocket ws = await ConnectWebSocketAsync(AuthMode.Publishing);
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync(AuthMode.Publishing);
 
             var auth = await ws.ReceiveOnceAsync();
 
@@ -106,12 +106,6 @@ namespace Netstr.Tests
             var ok = await ws.ReceiveOnceAsync();
 
             ok[2].GetBoolean().Should().BeFalse();
-        }
-
-        private async Task<WebSocket> ConnectWebSocketAsync(AuthMode authMode = AuthMode.WhenNeeded)
-        {
-            this.factory.AuthMode = authMode;
-            return await this.factory.Server.CreateWebSocketClient().ConnectAsync(new Uri($"ws://localhost"), CancellationToken.None);
         }
     }
 }

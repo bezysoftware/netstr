@@ -34,7 +34,7 @@ namespace Netstr.Tests
         [InlineData("Too long", "CLOSED")]
         public async Task SubscriptionIdTests(string id, string expected)
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             await ws.SendReqAsync(id, [new () { Kinds = [1] }]);
             var received = await ws.ReceiveOnceAsync();
@@ -47,7 +47,7 @@ namespace Netstr.Tests
         [InlineData(3, "CLOSED")]
         public async Task SubscriptionFiltersTests(int filters, string expected)
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             var requestFilters = Enumerable
                 .Range(0, filters)
@@ -65,7 +65,7 @@ namespace Netstr.Tests
         [InlineData(6, "CLOSED")]
         public async Task SubscriptionMaxLimitTests(int limit, string expected)
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             await ws.SendReqAsync("id", [new() { Limit = limit }]);
             var received = await ws.ReceiveOnceAsync();
@@ -76,7 +76,7 @@ namespace Netstr.Tests
         [Fact]
         public async Task SubscriptionCountTest()
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             // first sub succeeds
             await ws.SendReqAsync("id", [new() { Limit = 1 }]);
@@ -103,7 +103,7 @@ namespace Netstr.Tests
         [InlineData(-20, false)]
         public async Task EventCreatedAtTest(int offset, bool expected)
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             var e = new Event
             {
@@ -130,7 +130,7 @@ namespace Netstr.Tests
         [Fact]
         public async Task PayloadTooLargeTest()
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             var payload = new byte[1025];
 
@@ -147,7 +147,7 @@ namespace Netstr.Tests
         [Fact]
         public async Task TooManyTagsTest()
         {
-            using WebSocket ws = await ConnectWebSocketAsync();
+            using WebSocket ws = await this.factory.ConnectWebSocketAsync();
 
             var e = new Event
             {
@@ -168,11 +168,6 @@ namespace Netstr.Tests
             received[0].GetString()?.Should().BeEquivalentTo("OK");
             received[1].GetString()?.Should().BeEquivalentTo(e.Id);
             received[2].GetBoolean().Should().Be(false);
-        }
-
-        private async Task<WebSocket> ConnectWebSocketAsync()
-        {
-            return await this.factory.Server.CreateWebSocketClient().ConnectAsync(new Uri($"ws://localhost"), CancellationToken.None);
         }
     }
 }

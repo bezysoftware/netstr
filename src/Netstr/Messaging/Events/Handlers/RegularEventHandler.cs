@@ -32,7 +32,7 @@ namespace Netstr.Messaging.Events.Handlers
             if (await db.Events.IsDeleted(e.Id))
             {
                 this.logger.LogInformation($"Event {e.Id} was already deleted");
-                await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                await sender.SendNotOkAsync(e.Id, Messages.InvalidDeletedEvent);
                 return;
             }
 

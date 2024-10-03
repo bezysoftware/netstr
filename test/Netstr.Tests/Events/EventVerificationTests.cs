@@ -1,5 +1,4 @@
-﻿using DotNext.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -42,7 +41,7 @@ namespace Netstr.Tests.Events
                 Signature = "44224ca5edd01161f617a7347d4f0b1c9a8ccf7bfb3f70bd74db3d6e26f44aa5318f3d39c93f5769d24fa5e56bd98eed7cd23a114cc3412650678a0280ed94f4"
             };
 
-            this.validators.ForEach(x => x.Validate(e, new ClientContext("test")).Should().BeNull());
+            this.validators.ToList().ForEach(x => x.Validate(e, new ClientContext("test")).Should().BeNull());
         }
 
         [Theory]

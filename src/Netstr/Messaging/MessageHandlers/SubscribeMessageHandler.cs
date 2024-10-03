@@ -26,32 +26,25 @@ namespace Netstr.Messaging.MessageHandlers
 
         protected override string AcceptedMessageType => MessageType.Req;
 
-        protected override async Task HandleMessageCoreAsync(DateTimeOffset processingStart, IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
+        protected override async Task HandleMessageCoreAsync(IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
         {
-            // lock to make sure incoming events will have to wait until EOSE is sent
-            await adapter.LockAsync(LockType.Write, async x =>
+            var maxSubscriptions = this.limits.Value.MaxSubscriptions;
+            if (maxSubscriptions > 0 && adapter.GetSubscriptions().Where(x => x.Key != subscriptionId).Count() >= maxSubscriptions)
             {
-                var maxSubscriptions = this.limits.Value.MaxSubscriptions;
-                if (maxSubscriptions > 0 && x.GetSubscriptions().Where(x => x.Key != subscriptionId).Count() >= maxSubscriptions)
-                {
-                    throw new MessageProcessingException(subscriptionId, Messages.InvalidTooManySubscriptions);
-                }
+                throw new MessageProcessingException(subscriptionId, Messages.InvalidTooManySubscriptions);
+            }
 
-                using var context = this.db.CreateDbContext();
+            using var context = this.db.CreateDbContext();
 
-                // get stored events
-                var entities = await GetFilteredEvents(context, filters, adapter.Context.PublicKey, processingStart).ToArrayAsync();
-                var events = entities.Select(CreateEvent).ToArray();
+            // add sub
+            var subscription = adapter.AddSubscription(subscriptionId, filters);
 
-                // add sub
-                x.AddSubscription(subscriptionId, filters);
+            // get stored events
+            var entities = await GetFilteredEvents(context, filters, adapter.Context.PublicKey).ToArrayAsync();
+            var events = entities.Select(CreateEvent).ToArray();
 
-                // send back
-                await adapter.SendEventsAsync(subscriptionId, events);
-
-                // EOSE
-                await x.SendEndOfStoredEventsAsync(subscriptionId);
-            });
+            // send stored events (also sends EOSE)
+            await subscription.SendStoredEventsAsync(events);
         }
 
         private Event CreateEvent(EventEntity e)

@@ -11,17 +11,14 @@ namespace Netstr.Messaging.MessageHandlers
     {
         public bool CanHandleMessage(string type) => type == MessageType.Close;
 
-        public async Task HandleMessageAsync(IWebSocketAdapter sender, JsonDocument[] parameters)
+        public Task HandleMessageAsync(IWebSocketAdapter sender, JsonDocument[] parameters)
         {
             var id = parameters[1].DeserializeRequired<string>();
 
-            await sender.LockAsync(LockType.Write, adapter =>
-            {
-                // remove sub
-                adapter.RemoveSubscription(id);
+            // remove sub
+            sender.RemoveSubscription(id);
 
-                return Task.CompletedTask;
-            });
+            return Task.CompletedTask;
         }
     }
 }

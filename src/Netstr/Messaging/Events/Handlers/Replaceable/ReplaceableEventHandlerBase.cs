@@ -32,7 +32,7 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
             if (await db.Events.IsDeleted(e.Id))
             {
                 this.logger.LogInformation($"Event {e.Id} was already deleted");
-                await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                await sender.SendNotOkAsync(e.Id, Messages.InvalidDeletedEvent);
                 return;
             }
 
@@ -54,8 +54,8 @@ namespace Netstr.Messaging.Events.Handlers.Replaceable
                 // if event was previously deleted only accept newer events if they are newer than the deletion
                 if (existing.DeletedAt.HasValue && newEntity.EventCreatedAt < existing.DeletedAt)
                 {
-                    this.logger.LogInformation($"Newer event {e.ToStringUnique()} already exists, ignoring");
-                    await sender.SendNotOkAsync(e.Id, Messages.DuplicateDeletedEvent);
+                    this.logger.LogInformation($"Event {e.ToStringUnique()} was previously deleted");
+                    await sender.SendNotOkAsync(e.Id, Messages.InvalidDeletedEvent);
                     return;
                 }
 
