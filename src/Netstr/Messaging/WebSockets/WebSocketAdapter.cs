@@ -166,7 +166,6 @@ namespace Netstr.Messaging.WebSockets
                     try
                     {
                         await this.ws.SendAsync(message, WebSocketMessageType.Text, true, cancellationToken);
-                        await Task.Delay(100);
                     }
                     catch (WebSocketException ex)
                     {
