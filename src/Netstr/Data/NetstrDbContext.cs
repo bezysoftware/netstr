@@ -5,7 +5,9 @@ namespace Netstr.Data
     public class NetstrDbContext : DbContext
     {
         public const string ReplaceableUniqueIndexName = "ReplaceableEventsIdx";
+        public const string EventLookupIndexName = "EventLookupIdx";
         public const string EventIdIndexName = "EventIdIdx";
+        public const string TagValueIndexName = "TagNameValueIdx";
 
         public NetstrDbContext(DbContextOptions<NetstrDbContext> options)
             : base(options)
@@ -25,6 +27,12 @@ namespace Netstr.Data
                 e.HasKey(x => x.Id);
                 e.HasMany(x => x.Tags).WithOne(x => x.Event).OnDelete(DeleteBehavior.Cascade);
                 e.HasIndex(x => x.EventId, EventIdIndexName).IsUnique();
+                e.HasIndex(x => new 
+                { 
+                    x.EventKind,
+                    x.EventPublicKey,
+                    x.EventCreatedAt
+                }, EventLookupIndexName);
                 e.HasIndex(x => new
                 {
                     x.EventPublicKey,
@@ -40,7 +48,8 @@ namespace Netstr.Data
 
             builder.Entity<TagEntity>(e =>
             {
-                e.HasKey(x => new { x.EventId, x.Name, x.Values });
+                e.HasKey(x => x.Id);
+                e.HasIndex(x => new { x.Name, x.Value, x.EventId }, TagValueIndexName).IsUnique();
             });
         }
     }
