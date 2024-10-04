@@ -59,7 +59,7 @@ namespace Netstr.Messaging.WebSockets
                 existing.Dispose();
             }
 
-            this.logger.LogInformation($"Assing new subscription {id} for client {Context.ClientId}");
+            this.logger.LogInformation($"Adding new subscription {id} for client {Context.ClientId}");
             return this.subscriptions[id] = new SubscriptionAdapter(this, id, filters.ToArray());
         }
 

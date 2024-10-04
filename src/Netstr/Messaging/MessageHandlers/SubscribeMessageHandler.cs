@@ -57,7 +57,15 @@ namespace Netstr.Messaging.MessageHandlers
                 Kind = e.EventKind,
                 PublicKey = e.EventPublicKey,
                 Signature = e.EventSignature,
-                Tags = e.Tags.Select(tag => (string[])[ tag.Name, ..tag.Values ]).ToArray()
+                Tags = e.Tags.Select(tag => 
+                {
+                    if (tag.Value == null)
+                    {
+                        return (string[])[tag.Name];
+                    };
+
+                    return (string[])[tag.Name, tag.Value, ..tag.OtherValues];
+                }).ToArray()
             };
         }
     }
