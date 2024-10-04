@@ -34,7 +34,7 @@ namespace Netstr.Messaging.Subscriptions
                         (filter.Since <= x.EventCreatedAt || !filter.Since.HasValue) &&
                         (filter.Until >= x.EventCreatedAt || !filter.Until.HasValue))
                     .WhereTags(filter.Tags)
-                    .Where(x => !protectedKinds.Contains(x.EventKind) || x.EventPublicKey == authenticatedPublicKey || x.Tags.Any(tag => tag.Name == EventTag.PublicKey && tag.Values[0] == authenticatedPublicKey))
+                    .Where(x => !protectedKinds.Contains(x.EventKind) || x.EventPublicKey == authenticatedPublicKey || x.Tags.Any(tag => tag.Name == EventTag.PublicKey && tag.Value == authenticatedPublicKey))
                     .OrderByDescending(x => x.EventCreatedAt)
                     .ThenBy(x => x.EventId)
                     .Take(filter.Limit.HasValue && filter.Limit.Value < maxLimit ? filter.Limit.Value : maxLimit))
@@ -57,7 +57,7 @@ namespace Netstr.Messaging.Subscriptions
         {
             foreach (var tag in tags)
             {
-                entities = entities.Where(e => e.Tags.Any(etag => etag.Name == tag.Key && tag.Value.Contains(etag.Values[0])));
+                entities = entities.Where(e => e.Tags.Any(etag => etag.Name == tag.Key && tag.Value.Contains(etag.Value)));
             }
 
             return entities;

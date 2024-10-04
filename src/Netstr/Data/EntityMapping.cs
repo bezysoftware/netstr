@@ -22,7 +22,8 @@ namespace Netstr.Data
                 Tags = e.Tags.Select(x => new TagEntity
                 {
                     Name = x.First(),
-                    Values = x.Skip(1).ToArray()
+                    Value = x.Skip(1).FirstOrDefault(),
+                    OtherValues = x.Skip(2).ToArray()
                 }).ToArray(),
             };
         }
