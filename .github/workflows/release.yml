@@ -67,3 +67,4 @@ jobs:
           NETSTR_IMAGE: "bezysoftware/netstr:${{ env.IMAGE_TAG }}"
           NETSTR_ENVIRONMENT: prod
           NETSTR_PORT: 8080
+          NETSTR_VERSION: ${{ env.IMAGE_TAG }}

@@ -88,4 +88,4 @@ jobs:
           NETSTR_ENVIRONMENT: dev
           NETSTR_ENVIRONMENT_LONG: Development
           NETSTR_PORT: 8081
-          RelayInformation__Version: ${{ github.sha }}
+          NETSTR_VERSION: ${{ github.sha }}

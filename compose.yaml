@@ -8,6 +8,7 @@ services:
       - "${NETSTR_PORT:-8080}:8080"
     environment:
       ConnectionStrings__NetstrDatabase: Host=db:5432;Database=Netsrt;Username=Netstr;Password=${NETSTR_DB_PASSWORD:?Password must be set}
+      RelayInformation__Version: ${NETSTR_VERSION:-v0.0.0}
       ASPNETCORE_ENVIRONMENT: ${NETSTR_ENVIRONMENT_LONG}
     depends_on: 
       - db
