@@ -168,8 +168,8 @@ this.FeatureBackground();
                             "Invalid",
                             ""});
                 table5.AddRow(new string[] {
-                            "9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296",
-                            "Hi \' \\\" \\b \\t \\r \n",
+                            "bb5d2fe5b2c16c676d87ef446fa38581b9fa45e2e50ba89568664abf4e1d1396",
+                            "Hi \' \\\" \\b \\t \\r \n 🎉 #nostr",
                             "1",
                             "1722337838",
                             "",
@@ -198,7 +198,7 @@ this.FeatureBackground();
                             "false"});
                 table6.AddRow(new string[] {
                             "OK",
-                            "9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296",
+                            "bb5d2fe5b2c16c676d87ef446fa38581b9fa45e2e50ba89568664abf4e1d1396",
                             "true"});
                 table6.AddRow(new string[] {
                             "OK",
@@ -218,7 +218,7 @@ this.FeatureBackground();
                 table7.AddRow(new string[] {
                             "EVENT",
                             "abcd",
-                            "9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296"});
+                            "bb5d2fe5b2c16c676d87ef446fa38581b9fa45e2e50ba89568664abf4e1d1396"});
 #line 34
  testRunner.And("Alice receives a message", ((string)(null)), table7, "And ");
 #line hidden

@@ -1,4 +1,5 @@
-﻿using Netstr.Messaging.Models;
+﻿using Netstr.Json;
+using Netstr.Messaging.Models;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -12,7 +13,7 @@ namespace Netstr.Messaging.Events.Validators
     {
         private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions
         {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = new NostrJsonEncoder()            
         };
 
         public string? Validate(Event e, ClientContext context)

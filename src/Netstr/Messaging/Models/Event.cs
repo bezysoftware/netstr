@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-using Netstr.Converters;
+using Netstr.Json;
 using System.Numerics;
 using System.Text.Json.Serialization;
 
