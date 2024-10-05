@@ -31,7 +31,7 @@ namespace Netstr.Messaging
             }
             catch (MessageProcessingException ex)
             {
-                this.logger.LogError(ex, $"Failed to process message: {message}");
+                this.logger.LogWarning(ex, $"Failed to process message: {message}");
                 await sender.SendAsync(ex.GetSenderReply());
             }
             catch (Exception ex)
