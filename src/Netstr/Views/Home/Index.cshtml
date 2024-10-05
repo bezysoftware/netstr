@@ -41,10 +41,13 @@
                 <td>Software</td>
                 <td><a href="@Model.RelayInformation.Software" target="_blank">@Model.RelayInformation.Software</a></td>
             </tr>
-            <tr>
-                <td>Environment</td>
-                <td>@Model.Environment</td>
-            </tr>
+            @if (!string.IsNullOrEmpty(Model.Environment))
+            {
+                <tr>
+                    <td>Environment</td>
+                    <td>@Model.Environment</td>
+                </tr>
+            }
         </table>
 
         <div class="connect-box">
