@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Netstr.Extensions
+namespace Netstr.Json
 {
     public static class JsonExtensions
     {

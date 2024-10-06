@@ -1,4 +1,4 @@
-Feature: NIP-01
+﻿Feature: NIP-01
 	Defines the basic protocol that should be implemented by everybody. 
 
 Background: 
@@ -20,21 +20,21 @@ Scenario: Invalid messages are discarded, valid ones accepted
 	| Kinds |
 	| 1     |
 	And Bob publishes events
-	| Id                                                               | Content              | Kind | CreatedAt  | Signature | Tags |
-	| ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff | Hello 1              | 1    | 1722337838 |           |      |
-	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1              | 1    | 1722337838 | Invalid   |      |
-	| 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 | Hi ' \" \b \t \r \n  | 1    | 1722337838 |           |      |
-	| 50ed63c449df67d89e9964a27a26abbf214ca155b03915067a5a0f75618802bb | Hello                | 1    | 1722337838 |           | [[]] |
+	| Id                                                               | Content                       | Kind | CreatedAt  | Signature | Tags |
+	| ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff | Hello 1                       | 1    | 1722337838 |           |      |
+	| a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | Hello 1                       | 1    | 1722337838 | Invalid   |      |
+	| bb5d2fe5b2c16c676d87ef446fa38581b9fa45e2e50ba89568664abf4e1d1396 | Hi ' \" \b \t \r \n 🎉 #nostr | 1    | 1722337838 |           |      |
+	| 50ed63c449df67d89e9964a27a26abbf214ca155b03915067a5a0f75618802bb | Hello                         | 1    | 1722337838 |           | [[]] |
 	Then Bob receives messages
  	| Type | Id                                                               | Success |
  	| OK   | ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff | false   |
  	| OK   | a6d166e834e78827af0770f31f15b13a772f281ad880f43ce12c24d4e3d0e346 | false   |
- 	| OK   | 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 | true    |
+ 	| OK   | bb5d2fe5b2c16c676d87ef446fa38581b9fa45e2e50ba89568664abf4e1d1396 | true    |
  	| OK   | 50ed63c449df67d89e9964a27a26abbf214ca155b03915067a5a0f75618802bb | false   |
 	And Alice receives a message
  	| Type  | Id   | EventId                                                          |
  	| EOSE  | abcd |                                                                  |
- 	| EVENT | abcd | 9a6b4cefcd17f3bf7fb03c02da044c628836a118c47d5b92503c1d2bdb796296 |
+ 	| EVENT | abcd | bb5d2fe5b2c16c676d87ef446fa38581b9fa45e2e50ba89568664abf4e1d1396 |
 
 Scenario: Newly subscribed client receives matching events, EOSE and future events
 	Bob publishes events which are stored by the relay before any subscription exists. 

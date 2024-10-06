@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace Netstr.Converters
+namespace Netstr.Json
 {
     /// <summary>
     /// Converts Unix time to DateTimeOffset.
