@@ -33,7 +33,8 @@ namespace Netstr.Messaging.Subscriptions
                         (filter.Kinds.Contains(x.EventKind) || !filter.Kinds.Any()) &&
                         (filter.Since <= x.EventCreatedAt || !filter.Since.HasValue) &&
                         (filter.Until >= x.EventCreatedAt || !filter.Until.HasValue))
-                    .WhereTags(filter.Tags)
+                    .WhereOrTags(filter.OrTags)
+                    .WhereAndTags(filter.AndTags)
                     .Where(x => !protectedKinds.Contains(x.EventKind) || x.EventPublicKey == authenticatedPublicKey || x.Tags.Any(tag => tag.Name == EventTag.PublicKey && tag.Value == authenticatedPublicKey))
                     .OrderByDescending(x => x.EventCreatedAt)
                     .ThenBy(x => x.EventId)
@@ -53,11 +54,24 @@ namespace Netstr.Messaging.Subscriptions
             return WhereAnyFilterMatches(entities, filters, [], null, maxLimit);
         }
 
-        private static IQueryable<EventEntity> WhereTags(this IQueryable<EventEntity> entities, IDictionary<string, string[]> tags)
+        private static IQueryable<EventEntity> WhereOrTags(this IQueryable<EventEntity> entities, IDictionary<string, string[]> tags)
         {
             foreach (var tag in tags)
             {
                 entities = entities.Where(e => e.Tags.Any(etag => etag.Name == tag.Key && tag.Value.Contains(etag.Value)));
+            }
+
+            return entities;
+        }
+
+        private static IQueryable<EventEntity> WhereAndTags(this IQueryable<EventEntity> entities, IDictionary<string, string[]> tags)
+        {
+            foreach (var tag in tags)
+            {
+                foreach (var tagValue in tag.Value)
+                {
+                    entities = entities.Where(e => e.Tags.Any(etag => etag.Name == tag.Key && etag.Value == tagValue));
+                }
             }
 
             return entities;
