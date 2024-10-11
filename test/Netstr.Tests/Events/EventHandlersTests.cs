@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Netstr.Data;
 using Netstr.Messaging;
+using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Events.Handlers.Replaceable;
 using Netstr.Messaging.Models;

@@ -1,7 +1,7 @@
 ﻿using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Models;
 
-namespace Netstr.Messaging
+namespace Netstr.Messaging.Events
 {
     /// <summary>
     /// Dispatches EVENT message to someone who can handle it.

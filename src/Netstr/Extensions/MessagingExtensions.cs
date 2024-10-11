@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Netstr.Messaging;
+using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Events.Handlers.Replaceable;
 using Netstr.Messaging.Events.Validators;
@@ -28,10 +29,12 @@ namespace Netstr.Extensions
             // event
             services.AddSingleton<IEventDispatcher, EventDispatcher>();
             services.AddSingleton<IEventHandler, DeleteEventHandler>();
-            services.AddSingleton<IEventHandler, RegularEventHandler>();
             services.AddSingleton<IEventHandler, ReplaceableEventHandler>();
             services.AddSingleton<IEventHandler, EphemeralEventHandler>();
             services.AddSingleton<IEventHandler, AddressableEventHandler>();
+
+            // RegularEventHandler needs to go last
+            services.AddSingleton<IEventHandler, RegularEventHandler>();
 
             services.AddEventValidators();
             services.AddSubscriptionValidators();

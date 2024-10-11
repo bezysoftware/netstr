@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Netstr.Data;
 using Netstr.Messaging;
+using Netstr.Messaging.Events;
 using Netstr.Messaging.MessageHandlers;
 using Netstr.Options;
 
