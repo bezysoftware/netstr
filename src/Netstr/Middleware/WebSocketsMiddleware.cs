@@ -33,7 +33,7 @@ namespace Netstr.Middleware
                 this.logger.LogInformation($"Accepting websocket connection from {context.Connection.RemoteIpAddress}");
 
                 var ws = await context.WebSockets.AcceptWebSocketAsync();
-                var adapter = this.factory.CreateAdapter(ws, context.Request.Headers);
+                var adapter = this.factory.CreateAdapter(ws, context.Request.Headers, context.Connection);
 
                 await adapter.StartAsync();
 

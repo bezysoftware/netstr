@@ -12,5 +12,7 @@
         public int MaxCreatedAtLowerOffset { get; init; }
         public int MaxCreatedAtUpperOffset { get; init; }
         public int MaxPendingEvents { get; init; }
+        public int MaxEventsPerMinute { get; init; }
+        public int MaxSubscriptionsPerMinute { get; init; }
     }
 }

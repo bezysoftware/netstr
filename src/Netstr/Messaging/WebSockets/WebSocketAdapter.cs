@@ -30,7 +30,8 @@ namespace Netstr.Messaging.WebSockets
             IMessageDispatcher dispatcher,
             CancellationToken cancellationToken,
             WebSocket ws,
-            IHeaderDictionary headers)
+            IHeaderDictionary headers,
+            ConnectionInfo connectionInfo)
         {
             this.logger = logger;
             this.connection = connection;
@@ -45,8 +46,9 @@ namespace Netstr.Messaging.WebSockets
                 e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
 
             var id = headers["sec-websocket-key"].ToString();
+            
 
-            Context = new ClientContext(id);
+            Context = new ClientContext(id, connectionInfo.RemoteIpAddress?.ToString() ?? string.Empty);
         }
 
         public ClientContext Context { get; }
