@@ -18,8 +18,9 @@ namespace Netstr.Messaging.MessageHandlers
             IDbContextFactory<NetstrDbContext> db,
             IEnumerable<ISubscriptionRequestValidator> validators,
             IOptions<LimitsOptions> limits,
-            IOptions<AuthOptions> auth)
-            : base(validators, limits, auth)
+            IOptions<AuthOptions> auth,
+            ILogger<SubscribeMessageHandler> logger)
+            : base(validators, limits, auth, logger)
         {
             this.db = db;
         }

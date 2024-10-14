@@ -5,14 +5,17 @@
     /// </summary>
     public class ClientContext
     {
-        public ClientContext(string clientId)
+        public ClientContext(string clientId, string ipAddress)
         {
             ClientId = clientId;
+            IpAddress = ipAddress;
             Challenge = Guid.NewGuid().ToString();
         }
 
         public string ClientId { get; }
 
+        public string IpAddress { get; }
+        
         public string Challenge { get; }
         
         public string? PublicKey { get; private set; }
