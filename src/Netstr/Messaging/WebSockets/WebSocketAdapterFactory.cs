@@ -33,7 +33,7 @@ namespace Netstr.Messaging.WebSockets
             this.lifetime = lifetime;
         }
 
-        public IWebSocketListenerAdapter CreateAdapter(WebSocket socket, IHeaderDictionary headers)
+        public IWebSocketListenerAdapter CreateAdapter(WebSocket socket, IHeaderDictionary headers, ConnectionInfo connection)
         {
             var adapter = new WebSocketAdapter(
                 this.logger,
@@ -43,7 +43,8 @@ namespace Netstr.Messaging.WebSockets
                 this.dispatcher,
                 this.lifetime.ApplicationStopping,
                 socket,
-                headers);
+                headers,
+                connection);
 
             this.tracker.Add(adapter);
 

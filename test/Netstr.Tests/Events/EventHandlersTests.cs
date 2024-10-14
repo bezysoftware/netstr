@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Netstr.Data;
 using Netstr.Messaging;
+using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Events.Handlers.Replaceable;
 using Netstr.Messaging.Models;
@@ -57,16 +58,17 @@ namespace Netstr.Tests.Events
                 Mock.Of<IMessageDispatcher>(),
                 CancellationToken.None,
                 this.ws.Object,
-                Mock.Of<IHeaderDictionary>());
+                Mock.Of<IHeaderDictionary>(),
+                Mock.Of<ConnectionInfo>());
 
             this.clients = new WebSocketAdapterCollection();
             
             var handlers = new IEventHandler[]
             {
-                new RegularEventHandler(Mock.Of<ILogger<RegularEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object),
                 new EphemeralEventHandler(Mock.Of<ILogger<EphemeralEventHandler>>(), auth, this.clients),
                 new ReplaceableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object),
-                new AddressableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object)
+                new AddressableEventHandler(Mock.Of<ILogger<ReplaceableEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object),
+                new RegularEventHandler(Mock.Of<ILogger<RegularEventHandler>>(), auth, this.clients, this.dbFactoryMock.Object)
             };
             this.dispatcher = new EventDispatcher(Mock.Of<ILogger<EventDispatcher>>(), handlers);
             _ = Task.Run(this.adapter.StartAsync);

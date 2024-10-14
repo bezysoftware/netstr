@@ -4,6 +4,7 @@ using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.Models;
 using Netstr.Options;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 
 namespace Netstr.Messaging.MessageHandlers
 {
@@ -16,17 +17,28 @@ namespace Netstr.Messaging.MessageHandlers
         private readonly IEventDispatcher eventDispatcher;
         private readonly IEnumerable<IEventValidator> validators;
         private readonly IOptions<AuthOptions> auth;
+        private readonly PartitionedRateLimiter<string> rateLimiter;
 
         public EventMessageHandler(
             ILogger<EventMessageHandler> logger,
             IEventDispatcher eventDispatcher,
             IEnumerable<IEventValidator> validators,
-            IOptions<AuthOptions> auth)
+            IOptions<AuthOptions> auth,
+            IOptions<LimitsOptions> limits
+            )
         {
             this.logger = logger;
             this.eventDispatcher = eventDispatcher;
             this.validators = validators;
             this.auth = auth;
+            this.rateLimiter = PartitionedRateLimiter.Create<string, string>(
+                x => RateLimitPartition.GetSlidingWindowLimiter(x, _ => new SlidingWindowRateLimiterOptions 
+                {
+                    AutoReplenishment = true,
+                    PermitLimit = limits.Value.MaxEventsPerMinute > 0 ? limits.Value.MaxEventsPerMinute : int.MaxValue,
+                    SegmentsPerWindow = 6,
+                    Window = TimeSpan.FromMinutes(1)
+                }));
         }
 
         public bool CanHandleMessage(string type) => type == MessageType.Event;
@@ -39,6 +51,15 @@ namespace Netstr.Messaging.MessageHandlers
             {
                 this.logger.LogError(ex, $"Couldn't parse event: {parameters.ToString()}");
                 throw new MessageProcessingException(Messages.ErrorProcessingEvent);
+            }
+
+            using var lease = this.rateLimiter.AttemptAcquire(sender.Context.IpAddress);
+
+            if (!lease.IsAcquired)
+            {
+                this.logger.LogInformation($"User {sender.Context.IpAddress} is rate limited");
+                await sender.SendNotOkAsync(e.Id, Messages.RateLimited);
+                return;
             }
 
             var auth = this.auth.Value.Mode;

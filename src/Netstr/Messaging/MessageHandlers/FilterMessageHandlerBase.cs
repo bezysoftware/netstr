@@ -6,7 +6,9 @@ using Netstr.Messaging.Models;
 using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
+using System.Reflection;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 
 namespace Netstr.Messaging.MessageHandlers
 {
@@ -21,15 +23,27 @@ namespace Netstr.Messaging.MessageHandlers
         protected readonly IEnumerable<ISubscriptionRequestValidator> validators;
         protected readonly IOptions<LimitsOptions> limits;
         protected readonly IOptions<AuthOptions> auth;
+        protected readonly ILogger<FilterMessageHandlerBase> logger;
+        protected readonly PartitionedRateLimiter<string> rateLimiter;
 
         protected FilterMessageHandlerBase(
             IEnumerable<ISubscriptionRequestValidator> validators,
             IOptions<LimitsOptions> limits,
-            IOptions<AuthOptions> auth)
+            IOptions<AuthOptions> auth,
+            ILogger<FilterMessageHandlerBase> logger)
         {
             this.validators = validators;
             this.limits = limits;
             this.auth = auth;
+            this.logger = logger;
+            this.rateLimiter = PartitionedRateLimiter.Create<string, string>(
+                x => RateLimitPartition.GetSlidingWindowLimiter(x, _ => new SlidingWindowRateLimiterOptions
+                {
+                    AutoReplenishment = true,
+                    PermitLimit = limits.Value.MaxSubscriptionsPerMinute > 0 ? limits.Value.MaxSubscriptionsPerMinute : int.MaxValue,
+                    SegmentsPerWindow = 6,
+                    Window = TimeSpan.FromMinutes(1)
+                }));
         }
 
         protected abstract string AcceptedMessageType { get; }
@@ -44,6 +58,14 @@ namespace Netstr.Messaging.MessageHandlers
             }
 
             var id = parameters[1].DeserializeRequired<string>();
+            using var lease = this.rateLimiter.AttemptAcquire(adapter.Context.IpAddress);
+
+            if (!lease.IsAcquired)
+            {
+                this.logger.LogInformation($"User {adapter.Context.IpAddress} is rate limited");
+                await adapter.SendClosedAsync(id, Messages.RateLimited);
+                return;
+            }
 
             if (this.auth.Value.Mode == AuthMode.Always && !adapter.Context.IsAuthenticated())
             {
