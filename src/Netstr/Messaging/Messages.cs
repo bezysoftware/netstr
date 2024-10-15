@@ -17,6 +17,7 @@
         public const string InvalidTooManyTags = "invalid: too many tags";
         public const string InvalidCannotDelete = "invalid: cannot delete deletions and someone else's events";
         public const string InvalidDeletedEvent = "invalid: this event was already deleted";
+        public const string InvalidWrongTagValue = "invalid: this event has an unexpected value of tag {0}";
         public const string AuthRequired = "auth-required: we only allow publishing and subscribing to authenticated clients";
         public const string AuthRequiredProtected = "auth-required: this event may only be published by its author";
         public const string AuthRequiredPublishing = "auth-required: we only allow publishing to authenticated clients";
