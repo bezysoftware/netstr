@@ -115,7 +115,8 @@ namespace Netstr.Tests.NIPs
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Tag filter with & is treated as AND", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Tag filter with & is treated as AND", "\tAlice asks for events tagged with both \"meme\" AND \"cat\" that have the tag \"black" +
+                    "\" OR \"white\"", tagsOfScenario, argumentsOfScenario, featureTags);
 #line 13
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -147,7 +148,7 @@ this.FeatureBackground();
                             "1",
                             "[[\"t\", \"meme\"], [\"t\", \"dog\"], [\"t\", \"black\"]]",
                             "1722337838"});
-#line 14
+#line 15
  testRunner.When("Bob publishes events", ((string)(null)), table74, "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table75 = new TechTalk.SpecFlow.Table(new string[] {
@@ -158,7 +159,7 @@ this.FeatureBackground();
                             "1",
                             "meme,cat",
                             "black,white"});
-#line 18
+#line 19
  testRunner.And("Alice sends a subscription request moarcats", ((string)(null)), table75, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table76 = new TechTalk.SpecFlow.Table(new string[] {
@@ -179,7 +180,7 @@ this.FeatureBackground();
                             "1",
                             "[[\"t\", \"meme\"], [\"t\", \"dog\"], [\"t\", \"white\"]]",
                             "1722337840"});
-#line 21
+#line 22
  testRunner.And("Bob publishes an event", ((string)(null)), table76, "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table77 = new TechTalk.SpecFlow.Table(new string[] {
@@ -198,7 +199,7 @@ this.FeatureBackground();
                             "EVENT",
                             "moarcats",
                             "dad216b3cebb2754fcef13dfd6299879cd2b4cb7988e38e36bc01874c90fab47"});
-#line 25
+#line 26
  testRunner.Then("Alice receives messages", ((string)(null)), table77, "Then ");
 #line hidden
             }

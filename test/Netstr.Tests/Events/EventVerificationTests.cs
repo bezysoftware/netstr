@@ -23,6 +23,7 @@ namespace Netstr.Tests.Events
                 .AddOptions<LimitsOptions>().Services
                 .AddLogging()
                 .AddEventValidators()
+                .AddSingleton<IUserCache, UserCache>()
                 .BuildServiceProvider()
                 .GetRequiredService<IEnumerable<IEventValidator>>();
         }

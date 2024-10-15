@@ -13,6 +13,8 @@ namespace Netstr.Messaging.Events.Handlers
     /// </summary>
     public class DeleteEventHandler : EventHandlerBase
     {
+        private static readonly long[] CannotDeleteKinds = [ EventKind.Delete, EventKind.RequestToVanish ];
+
         private record ReplaceableEventRef(int Kind, string PublicKey, string? Deduplication) { }
 
         private readonly IDbContextFactory<NetstrDbContext> db;
@@ -45,15 +47,15 @@ namespace Netstr.Messaging.Events.Handlers
                 .Select(x => new
                 {
                     x.Id,
-                    WrongKey = x.EventPublicKey != e.PublicKey,  // only delete own events
-                    WrongKind = x.EventKind == EventKind.Delete, // cannnot delete a delete event
-                    AlreadyDeleted = x.DeletedAt.HasValue        // was previously deleted
+                    WrongKey = x.EventPublicKey != e.PublicKey,          // only delete own events
+                    WrongKind = CannotDeleteKinds.Contains(x.EventKind), // cannnot delete some events
+                    AlreadyDeleted = x.DeletedAt.HasValue                // was previously deleted
                 })
                 .ToArrayAsync();
             
             if (events.Any(x => x.WrongKey || x.WrongKind))
             {
-                this.logger.LogWarning("Someone's trying to delete someone else's event or a deletion.");
+                this.logger.LogWarning("Someone's trying to delete someone else's or undeletable event.");
                 await sender.SendNotOkAsync(e.Id, Messages.InvalidCannotDelete);
                 return;
             }
