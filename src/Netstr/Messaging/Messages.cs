@@ -22,7 +22,7 @@
         public const string AuthRequiredPublishing = "auth-required: we only allow publishing to authenticated clients";
         public const string AuthRequiredKind = "auth-required: subscribing to specified kind(s) requires authentication";
         public const string AuthRequiredWrongKind = "auth-required: event has a wrong kind";
-        public const string AuthRequiredWrongTags = "auth-required: event has a challenge or relay";
+        public const string AuthRequiredWrongTags = "auth-required: event has a wrong challenge or relay";
         public const string DuplicateEvent = "duplicate: already have this event";
         public const string DuplicateReplaceableEvent = "duplicate: already have a newer version of this event";
         public const string PowNotEnough = "pow: difficulty {0} is less than {1}";
