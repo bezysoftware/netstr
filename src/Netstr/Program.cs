@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Extensions;
+using Netstr.Middleware;
 using Netstr.Options;
 using Netstr.RelayInformation;
 using Serilog;
@@ -22,6 +23,7 @@ builder.Services
     .AddApplicationOptions<LimitsOptions>("Limits")
     .AddApplicationOptions<AuthOptions>("Auth")
     .AddMessaging()
+    .AddHostedService<UserCacheStartupService>()
     .AddScoped<IRelayInformationService, RelayInformationService>()
     .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(connectionString));
 

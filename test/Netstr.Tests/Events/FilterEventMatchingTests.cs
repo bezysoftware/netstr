@@ -44,7 +44,7 @@ namespace Netstr.Tests.Events
         [InlineData("6b3cdd0302ded8068a", false)]
         public void IdsFilterTests(string id, bool expectation)
         {
-            var filter = new SubscriptionFilter([id], [], [], null, null, 0, []);
+            var filter = new SubscriptionFilter([id], [], [], null, null, 0, [], []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.Equal(expectation, result);
@@ -56,7 +56,7 @@ namespace Netstr.Tests.Events
         [InlineData("22e804d26ed16b68db52", false)]
         public void AuthorsFilterTests(string author, bool expectation)
         {
-            var filter = new SubscriptionFilter([], [author], [], null, null, 0, []);
+            var filter = new SubscriptionFilter([], [author], [], null, null, 0, [], []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.Equal(expectation, result);
@@ -67,7 +67,7 @@ namespace Netstr.Tests.Events
         [InlineData(1, true)]
         public void KindsFilterTests(int kind, bool expecation)
         {
-            var filter = new SubscriptionFilter([], [], [kind], null, null, 0, []);
+            var filter = new SubscriptionFilter([], [], [kind], null, null, 0, [], []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.Equal(expecation, result);
@@ -79,7 +79,7 @@ namespace Netstr.Tests.Events
         [InlineData(1648351381, false)]
         public void SinceFilterTests(int since, bool expecation)
         {
-            var filter = new SubscriptionFilter([], [], [], DateTimeOffset.FromUnixTimeSeconds(since), null, 0, []);
+            var filter = new SubscriptionFilter([], [], [], DateTimeOffset.FromUnixTimeSeconds(since), null, 0, [], []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.Equal(expecation, result);
@@ -91,7 +91,7 @@ namespace Netstr.Tests.Events
         [InlineData(1648351381, true)]
         public void UntilFilterTests(int until, bool expecation)
         {
-            var filter = new SubscriptionFilter([], [], [], null, DateTimeOffset.FromUnixTimeSeconds(until), 0, []);
+            var filter = new SubscriptionFilter([], [], [], null, DateTimeOffset.FromUnixTimeSeconds(until), 0, [], []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.Equal(expecation, result);
@@ -112,6 +112,7 @@ namespace Netstr.Tests.Events
                 DateTimeOffset.FromUnixTimeSeconds(since),
                 DateTimeOffset.FromUnixTimeSeconds(until),
                 0,
+                [], 
                 []);
 
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
@@ -130,7 +131,8 @@ namespace Netstr.Tests.Events
                 new()
                 {
                     ["e"] = ["7377fa81fc6c7ae7f7f4ef8938d4a603f7bf98183b35ab128235cc92d4bebf96"]
-                });
+                }, 
+                []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.True(result);
@@ -148,7 +150,8 @@ namespace Netstr.Tests.Events
                 {
                     ["e"] = ["7377fa81fc6c7ae7f7f4ef8938d4a603f7bf98183b35ab128235cc92d4bebf96"],
                     ["p"] = ["abcd", "8355095016fddbe31fcf1453b26f613553e9758cf2263e190eac8fd96a3d3de9"]
-                });
+                }, 
+                []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.True(result);
@@ -166,7 +169,8 @@ namespace Netstr.Tests.Events
                 {
                     ["e"] = ["abcd"],
                     ["p"] = ["8355095016fddbe31fcf1453b26f613553e9758cf2263e190eac8fd96a3d3de9"]
-                });
+                }, 
+                []);
             var result = SubscriptionFilterMatcher.IsMatch(filter, this.e);
 
             Assert.False(result);

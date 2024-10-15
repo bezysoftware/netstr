@@ -68,10 +68,10 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new MessageProcessingException(e, Messages.AuthRequiredWrongTags);
             }
 
-            var path = $"{ctx.Host}{ctx.Path}".TrimEnd('/');
-            var relayTag = e.Tags.FirstOrDefault(x => x.Length == 2 && x[0] == EventTag.Relay);
-            var relay = relayTag?[1].Split("://")[1].TrimEnd('/');
-            if (relayTag == null || relay != path)
+            var path = ctx.GetNormalizedUrl();
+            var relays = e.GetNormalizedRelayValues();
+            
+            if (!relays.Any(x => x == path))
             {
                 throw new MessageProcessingException(e, Messages.AuthRequiredWrongTags);
             }

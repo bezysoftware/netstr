@@ -37,13 +37,12 @@ namespace Netstr.Messaging.Models
         DateTimeOffset? Since,
         DateTimeOffset? Until,
         int? Limit,
-        Dictionary<string, string[]> Tags)
+        Dictionary<string, string[]> OrTags,
+        Dictionary<string, string[]> AndTags)
     {
         public SubscriptionFilter()
-            : this([], [], [], null, null, null, [])
+            : this([], [], [], null, null, null, [], [])
         {
         }
     }
-
-    public record Tag(string Name, string[] Values) { }
 }

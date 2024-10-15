@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
 using Netstr.Json;
+using System.Linq;
 using System.Numerics;
 using System.Text.Json.Serialization;
 
@@ -42,6 +43,8 @@ namespace Netstr.Messaging.Models
 
         public bool IsDelete() => Kind == EventKind.Delete;
 
+        public bool IsRequestToVanish() => Kind == EventKind.RequestToVanish;
+
         public bool IsProtected() => Tags.Any(x => x.Length >= 1 && x[0] == EventTag.Protected);
 
         public string ToStringUnique()
@@ -76,6 +79,11 @@ namespace Netstr.Messaging.Models
             return GetTagValue(EventTag.Deduplication);
         }
 
+        public IEnumerable<string> GetNormalizedRelayValues()
+        {
+            return GetTagValues(EventTag.Relay).Select(x => x.Contains("://") ? x.Split("://")[1].TrimEnd('/') : x);
+        }
+
         public DateTimeOffset? GetExpirationValue()
         {
             if (long.TryParse(GetTagValue(EventTag.Expiration), out var exp) && exp > 0)
@@ -89,6 +97,13 @@ namespace Netstr.Messaging.Models
         public string? GetTagValue(string tag)
         {
             return Tags.FirstOrDefault(x => x.Length > 1 && x.FirstOrDefault() == tag)?[1];
+        }
+
+        public IEnumerable<string> GetTagValues(string tag)
+        {
+            return Tags
+                .Where(x => x.Length > 1 && x.FirstOrDefault() == tag)
+                .Select(x => x[1]);
         }
     }
 }

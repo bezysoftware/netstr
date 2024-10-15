@@ -21,7 +21,7 @@ namespace Netstr.Tests.NIPs
                 return x with
                 {
                     AdditionalData = table.Rows[i]
-                        .Where(x => x.Key.StartsWith("#") && !string.IsNullOrEmpty(x.Value))
+                        .Where(x => (x.Key.StartsWith("#") || x.Key.StartsWith("&")) && !string.IsNullOrEmpty(x.Value))
                         .ToDictionary(x => x.Key, x => JsonSerializer.Deserialize<JsonElement>(JsonSerializer.Serialize(x.Value.Split(",")))),
                     Since = since > 0 ? DateTimeOffset.FromUnixTimeSeconds(since) : null,
                     Until = since > 0 ? DateTimeOffset.FromUnixTimeSeconds(until) : null,

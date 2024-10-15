@@ -17,6 +17,9 @@ namespace Netstr.Messaging.MessageHandlers
     /// </summary>
     public abstract class FilterMessageHandlerBase : IMessageHandler
     {
+        const char TagModifierOr = '#';
+        const char TagModifierAnd = '&';
+
         protected readonly IEnumerable<ISubscriptionRequestValidator> validators;
         protected readonly IOptions<LimitsOptions> limits;
         protected readonly IOptions<AuthOptions> auth;
@@ -105,13 +108,20 @@ namespace Netstr.Messaging.MessageHandlers
         {
             var r = json.DeserializeRequired<SubscriptionFilterRequest>();
 
-            if (r.AdditionalData?.Any(x => !x.Key.StartsWith("#") || x.Key.Length != 2) ?? false)
+            // only single letter tags with AND and OR modifiers are allowed as tag filters
+            if (r.AdditionalData?.Any(x => (!x.Key.StartsWith(TagModifierOr) && !x.Key.StartsWith(TagModifierAnd)) || x.Key.Length != 2) ?? false)
             {
                 throw new MessageProcessingException(subscriptionId, Messages.UnsupportedFilter);
             }
 
-            var tags = r.AdditionalData?.ToDictionary(x => x.Key.TrimStart('#'), x => x.Value.DeserializeRequired<string[]>()) ?? new();
+            Func<Dictionary<string, JsonElement>?, char, Dictionary<string, string[]>> getTags = (data, type) => data?
+                .Where(x => x.Key.StartsWith(type))
+                .ToDictionary(x => x.Key.TrimStart(type), x => x.Value.DeserializeRequired<string[]>())
+                ?? new();
 
+            var orTags = getTags(r.AdditionalData, TagModifierOr);
+            var andTags = getTags(r.AdditionalData, TagModifierAnd);
+            
             return new SubscriptionFilter(
                 r.Ids.EmptyIfNull(),
                 r.Authors.EmptyIfNull(),
@@ -119,7 +129,8 @@ namespace Netstr.Messaging.MessageHandlers
                 r.Since,
                 r.Until,
                 r.Limit,
-                tags);
+                orTags,
+                andTags);
         }
     }
 }
