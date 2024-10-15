@@ -4,10 +4,10 @@
 
 ![netstr logo](art/logo.jpg)
 
-Netstr is a relay for the [nostr protocol](https://github.com/nostr-protocol/nostr) written in C#. Currently in early stages of development.
+Netstr is a modern relay for the [nostr protocol](https://github.com/nostr-protocol/nostr) written in C#. 
 
- * Prod instance: https://relay.netstr.io/
- * Dev instance: https://relay-dev.netstr.io/
+ * **Prod** instance: https://relay.netstr.io/
+ * **Dev** instance: https://relay-dev.netstr.io/ (feel free to play with it / try to break it, just report if you find anything that needs fixing)
 
 ## Features
 
@@ -24,6 +24,7 @@ NIPs with a relay-specific implementation are listed here.
 - [x] NIP-42: [Authentication of clients to relays](https://github.com/nostr-protocol/nips/blob/master/42.md)
 - [x] NIP-45: [Counting results](https://github.com/nostr-protocol/nips/blob/master/45.md)
 - [ ] NIP-50: [Search Capability](https://github.com/nostr-protocol/nips/blob/master/50.md)
+- [x] NIP-62: [Request to Vanish](https://github.com/vitorpamplona/nips/blob/right-to-vanish/62.md)
 - [x] NIP-70: [Protected events](https://github.com/nostr-protocol/nips/blob/master/70.md)
 
 ## Tests
