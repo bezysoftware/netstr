@@ -161,7 +161,7 @@ namespace Netstr.Tests.Events
             var filters = new[]
             {
                 new SubscriptionFilter {
-                    Tags = new () {
+                    OrTags = new () {
                         ["p"] = [ "abcd", "4d5ce768123563bc583697db5e84841fb528f7b708d966f2e546286ce3c72077" ],
                         ["e"] = [ "8da089fad0df548e490d93eccc413ecee63cc9da4901051b0bdcb801032f05d3" ]
                     }

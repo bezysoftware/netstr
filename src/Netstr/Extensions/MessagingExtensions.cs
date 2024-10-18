@@ -38,6 +38,9 @@ namespace Netstr.Extensions
             // RegularEventHandler needs to go last
             services.AddSingleton<IEventHandler, RegularEventHandler>();
 
+            // RegularEventHandler needs to go last
+            services.AddSingleton<IEventHandler, RegularEventHandler>();
+
             services.AddEventValidators();
             services.AddSubscriptionValidators();
 
