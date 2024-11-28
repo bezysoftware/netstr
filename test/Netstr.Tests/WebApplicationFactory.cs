@@ -19,11 +19,13 @@ namespace Netstr.Tests
             builder.ConfigureAppConfiguration((ctx, b) =>
             {
                 b.AddInMemoryObject(Limits, "Limits");
+                b.AddInMemoryObject(NegentropyLimits, "Negentropy");
                 b.AddInMemoryCollection([ KeyValuePair.Create("Auth:Mode", AuthMode.ToString())]);
             });
         }
 
         public LimitsOptions? Limits { get; set; }
+        public NegentropyLimitsOptions? NegentropyLimits { get; set; }
         public AuthMode AuthMode { get; set; } = AuthMode.Disabled;
 
         public async Task<WebSocket> ConnectWebSocketAsync(AuthMode authMode = AuthMode.Disabled)

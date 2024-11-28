@@ -34,5 +34,10 @@
                 PublicKey = publicKey;
             }
         }
+
+        public override string ToString()
+        {
+            return $"Id: {ClientId}, IP: {IpAddress}, PublicKey: {PublicKey}";
+        }
     }
 }

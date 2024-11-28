@@ -11,6 +11,8 @@ using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Events.Handlers.Replaceable;
 using Netstr.Messaging.Models;
+using Netstr.Messaging.Negentropy;
+using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.WebSockets;
 using Netstr.Options;
 using System.Net.WebSockets;
@@ -56,6 +58,8 @@ namespace Netstr.Tests.Events
                 limits,
                 auth,
                 Mock.Of<IMessageDispatcher>(),
+                Mock.Of<INegentropyAdapterFactory>(),
+                new SubscriptionsAdapterFactory(Mock.Of<ILogger<SubscriptionsAdapter>>()),
                 CancellationToken.None,
                 this.ws.Object,
                 Mock.Of<IHeaderDictionary>(),
@@ -85,8 +89,8 @@ namespace Netstr.Tests.Events
             var sender = Mock.Of<IWebSocketAdapter>();
             var receiver = this.adapter;
 
-            await receiver.AddSubscription("sub1", [new SubscriptionFilter { Ids = ["blah"] }]).SendStoredEventsAsync([]);
-            await receiver.AddSubscription("sub2", [new SubscriptionFilter { Ids = ["904559949fe0a7dcc43166545c765b4af823a63ef9f8177484596972478b662c"] }]).SendStoredEventsAsync([]);
+            await receiver.Subscriptions.Add("sub1", [new SubscriptionFilter { Ids = ["blah"] }]).SendStoredEventsAsync([]);
+            await receiver.Subscriptions.Add("sub2", [new SubscriptionFilter { Ids = ["904559949fe0a7dcc43166545c765b4af823a63ef9f8177484596972478b662c"] }]).SendStoredEventsAsync([]);
             
             this.clients.Add(receiver);
 

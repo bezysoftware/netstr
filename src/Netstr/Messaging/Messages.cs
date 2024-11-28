@@ -9,6 +9,7 @@
         public const string InvalidCreatedAt = "invalid: event creation date is too far off from the current time";
         public const string InvalidSubscriptionIdTooLong = "invalid: subscription id is too long";
         public const string InvalidTooManyFilters = "invalid: too many filters";
+        public const string InvalidCannotProcessFilters = "invalid: cannot process filters";
         public const string InvalidTooManySubscriptions = "invalid: too many subscriptions";
         public const string InvalidLimitTooHigh = "invalid: filter limit is too high";
         public const string InvalidPayloadTooLarge = "invalid: message is too large";
@@ -33,5 +34,13 @@
 
         public const string CannotParseMessage = "unable to parse the message";
         public const string CannotProcessMessageType = "unknown message type";
+
+        public static class Negentropy
+        {
+            public const string BlockedTooBig = "blocked: too many results";
+            public const string InvalidMessage = "invalid: couldn't process your message";
+            public const string InvalidUnknownId = "invalid: unknown subscription id";
+            public const string ClosedTimeout = "closed: you took too long to respond";
+        }
     }
 }

@@ -57,6 +57,33 @@ namespace Netstr.Tests
             ], cancellationToken);
         }
 
+        public static Task SendNegentropyOpenAsync(this WebSocket ws, string id, SubscriptionFilterRequest filter, string msg, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "NEG-OPEN",
+                id,
+                filter,
+                msg
+            ], cancellationToken);
+        }
+
+        public static Task SendNegentropyMessageAsync(this WebSocket ws, string id, string msg, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "NEG-MSG",
+                id,
+                msg
+            ], cancellationToken);
+        }
+
+        public static Task SendNegentropyCloseAsync(this WebSocket ws, string id, CancellationToken? cancellationToken = null)
+        {
+            return ws.SendAsync([
+                "NEG-CLOSE",
+                id,
+            ], cancellationToken);
+        }
+
         public static async Task ReceiveAsync(this WebSocket ws, Action<JsonElement[]> action, CancellationToken? cancellationToken = null)
         {
             var token = cancellationToken ?? CancellationToken.None;
@@ -101,6 +128,15 @@ namespace Netstr.Tests
         {
             var cancellation = new CancellationTokenSource();
             var tcs = new TaskCompletionSource<JsonElement[]>();
+            
+            if (cancellationToken.HasValue)
+            {
+                cancellationToken.Value.Register(() => 
+                {
+                    cancellation.Cancel();
+                    tcs.SetException(new TaskCanceledException());
+                });
+            }
 
             _ = ws.ReceiveAsync(x =>
             {

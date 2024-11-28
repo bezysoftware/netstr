@@ -4,6 +4,7 @@ using Netstr.Data;
 using Netstr.Messaging.Models;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
+using System.Text.Json;
 
 namespace Netstr.Messaging.MessageHandlers
 {
@@ -23,11 +24,16 @@ namespace Netstr.Messaging.MessageHandlers
             : base(validators, limits, auth, logger)
         {
             this.db = db;
+
         }
 
         protected override string AcceptedMessageType => MessageType.Count;
 
-        protected override async Task HandleMessageCoreAsync(IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
+        protected override async Task HandleMessageCoreAsync(
+            IWebSocketAdapter adapter, 
+            string subscriptionId, 
+            IEnumerable<SubscriptionFilter> filters,
+            IEnumerable<JsonDocument> remainingParameters)
         {
             using var context = this.db.CreateDbContext();
 

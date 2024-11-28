@@ -15,4 +15,11 @@
         public int MaxEventsPerMinute { get; init; }
         public int MaxSubscriptionsPerMinute { get; init; }
     }
+
+    public class NegentropyLimitsOptions : LimitsOptions 
+    {
+        public int StaleSubscriptionPeriodSeconds { get; set; }
+        public int StaleSubscriptionLimitSeconds { get; set; }
+        public int MaxSubscriptionAgeSeconds { get; set; }
+    }
 }

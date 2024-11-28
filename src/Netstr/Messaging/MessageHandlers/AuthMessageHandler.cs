@@ -47,25 +47,25 @@ namespace Netstr.Messaging.MessageHandlers
 
             if (e == null)
             {
-                throw new MessageProcessingException(Messages.ErrorProcessingEvent);
+                throw new UnknownMessageProcessingException(Messages.ErrorProcessingEvent);
             }
 
             var validation = this.validators.ValidateEvent(e, context);
 
             if (validation != null)
             {
-                throw new MessageProcessingException(e, validation);
+                throw new EventProcessingException(e, validation);
             }
 
             if (e.Kind != EventKind.Auth)
             {
-                throw new MessageProcessingException(e, Messages.AuthRequiredWrongKind);
+                throw new EventProcessingException(e, Messages.AuthRequiredWrongKind);
             }
 
             var challenge = e.Tags.FirstOrDefault(x => x.Length == 2 && x[0] == EventTag.Challenge);
             if (challenge == null || challenge[1] != context.Challenge)
             {
-                throw new MessageProcessingException(e, Messages.AuthRequiredWrongTags);
+                throw new EventProcessingException(e, Messages.AuthRequiredWrongTags);
             }
 
             var path = ctx.GetNormalizedUrl();
@@ -73,7 +73,7 @@ namespace Netstr.Messaging.MessageHandlers
             
             if (!relays.Any(x => x == path))
             {
-                throw new MessageProcessingException(e, Messages.AuthRequiredWrongTags);
+                throw new EventProcessingException(e, Messages.AuthRequiredWrongTags);
             }
 
             return e;

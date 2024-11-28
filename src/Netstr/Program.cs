@@ -21,9 +21,12 @@ builder.Services
     .AddApplicationOptions<ConnectionOptions>("Connection")
     .AddApplicationOptions<RelayInformationOptions>("RelayInformation")
     .AddApplicationOptions<LimitsOptions>("Limits")
+    .AddApplicationOptions<NegentropyLimitsOptions>("Limits")
+        .Configure<NegentropyLimitsOptions>(builder.Configuration.GetSection("Negentropy")) // setup negentropy options by "Limits" defaults and then override with what is set in "Negentropy" section
     .AddApplicationOptions<AuthOptions>("Auth")
     .AddMessaging()
     .AddHostedService<UserCacheStartupService>()
+    .AddHostedService<NegentropyBackgroundWatcher>()
     .AddScoped<IRelayInformationService, RelayInformationService>()
     .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(connectionString));
 

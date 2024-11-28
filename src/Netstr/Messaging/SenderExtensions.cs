@@ -9,6 +9,11 @@ namespace Netstr.Messaging
             return sender.SendAsync(MessageBatch.Single(message));
         }
 
+        public static void Send(this IWebSocketAdapter sender, object[] message)
+        {
+            sender.Send(MessageBatch.Single(message));
+        }
+
         public static Task SendOkAsync(this IWebSocketAdapter sender, string id, string message = "")
         {
             return sender.SendAsync(

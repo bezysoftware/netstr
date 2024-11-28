@@ -1,4 +1,5 @@
 ﻿using Netstr.Messaging.Models;
+using Netstr.Messaging.Negentropy;
 using Netstr.Messaging.Subscriptions;
 
 namespace Netstr.Messaging
@@ -13,11 +14,11 @@ namespace Netstr.Messaging
     {
         Task SendAsync(MessageBatch batch);
 
-        SubscriptionAdapter AddSubscription(string id, IEnumerable<SubscriptionFilter> filters);
+        void Send(MessageBatch batch);
 
-        void RemoveSubscription(string id);
-
-        IDictionary<string, SubscriptionAdapter> GetSubscriptions();
+        ISubscriptionsAdapter Subscriptions { get; }
+        
+        INegentropyAdapter Negentropy { get; }
 
         ClientContext Context { get; }
     }

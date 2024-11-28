@@ -5,6 +5,9 @@ using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Events.Handlers.Replaceable;
 using Netstr.Messaging.Events.Validators;
 using Netstr.Messaging.MessageHandlers;
+using Netstr.Messaging.MessageHandlers.Negentropy;
+using Netstr.Messaging.Negentropy;
+using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Messaging.WebSockets;
 using Netstr.Middleware;
@@ -26,6 +29,15 @@ namespace Netstr.Extensions
             services.AddSingleton<IMessageHandler, UnsubscribeMessageHandler>();
             services.AddSingleton<IMessageHandler, AuthMessageHandler>();
             services.AddSingleton<IMessageHandler, CountMessageHandler>();
+
+            // negentropy messages
+            services.AddSingleton<IMessageHandler, NegentropyOpenHandler>();
+            services.AddSingleton<IMessageHandler, NegentropyCloseHandler>();
+            services.AddSingleton<IMessageHandler, NegentropyMessageHandler>();
+            
+            // factories
+            services.AddSingleton<INegentropyAdapterFactory, NegentropyAdapterFactory>();
+            services.AddSingleton<ISubscriptionsAdapterFactory, SubscriptionsAdapterFactory>();
 
             // event
             services.AddSingleton<IEventDispatcher, EventDispatcher>();
@@ -64,6 +76,7 @@ namespace Netstr.Extensions
         public static IServiceCollection AddSubscriptionValidators(this IServiceCollection services)
         {
             services.AddSingleton<ISubscriptionRequestValidator, SubscriptionLimitsValidator>();
+            services.AddSingleton<ISubscriptionRequestValidator, NegentropyLimitsValidator>();
             services.AddSingleton<ISubscriptionRequestValidator, AuthProtectedKindsValidator>();
 
             return services;

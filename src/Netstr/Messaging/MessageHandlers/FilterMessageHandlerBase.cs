@@ -6,6 +6,7 @@ using Netstr.Messaging.Models;
 using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.RateLimiting;
@@ -48,13 +49,15 @@ namespace Netstr.Messaging.MessageHandlers
 
         protected abstract string AcceptedMessageType { get; }
 
+        protected virtual bool SingleFilter { get; }
+
         public bool CanHandleMessage(string type) => AcceptedMessageType == type;
 
         public async Task HandleMessageAsync(IWebSocketAdapter adapter, JsonDocument[] parameters)
         {
             if (parameters.Length < 3)
             {
-                throw new MessageProcessingException($"{AcceptedMessageType} message should be an array with at least 2 elements");
+                throw new UnknownMessageProcessingException($"{AcceptedMessageType} message should be an array with at least 2 elements");
             }
 
             var id = parameters[1].DeserializeRequired<string>();
@@ -62,31 +65,35 @@ namespace Netstr.Messaging.MessageHandlers
 
             if (!lease.IsAcquired)
             {
-                this.logger.LogInformation($"User {adapter.Context.IpAddress} is rate limited");
-                await adapter.SendClosedAsync(id, Messages.RateLimited);
-                return;
+                RaiseSubscriptionException(id, Messages.RateLimited, $"User {adapter.Context.IpAddress} is rate limited");
             }
 
             if (this.auth.Value.Mode == AuthMode.Always && !adapter.Context.IsAuthenticated())
             {
-                throw new MessageProcessingException(id, Messages.AuthRequired);
+                RaiseSubscriptionException(id, Messages.AuthRequired);
             }
 
+            // limit number of filters, pass whatever follows the filter list to Core method (JsonDocument)
             var filters = parameters
                 .Skip(2)
+                .Take(SingleFilter ? 1 : int.MaxValue)
                 .Select(x => GetSubscriptionFilter(id, x))
                 .ToArray();
 
-            var validationError = this.validators.CanSubscribe(id, adapter.Context, filters);
+            var validationError = this.validators.CanSubscribe(id, adapter.Context, filters, this);
             if (validationError != null)
             {
-                throw new MessageProcessingException(id, validationError);
+                RaiseSubscriptionException(id, validationError);
             }
 
-            await HandleMessageCoreAsync(adapter, id, filters);
+            await HandleMessageCoreAsync(adapter, id, filters, parameters.Skip(filters.Length + 2).ToArray());
         }
 
-        protected abstract Task HandleMessageCoreAsync(IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters);
+        protected abstract Task HandleMessageCoreAsync(
+            IWebSocketAdapter adapter, 
+            string subscriptionId, 
+            IEnumerable<SubscriptionFilter> filters,
+            IEnumerable<JsonDocument> remainingParameters);
 
         protected IQueryable<EventEntity> GetFilteredEvents(NetstrDbContext db, IEnumerable<SubscriptionFilter> filters, string? clientPublicKey)
         {
@@ -104,14 +111,19 @@ namespace Netstr.Messaging.MessageHandlers
                 .ThenBy(x => x.EventId);
         }
 
+        protected virtual void RaiseSubscriptionException(string subscriptionId, string message, string? logMessage = null)
+        {
+            throw new SubscriptionProcessingException(subscriptionId, message, logMessage);
+        }
+
         private SubscriptionFilter GetSubscriptionFilter(string subscriptionId, JsonDocument json)
         {
-            var r = json.DeserializeRequired<SubscriptionFilterRequest>();
+            var r = DeserializeFilter(subscriptionId, json);
 
             // only single letter tags with AND and OR modifiers are allowed as tag filters
             if (r.AdditionalData?.Any(x => (!x.Key.StartsWith(TagModifierOr) && !x.Key.StartsWith(TagModifierAnd)) || x.Key.Length != 2) ?? false)
             {
-                throw new MessageProcessingException(subscriptionId, Messages.UnsupportedFilter);
+                RaiseSubscriptionException(subscriptionId, Messages.UnsupportedFilter);
             }
 
             Func<Dictionary<string, JsonElement>?, char, Dictionary<string, string[]>> getTags = (data, type) => data?
@@ -121,7 +133,7 @@ namespace Netstr.Messaging.MessageHandlers
 
             var orTags = getTags(r.AdditionalData, TagModifierOr);
             var andTags = getTags(r.AdditionalData, TagModifierAnd);
-            
+
             return new SubscriptionFilter(
                 r.Ids.EmptyIfNull(),
                 r.Authors.EmptyIfNull(),
@@ -131,6 +143,19 @@ namespace Netstr.Messaging.MessageHandlers
                 r.Limit,
                 orTags,
                 andTags);
+        }
+
+        private SubscriptionFilterRequest DeserializeFilter(string subscriptionId, JsonDocument json)
+        {
+            try
+            {
+                return json.DeserializeRequired<SubscriptionFilterRequest>();
+            }
+            catch(Exception ex)
+            {
+                RaiseSubscriptionException(subscriptionId, Messages.InvalidCannotProcessFilters, ex.Message);
+                throw;
+            }
         }
     }
 }

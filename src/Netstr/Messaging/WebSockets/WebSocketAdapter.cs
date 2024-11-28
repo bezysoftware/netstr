@@ -3,10 +3,10 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Netstr.Options;
 using Netstr.Messaging.Models;
-using System.Collections.Immutable;
 using System.Threading.Channels;
 using Netstr.Messaging.Subscriptions;
 using System.Text.Json;
+using Netstr.Messaging.Negentropy;
 
 namespace Netstr.Messaging.WebSockets
 {
@@ -18,7 +18,6 @@ namespace Netstr.Messaging.WebSockets
         private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
         private readonly WebSocket ws;
-        private readonly Dictionary<string, SubscriptionAdapter> subscriptions;
         private readonly Channel<MessageBatch> sendChannel;
         private CancellationToken cancellationToken;
 
@@ -28,6 +27,8 @@ namespace Netstr.Messaging.WebSockets
             IOptions<LimitsOptions> limits,
             IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
+            INegentropyAdapterFactory negentropyFactory,
+            ISubscriptionsAdapterFactory subscriptionsFactory,
             CancellationToken cancellationToken,
             WebSocket ws,
             IHeaderDictionary headers,
@@ -40,47 +41,32 @@ namespace Netstr.Messaging.WebSockets
             this.dispatcher = dispatcher;
             this.cancellationToken = cancellationToken;
             this.ws = ws;
-            this.subscriptions = new();
             this.sendChannel = Channel.CreateBounded<MessageBatch>(
                 new BoundedChannelOptions(limits.Value.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
                 e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
 
             var id = headers["sec-websocket-key"].ToString();
-            
 
             Context = new ClientContext(id, connectionInfo.RemoteIpAddress?.ToString() ?? string.Empty);
+            
+            Subscriptions = subscriptionsFactory.CreateAdapter(this);
+            Negentropy = negentropyFactory.CreateAdapter(this);
         }
 
         public ClientContext Context { get; }
 
-        public SubscriptionAdapter AddSubscription(string id, IEnumerable<SubscriptionFilter> filters)
-        {
-            if (this.subscriptions.TryGetValue(id, out var existing))
-            {
-                this.logger.LogInformation($"Disposing existing subscription {id} for client {Context.ClientId}");
-                existing.Dispose();
-            }
-
-            this.logger.LogInformation($"Adding new subscription {id} for client {Context.ClientId}");
-            return this.subscriptions[id] = new SubscriptionAdapter(this, id, filters.ToArray());
-        }
-
-        public IDictionary<string, SubscriptionAdapter> GetSubscriptions()
-        {
-            return this.subscriptions.ToImmutableDictionary(x => x.Key, x => x.Value);
-        }
-
-        public void RemoveSubscription(string id)
-        {
-            this.logger.LogInformation($"Removing subscription {id} for client {Context.ClientId}");
-            this.subscriptions.Remove(id, out var subscription);
-
-            subscription?.Dispose();
-        }
+        public ISubscriptionsAdapter Subscriptions { get; }
+        
+        public INegentropyAdapter Negentropy { get; }
 
         public async Task SendAsync(MessageBatch batch)
         {
             await this.sendChannel.Writer.WriteAsync(batch);
+        }
+
+        public void Send(MessageBatch batch)
+        {
+            this.sendChannel.Writer.TryWrite(batch);
         }
 
         public async Task StartAsync()
@@ -102,7 +88,9 @@ namespace Netstr.Messaging.WebSockets
             finally
             {
                 this.sendChannel.Writer.Complete();
-                this.subscriptions.Clear();
+                
+                Subscriptions.Dispose();
+                Negentropy.Dispose();
             }
         }
 

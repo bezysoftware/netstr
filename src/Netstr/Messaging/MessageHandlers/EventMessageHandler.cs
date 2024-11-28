@@ -50,7 +50,7 @@ namespace Netstr.Messaging.MessageHandlers
             if (e == null)
             {
                 this.logger.LogError(ex, $"Couldn't parse event: {parameters.ToString()}");
-                throw new MessageProcessingException(Messages.ErrorProcessingEvent);
+                throw new UnknownMessageProcessingException(Messages.ErrorProcessingEvent);
             }
 
             using var lease = this.rateLimiter.AttemptAcquire(sender.Context.IpAddress);
@@ -67,7 +67,7 @@ namespace Netstr.Messaging.MessageHandlers
             if (!sender.Context.IsAuthenticated() && (auth == AuthMode.Always || auth == AuthMode.Publishing))
             {
                 this.logger.LogError("Auth required but client not authenticated");
-                throw new MessageProcessingException(e, auth == AuthMode.Always ? Messages.AuthRequired : Messages.AuthRequiredPublishing);
+                throw new EventProcessingException(e, auth == AuthMode.Always ? Messages.AuthRequired : Messages.AuthRequiredPublishing);
             }
 
             var validation = this.validators.ValidateEvent(e, sender.Context);
@@ -75,7 +75,7 @@ namespace Netstr.Messaging.MessageHandlers
             if (validation != null)
             {
                 this.logger.LogError($"Couldn't validate event: {e.ToStringUnique()}");
-                throw new MessageProcessingException(e, validation);
+                throw new EventProcessingException(e, validation);
             }
 
             await this.eventDispatcher.DispatchEventAsync(sender, e);

@@ -59,8 +59,8 @@ namespace Netstr.Messaging.Events.Handlers
                 return;
             }
 
-            var broadcast = adapter
-                .GetSubscriptions()
+            var broadcast = adapter.Subscriptions
+                .GetAll()
                 .Where(x => x.Value.Filters.IsAnyMatch(e))
                 .Select(x => x.Value.SendEventAsync(e))
                 .ToArray();

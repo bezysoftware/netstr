@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using Netstr.Messaging.MessageHandlers;
+using Netstr.Messaging.MessageHandlers.Negentropy;
 using Netstr.Messaging.Models;
 using Netstr.Options;
 
@@ -34,6 +36,11 @@ namespace Netstr.Messaging.Subscriptions.Validators
             }
 
             return null;
+        }
+
+        public virtual bool IsApplicable(FilterMessageHandlerBase handler)
+        {
+            return handler is not NegentropyOpenHandler;
         }
     }
 }

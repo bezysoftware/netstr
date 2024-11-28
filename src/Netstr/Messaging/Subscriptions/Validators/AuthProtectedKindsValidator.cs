@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Netstr.Extensions;
+using Netstr.Messaging.MessageHandlers;
 using Netstr.Messaging.Models;
 using Netstr.Options;
 
@@ -38,6 +39,11 @@ namespace Netstr.Messaging.Subscriptions.Validators
             return anyProtectedKinds && !context.IsAuthenticated()
                 ? Messages.AuthRequiredKind
                 : null;
+        }
+
+        public bool IsApplicable(FilterMessageHandlerBase handler)
+        {
+            return true;
         }
     }
 }

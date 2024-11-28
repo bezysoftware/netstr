@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
+using Netstr.Messaging.Negentropy;
+using Netstr.Messaging.Subscriptions;
 using Netstr.Options;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
@@ -14,6 +16,8 @@ namespace Netstr.Messaging.WebSockets
         private readonly IMessageDispatcher dispatcher;
         private readonly IWebSocketAdapterCollection tracker;
         private readonly IHostApplicationLifetime lifetime;
+        private readonly INegentropyAdapterFactory negentropyFactory;
+        private readonly ISubscriptionsAdapterFactory subscriptionsFactory;
 
         public WebSocketAdapterFactory(
             ILogger<WebSocketAdapter> logger,
@@ -22,7 +26,9 @@ namespace Netstr.Messaging.WebSockets
             IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
             IWebSocketAdapterCollection tracker,
-            IHostApplicationLifetime lifetime)
+            IHostApplicationLifetime lifetime,
+            INegentropyAdapterFactory negentropyFactory,
+            ISubscriptionsAdapterFactory subscriptionsFactory)
         {
             this.logger = logger;
             this.connection = connection;
@@ -31,6 +37,8 @@ namespace Netstr.Messaging.WebSockets
             this.dispatcher = dispatcher;
             this.tracker = tracker;
             this.lifetime = lifetime;
+            this.negentropyFactory = negentropyFactory;
+            this.subscriptionsFactory = subscriptionsFactory;
         }
 
         public IWebSocketListenerAdapter CreateAdapter(WebSocket socket, IHeaderDictionary headers, ConnectionInfo connection)
@@ -41,6 +49,8 @@ namespace Netstr.Messaging.WebSockets
                 this.limits,
                 this.auth,
                 this.dispatcher,
+                this.negentropyFactory,
+                this.subscriptionsFactory,
                 this.lifetime.ApplicationStopping,
                 socket,
                 headers,
