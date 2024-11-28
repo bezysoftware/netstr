@@ -37,14 +37,14 @@ namespace Netstr.RelayInformation
                 Limits = new()
                 {
                     MaxMessageLength = limits.MaxPayloadSize,
-                    MinPowDifficulty = limits.MinPowDifficulty,
-                    CreatedAtLowerLimit = limits.MaxCreatedAtLowerOffset,
-                    CreatedAtUpperLimit = limits.MaxCreatedAtUpperOffset,
-                    MaxEventTags = limits.MaxEventTags,
-                    MaxLimit = limits.MaxInitialLimit,
-                    MaxFilters = limits.MaxFilters,
-                    MaxSubscriptionIdLength = limits.MaxSubscriptionIdLength,
-                    MaxSubscriptions = limits.MaxSubscriptions
+                    MinPowDifficulty = limits.Events.MinPowDifficulty,
+                    CreatedAtLowerLimit = limits.Events.MaxCreatedAtLowerOffset,
+                    CreatedAtUpperLimit = limits.Events.MaxCreatedAtUpperOffset,
+                    MaxEventTags = limits.Events.MaxEventTags,
+                    MaxLimit = limits.Subscriptions.MaxInitialLimit,
+                    MaxFilters = limits.Subscriptions.MaxFilters,
+                    MaxSubscriptionIdLength = limits.Subscriptions.MaxSubscriptionIdLength,
+                    MaxSubscriptions = limits.Subscriptions.MaxSubscriptions
                 }
             };
         }

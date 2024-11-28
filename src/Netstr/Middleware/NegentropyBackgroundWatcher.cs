@@ -11,12 +11,12 @@ namespace Netstr.Middleware
     public class NegentropyBackgroundWatcher : BackgroundService
     {
         private readonly IWebSocketAdapterCollection webSockets;
-        private readonly IOptions<NegentropyLimitsOptions> options;
+        private readonly IOptions<LimitsOptions> options;
         private readonly ILogger logger;
 
         public NegentropyBackgroundWatcher(
             IWebSocketAdapterCollection webSockets, 
-            IOptions<NegentropyLimitsOptions> options,
+            IOptions<LimitsOptions> options,
             ILogger<NegentropyBackgroundWatcher> logger)
         {
             this.webSockets = webSockets;
@@ -28,7 +28,7 @@ namespace Netstr.Middleware
         {
             do
             {
-                await Task.Delay(TimeSpan.FromSeconds(this.options.Value.StaleSubscriptionPeriodSeconds), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(this.options.Value.Negentropy.StaleSubscriptionPeriodSeconds), stoppingToken);
 
                 this.logger.LogInformation("Checking stale negentropy subscriptions");
 

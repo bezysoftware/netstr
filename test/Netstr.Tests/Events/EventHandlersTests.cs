@@ -45,10 +45,14 @@ namespace Netstr.Tests.Events
             var auth = Microsoft.Extensions.Options.Options.Create(new AuthOptions());
             var limits = Microsoft.Extensions.Options.Options.Create(new LimitsOptions
             {
-                MaxCreatedAtLowerOffset = 10,
-                MaxCreatedAtUpperOffset = 10,
-                MaxSubscriptions = 5,
-                MaxPendingEvents = 10
+                Events = new Options.Limits.EventLimits
+                {
+                    MaxCreatedAtLowerOffset = 10,
+                    MaxCreatedAtUpperOffset = 10,
+                    MaxPendingEvents = 10
+                },
+                Subscriptions = new Options.Limits.SubscriptionLimits(),
+                Negentropy = new Options.Limits.NegentropyLimits()
             });
 
             // receiver is a client with 2 registered subscriptions

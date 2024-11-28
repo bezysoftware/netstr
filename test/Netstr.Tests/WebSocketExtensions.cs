@@ -133,8 +133,10 @@ namespace Netstr.Tests
             {
                 cancellationToken.Value.Register(() => 
                 {
-                    cancellation.Cancel();
-                    tcs.SetException(new TaskCanceledException());
+                    if (tcs.TrySetException(new TaskCanceledException()))
+                    {
+                        cancellation.Cancel();
+                    }
                 });
             }
 

@@ -18,7 +18,9 @@ namespace Netstr.Messaging.Events.Validators
 
         public string? Validate(Event e, ClientContext context)
         {
-            if (this.limits.Value.MaxEventTags > 0 && e.Tags.Length > this.limits.Value.MaxEventTags)
+            var limits = this.limits.Value.Events;
+
+            if (limits.MaxEventTags > 0 && e.Tags.Length > limits.MaxEventTags)
             {
                 return Messages.InvalidTooManyTags;
             }

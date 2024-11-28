@@ -42,8 +42,8 @@ namespace Netstr.Messaging.WebSockets
             this.cancellationToken = cancellationToken;
             this.ws = ws;
             this.sendChannel = Channel.CreateBounded<MessageBatch>(
-                new BoundedChannelOptions(limits.Value.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
-                e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
+                new BoundedChannelOptions(limits.Value.Events.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
+                e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.Events.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
 
             var id = headers["sec-websocket-key"].ToString();
 

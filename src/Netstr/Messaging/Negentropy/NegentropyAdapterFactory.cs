@@ -11,9 +11,9 @@ namespace Netstr.Messaging.Negentropy
     public class NegentropyAdapterFactory : INegentropyAdapterFactory
     {
         private readonly ILogger<NegentropyAdapter> logger;
-        private readonly IOptions<NegentropyLimitsOptions> options;
+        private readonly IOptions<LimitsOptions> options;
 
-        public NegentropyAdapterFactory(ILogger<NegentropyAdapter> logger, IOptions<NegentropyLimitsOptions> options)
+        public NegentropyAdapterFactory(ILogger<NegentropyAdapter> logger, IOptions<LimitsOptions> options)
         {
             this.logger = logger;
             this.options = options;

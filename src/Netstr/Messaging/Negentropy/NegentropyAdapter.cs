@@ -23,9 +23,9 @@ namespace Netstr.Messaging.Negentropy
         private readonly ConcurrentDictionary<string, NegentropySubscription> subscriptions;
         private readonly ILogger<NegentropyAdapter> logger;
         private readonly IWebSocketAdapter ws;
-        private readonly IOptions<NegentropyLimitsOptions> options;
+        private readonly IOptions<LimitsOptions> options;
 
-        public NegentropyAdapter(ILogger<NegentropyAdapter> logger, IWebSocketAdapter webSocketAdapter, IOptions<NegentropyLimitsOptions> options)
+        public NegentropyAdapter(ILogger<NegentropyAdapter> logger, IWebSocketAdapter webSocketAdapter, IOptions<LimitsOptions> options)
         {
             this.subscriptions = new();
             this.logger = logger;
@@ -73,7 +73,7 @@ namespace Netstr.Messaging.Negentropy
         {
             this.logger.LogInformation($"Starting negentropy for {this.ws.Context}, subscription {subscriptionId}, total items {items.Count}");
             
-            var n = new NegentropySubscription(items, (uint)this.options.Value.MaxPayloadSize);
+            var n = new NegentropySubscription(items, this.options.Value.Negentropy.FrameSizeLimit);
 
             this.subscriptions.AddOrUpdate(subscriptionId, n, (_, _) => n);
 
@@ -84,8 +84,8 @@ namespace Netstr.Messaging.Negentropy
 
         public void DisposeStaleSubscriptions()
         {
-            var absoluteCutoff = DateTimeOffset.UtcNow.AddSeconds(-this.options.Value.MaxSubscriptionAgeSeconds);
-            var relativeCutoff = DateTimeOffset.UtcNow.AddSeconds(-this.options.Value.StaleSubscriptionLimitSeconds);
+            var absoluteCutoff = DateTimeOffset.UtcNow.AddSeconds(-this.options.Value.Negentropy.MaxSubscriptionAgeSeconds);
+            var relativeCutoff = DateTimeOffset.UtcNow.AddSeconds(-this.options.Value.Negentropy.StaleSubscriptionLimitSeconds);
             var subs = this.subscriptions.ToArray();
 
             if (subs.Length > 0) 

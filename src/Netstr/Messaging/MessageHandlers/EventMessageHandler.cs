@@ -35,7 +35,7 @@ namespace Netstr.Messaging.MessageHandlers
                 x => RateLimitPartition.GetSlidingWindowLimiter(x, _ => new SlidingWindowRateLimiterOptions 
                 {
                     AutoReplenishment = true,
-                    PermitLimit = limits.Value.MaxEventsPerMinute > 0 ? limits.Value.MaxEventsPerMinute : int.MaxValue,
+                    PermitLimit = limits.Value.Events.MaxEventsPerMinute > 0 ? limits.Value.Events.MaxEventsPerMinute : int.MaxValue,
                     SegmentsPerWindow = 6,
                     Window = TimeSpan.FromMinutes(1)
                 }));

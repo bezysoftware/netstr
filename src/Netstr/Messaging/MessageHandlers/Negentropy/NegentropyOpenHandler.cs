@@ -6,6 +6,7 @@ using Netstr.Messaging.Models;
 using Netstr.Messaging.Negentropy;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
+using Netstr.Options.Limits;
 using System.Text.Json;
 
 namespace Netstr.Messaging.MessageHandlers.Negentropy
@@ -17,7 +18,7 @@ namespace Netstr.Messaging.MessageHandlers.Negentropy
         public NegentropyOpenHandler(
             IDbContextFactory<NetstrDbContext> db,
             IEnumerable<ISubscriptionRequestValidator> validators,
-            IOptions<NegentropyLimitsOptions> limits,
+            IOptions<LimitsOptions> limits,
             IOptions<AuthOptions> auth,
             ILogger<NegentropyOpenHandler> logger)
             : base(validators, limits, auth, logger)
@@ -35,7 +36,7 @@ namespace Netstr.Messaging.MessageHandlers.Negentropy
             IEnumerable<SubscriptionFilter> filters,
             IEnumerable<JsonDocument> remainingParameters)
         {
-            var maxSubscriptions = this.limits.Value.MaxSubscriptions;
+            var maxSubscriptions = this.limits.Value.Negentropy.MaxSubscriptions;
             if (maxSubscriptions > 0 && adapter.Negentropy.GetOpenSubscriptions().Where(x => x != subscriptionId).Count() >= maxSubscriptions)
             {
                 adapter.SendNegentropyError(subscriptionId, Messages.InvalidTooManySubscriptions);
@@ -62,6 +63,11 @@ namespace Netstr.Messaging.MessageHandlers.Negentropy
         protected override void RaiseSubscriptionException(string subscriptionId, string message, string? logMessage = null)
         {
             throw new NegentropyProcessingException(subscriptionId, message, logMessage);
+        }
+
+        protected override SubscriptionLimits GetLimits()
+        {
+            return this.limits.Value.Negentropy;
         }
     }
 }

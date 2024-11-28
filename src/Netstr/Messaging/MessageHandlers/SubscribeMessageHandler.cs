@@ -35,7 +35,7 @@ namespace Netstr.Messaging.MessageHandlers
             IEnumerable<SubscriptionFilter> filters,
             IEnumerable<JsonDocument> remainingParameters)
         {
-            var maxSubscriptions = this.limits.Value.MaxSubscriptions;
+            var maxSubscriptions = this.limits.Value.Subscriptions.MaxSubscriptions;
             if (maxSubscriptions > 0 && adapter.Subscriptions.GetAll().Where(x => x.Key != subscriptionId).Count() >= maxSubscriptions)
             {
                 throw new SubscriptionProcessingException(subscriptionId, Messages.InvalidTooManySubscriptions);

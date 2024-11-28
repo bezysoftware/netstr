@@ -18,16 +18,15 @@ namespace Netstr.Tests
         public NegentropyTests()
         {
             this.factory = new WebApplicationFactory();
-            this.factory.NegentropyLimits = new NegentropyLimitsOptions
+            this.factory.NegentropyLimits = new Options.Limits.NegentropyLimits
             {
-                MaxPayloadSize = 4096,
-                MaxEventTags = 2,
                 MaxInitialLimit = 20000,
                 MaxFilters = 2,
                 MaxSubscriptionIdLength = 5,
                 MaxSubscriptions = 1, 
                 StaleSubscriptionLimitSeconds = 1,
-                StaleSubscriptionPeriodSeconds = 1
+                StaleSubscriptionPeriodSeconds = 1,
+                FrameSizeLimit = 4096
             };
         }
 

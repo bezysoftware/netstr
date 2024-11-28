@@ -6,6 +6,7 @@ using Netstr.Messaging.Models;
 using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
+using Netstr.Options.Limits;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json;
@@ -38,12 +39,15 @@ namespace Netstr.Messaging.MessageHandlers
             this.auth = auth;
             this.logger = logger;
             this.rateLimiter = PartitionedRateLimiter.Create<string, string>(
-                x => RateLimitPartition.GetSlidingWindowLimiter(x, _ => new SlidingWindowRateLimiterOptions
-                {
-                    AutoReplenishment = true,
-                    PermitLimit = limits.Value.MaxSubscriptionsPerMinute > 0 ? limits.Value.MaxSubscriptionsPerMinute : int.MaxValue,
-                    SegmentsPerWindow = 6,
-                    Window = TimeSpan.FromMinutes(1)
+                x => RateLimitPartition.GetSlidingWindowLimiter(x, _ => {
+                    var limits = GetLimits();
+                    return new SlidingWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = limits.MaxSubscriptionsPerMinute > 0 ? limits.MaxSubscriptionsPerMinute : int.MaxValue,
+                        SegmentsPerWindow = 6,
+                        Window = TimeSpan.FromMinutes(1)
+                    };
                 }));
         }
 
@@ -95,15 +99,21 @@ namespace Netstr.Messaging.MessageHandlers
             IEnumerable<SubscriptionFilter> filters,
             IEnumerable<JsonDocument> remainingParameters);
 
+        protected virtual SubscriptionLimits GetLimits()
+        {
+            return this.limits.Value.Subscriptions;
+        }
+
         protected IQueryable<EventEntity> GetFilteredEvents(NetstrDbContext db, IEnumerable<SubscriptionFilter> filters, string? clientPublicKey)
         {
             // if auth is disabled ignore any set ProtectedKinds
             var auth = this.auth.Value;
             var protectedKinds = auth.Mode == AuthMode.Disabled ? [] : auth.ProtectedKinds;
             var now = DateTimeOffset.UtcNow;
+            var limits = GetLimits();
 
             return db.Events
-                .WhereAnyFilterMatches(filters, protectedKinds, clientPublicKey, this.limits.Value.MaxInitialLimit)
+                .WhereAnyFilterMatches(filters, protectedKinds, clientPublicKey, limits.MaxInitialLimit)
                 .Where(x =>
                     !x.DeletedAt.HasValue &&
                     (!x.EventExpiration.HasValue || x.EventExpiration.Value > now))
