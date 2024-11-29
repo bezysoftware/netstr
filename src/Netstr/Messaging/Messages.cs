@@ -39,7 +39,7 @@
         {
             public const string BlockedTooBig = "blocked: too many results";
             public const string InvalidMessage = "invalid: couldn't process your message";
-            public const string InvalidUnknownId = "invalid: unknown subscription id";
+            public const string ClosedUnknownId = "closed: unknown subscription handle";
             public const string ClosedTimeout = "closed: you took too long to respond";
         }
     }

@@ -65,7 +65,7 @@ namespace Netstr.Messaging.Negentropy
             {
                 // no such subscription
                 this.logger.LogWarning($"Received a negentropy message for client {this.ws.Context} and unknown subscription {subscriptionId}");
-                this.ws.SendNegentropyError(subscriptionId, Messages.Negentropy.InvalidUnknownId);
+                this.ws.SendNegentropyError(subscriptionId, Messages.Negentropy.ClosedUnknownId);
             }
         }
 

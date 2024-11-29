@@ -172,7 +172,7 @@ namespace Netstr.Tests
 
             received[0].GetString().Should().Be("NEG-ERR");
             received[1].GetString().Should().Be("abcd");
-            received[2].GetString().Should().Be(Messages.Negentropy.InvalidUnknownId);
+            received[2].GetString().Should().Be(Messages.Negentropy.ClosedUnknownId);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace Netstr.Tests
 
             received[0].GetString().Should().Be("NEG-ERR");
             received[1].GetString().Should().Be("abcd");
-            received[2].GetString().Should().Be(Messages.Negentropy.InvalidUnknownId);
+            received[2].GetString().Should().Be(Messages.Negentropy.ClosedUnknownId);
         }
 
         [Fact]
