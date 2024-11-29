@@ -19,13 +19,15 @@ namespace Netstr.Messaging.Events.Handlers
 
         public override bool CanHandleEvent(Event e) => e.IsEphemeral();
 
-        protected override async Task HandleEventCoreAsync(IWebSocketAdapter sender, Event e)
+        protected override Task HandleEventCoreAsync(IWebSocketAdapter sender, Event e)
         {
             // reply
-            await sender.SendOkAsync(e.Id);
+            sender.SendOk(e.Id);
 
             // broadcast
-            await BroadcastEventAsync(e);
+            BroadcastEvent(e);
+
+            return Task.CompletedTask;
         }
     }
 }

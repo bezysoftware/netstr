@@ -23,11 +23,11 @@ namespace Netstr.Messaging.Subscriptions
 
         public bool StoredEventsSent => this.storedEventsBatch != null;
 
-        public async Task SendEventAsync(Event e)
+        public void SendEvent(Event e)
         {
             if (StoredEventsSent)
             {
-                await this.webSocketAdapter.SendAsync(EventToMessage(e));
+                this.webSocketAdapter.Send(EventToMessage(e));
             } 
             else
             {
@@ -35,11 +35,11 @@ namespace Netstr.Messaging.Subscriptions
             }
         }
 
-        public async Task SendStoredEventsAsync(IEnumerable<Event> events)
+        public void SendStoredEvents(IEnumerable<Event> events)
         {
             if (StoredEventsSent)
             {
-                throw new InvalidOperationException($"Cannot call {nameof(SendStoredEventsAsync)} method twice");
+                throw new InvalidOperationException($"Cannot call {nameof(SendStoredEvents)} method twice");
             }
 
             var storedMessages = events.Select(EventToMessage).ToArray();
@@ -58,15 +58,15 @@ namespace Netstr.Messaging.Subscriptions
             ]);
 
 
-            await this.webSocketAdapter.SendAsync(batch);
+            this.webSocketAdapter.Send(batch);
 
             this.storedEventsBatch = batch;
 
             // check again in case more messages arrive while initial batch was being sent
-            if (!batch.IsCancelled && this.eventsQueue.Count > 0)
+            if (!batch.IsCancelled && !this.eventsQueue.IsEmpty)
             {
                 var messages = this.eventsQueue.Select(EventToMessage).ToArray();
-                await this.webSocketAdapter.SendAsync(new MessageBatch(this.subscriptionId, [ messages ]));
+                this.webSocketAdapter.Send(new MessageBatch(this.subscriptionId, [ messages ]));
             }
         }
 

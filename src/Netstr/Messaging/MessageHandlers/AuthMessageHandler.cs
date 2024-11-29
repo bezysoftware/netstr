@@ -11,25 +11,22 @@ namespace Netstr.Messaging.MessageHandlers
     public class AuthMessageHandler : IMessageHandler
     {
         private readonly ILogger<AuthMessageHandler> logger;
-        private readonly IOptions<ConnectionOptions> connection;
         private readonly IEnumerable<IEventValidator> validators;
         private readonly IHttpContextAccessor http;
 
         public AuthMessageHandler(
             ILogger<AuthMessageHandler> logger,
-            IOptions<ConnectionOptions> connection,
             IEnumerable<IEventValidator> validators,
             IHttpContextAccessor http)
         {
             this.logger = logger;
-            this.connection = connection;
             this.validators = validators;
             this.http = http;
         }
 
         public bool CanHandleMessage(string type) => type == MessageType.Auth;
 
-        public async Task HandleMessageAsync(IWebSocketAdapter adapter, JsonDocument[] parameters)
+        public Task HandleMessageAsync(IWebSocketAdapter adapter, JsonDocument[] parameters)
         {
             var e = ValidateAuthEvent(parameters, adapter.Context);
 
@@ -37,19 +34,15 @@ namespace Netstr.Messaging.MessageHandlers
 
             this.logger.LogInformation($"Client {adapter.Context.ClientId} successfully authenticated.");
 
-            await adapter.SendOkAsync(e.Id);
+            adapter.SendOk(e.Id);
+
+            return Task.CompletedTask;
         }
 
         private Event ValidateAuthEvent(JsonDocument[] parameters, ClientContext context)
         {
             var ctx = this.http.HttpContext?.Request ?? throw new InvalidOperationException("HttpContext not set");
-            var e = EventParser.TryParse(parameters, out var ex);
-
-            if (e == null)
-            {
-                throw new UnknownMessageProcessingException(Messages.ErrorProcessingEvent);
-            }
-
+            var e = EventParser.TryParse(parameters, out var ex) ?? throw new UnknownMessageProcessingException(Messages.ErrorProcessingEvent);
             var validation = this.validators.ValidateEvent(e, context);
 
             if (validation != null)

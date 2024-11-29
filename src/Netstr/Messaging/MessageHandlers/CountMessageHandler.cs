@@ -41,7 +41,7 @@ namespace Netstr.Messaging.MessageHandlers
             var count = await GetFilteredEvents(context, filters, adapter.Context.PublicKey).CountAsync();
 
             // send count back
-            await adapter.SendCountAsync(subscriptionId, count);
+            adapter.SendCount(subscriptionId, count);
         }
     }
 }

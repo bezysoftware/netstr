@@ -51,7 +51,7 @@ namespace Netstr.Messaging.MessageHandlers
             var events = entities.Select(CreateEvent).ToArray();
 
             // send stored events (also sends EOSE)
-            await subscription.SendStoredEventsAsync(events);
+            subscription.SendStoredEvents(events);
         }
 
         private Event CreateEvent(EventEntity e)

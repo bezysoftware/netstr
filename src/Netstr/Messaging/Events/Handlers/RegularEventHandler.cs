@@ -33,7 +33,7 @@ namespace Netstr.Messaging.Events.Handlers
             if (await db.Events.IsDeleted(e.Id))
             {
                 this.logger.LogInformation($"Event {e.Id} was already deleted");
-                await sender.SendNotOkAsync(e.Id, Messages.InvalidDeletedEvent);
+                sender.SendNotOk(e.Id, Messages.InvalidDeletedEvent);
                 return;
             }
 
@@ -43,10 +43,10 @@ namespace Netstr.Messaging.Events.Handlers
             await db.SaveChangesAsync();
 
             // reply
-            await sender.SendOkAsync(e.Id);
+            sender.SendOk(e.Id);
 
             // broadcast
-            await BroadcastEventAsync(e);
+            BroadcastEvent(e);
         }
     }
 }

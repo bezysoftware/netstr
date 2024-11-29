@@ -12,8 +12,6 @@ namespace Netstr.Messaging
 
     public interface IWebSocketAdapter
     {
-        Task SendAsync(MessageBatch batch);
-
         void Send(MessageBatch batch);
 
         ISubscriptionsAdapter Subscriptions { get; }

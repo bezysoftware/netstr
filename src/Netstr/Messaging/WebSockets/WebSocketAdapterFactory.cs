@@ -10,7 +10,6 @@ namespace Netstr.Messaging.WebSockets
     public class WebSocketAdapterFactory
     {
         private readonly ILogger<WebSocketAdapter> logger;
-        private readonly IOptions<ConnectionOptions> connection;
         private readonly IOptions<LimitsOptions> limits;
         private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
@@ -21,7 +20,6 @@ namespace Netstr.Messaging.WebSockets
 
         public WebSocketAdapterFactory(
             ILogger<WebSocketAdapter> logger,
-            IOptions<ConnectionOptions> connection,
             IOptions<LimitsOptions> limits,
             IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
@@ -31,7 +29,6 @@ namespace Netstr.Messaging.WebSockets
             ISubscriptionsAdapterFactory subscriptionsFactory)
         {
             this.logger = logger;
-            this.connection = connection;
             this.limits = limits;
             this.auth = auth;
             this.dispatcher = dispatcher;
@@ -45,7 +42,6 @@ namespace Netstr.Messaging.WebSockets
         {
             var adapter = new WebSocketAdapter(
                 this.logger,
-                this.connection,
                 this.limits,
                 this.auth,
                 this.dispatcher,

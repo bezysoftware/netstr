@@ -58,7 +58,6 @@ namespace Netstr.Tests.Events
             // receiver is a client with 2 registered subscriptions
             this.adapter = new WebSocketAdapter(
                 Mock.Of<ILogger<WebSocketAdapter>>(),
-                Mock.Of<IOptions<ConnectionOptions>>(),
                 limits,
                 auth,
                 Mock.Of<IMessageDispatcher>(),
@@ -93,8 +92,8 @@ namespace Netstr.Tests.Events
             var sender = Mock.Of<IWebSocketAdapter>();
             var receiver = this.adapter;
 
-            await receiver.Subscriptions.Add("sub1", [new SubscriptionFilter { Ids = ["blah"] }]).SendStoredEventsAsync([]);
-            await receiver.Subscriptions.Add("sub2", [new SubscriptionFilter { Ids = ["904559949fe0a7dcc43166545c765b4af823a63ef9f8177484596972478b662c"] }]).SendStoredEventsAsync([]);
+            receiver.Subscriptions.Add("sub1", [new SubscriptionFilter { Ids = ["blah"] }]).SendStoredEvents([]);
+            receiver.Subscriptions.Add("sub2", [new SubscriptionFilter { Ids = ["904559949fe0a7dcc43166545c765b4af823a63ef9f8177484596972478b662c"] }]).SendStoredEvents([]);
             
             this.clients.Add(receiver);
 

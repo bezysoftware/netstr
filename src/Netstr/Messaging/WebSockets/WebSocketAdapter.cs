@@ -13,7 +13,6 @@ namespace Netstr.Messaging.WebSockets
     public class WebSocketAdapter : IWebSocketListenerAdapter, IWebSocketAdapter
     {
         private readonly ILogger<WebSocketAdapter> logger;
-        private readonly IOptions<ConnectionOptions> connection;
         private readonly IOptions<LimitsOptions> limits;
         private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
@@ -23,7 +22,6 @@ namespace Netstr.Messaging.WebSockets
 
         public WebSocketAdapter(
             ILogger<WebSocketAdapter> logger,
-            IOptions<ConnectionOptions> connection,
             IOptions<LimitsOptions> limits,
             IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
@@ -35,7 +33,6 @@ namespace Netstr.Messaging.WebSockets
             ConnectionInfo connectionInfo)
         {
             this.logger = logger;
-            this.connection = connection;
             this.limits = limits;
             this.auth = auth;
             this.dispatcher = dispatcher;
@@ -45,7 +42,7 @@ namespace Netstr.Messaging.WebSockets
                 new BoundedChannelOptions(limits.Value.Events.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
                 e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.Events.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
 
-            var id = headers["sec-websocket-key"].ToString();
+            var id = headers.SecWebSocketKey.ToString();
 
             Context = new ClientContext(id, connectionInfo.RemoteIpAddress?.ToString() ?? string.Empty);
             
@@ -59,11 +56,6 @@ namespace Netstr.Messaging.WebSockets
         
         public INegentropyAdapter Negentropy { get; }
 
-        public async Task SendAsync(MessageBatch batch)
-        {
-            await this.sendChannel.Writer.WriteAsync(batch);
-        }
-
         public void Send(MessageBatch batch)
         {
             this.sendChannel.Writer.TryWrite(batch);
@@ -76,7 +68,7 @@ namespace Netstr.Messaging.WebSockets
                 // send auth challenge when it's not disabled
                 if (this.auth.Value.Mode != AuthMode.Disabled)
                 {
-                    await this.SendAuthAsync(Context.Challenge);
+                    this.SendAuth(Context.Challenge);
                 }
 
                 // start sending & receiving messages
@@ -115,7 +107,7 @@ namespace Netstr.Messaging.WebSockets
                     if (!result.EndOfMessage)
                     {
                         // payload too large, disconnect
-                        await this.SendNoticeAsync(Messages.InvalidPayloadTooLarge);
+                        this.SendNotice(Messages.InvalidPayloadTooLarge);
                         await this.ws.CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, Messages.InvalidPayloadTooLarge, CancellationToken.None);
                         break;
                     }

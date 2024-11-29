@@ -33,12 +33,12 @@ namespace Netstr.Messaging
             {
                 var reply = ex.GetSenderReply();
                 this.logger.LogWarning(ex, $"Failed to process message: {message}, reply is: {string.Join(",", reply)}");
-                await sender.SendAsync(reply);
+                sender.Send(reply);
             }
             catch (Exception ex)
             {
                 this.logger.LogError(ex, $"Error while processing message: {message}");
-                await sender.SendNoticeAsync(Messages.ErrorInternal);
+                sender.SendNotice(Messages.ErrorInternal);
             }
         }
 

@@ -68,10 +68,10 @@ namespace Netstr.Messaging.Events.Handlers
             this.userCache.Vanish(e.PublicKey, e.CreatedAt);
 
             // reply
-            await sender.SendOkAsync(e.Id);
+            sender.SendOk(e.Id);
 
             // broadcast
-            await BroadcastEventAsync(e);
+            BroadcastEvent(e);
         }
     }
 }

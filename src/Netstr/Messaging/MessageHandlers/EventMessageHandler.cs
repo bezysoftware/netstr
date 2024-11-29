@@ -49,7 +49,7 @@ namespace Netstr.Messaging.MessageHandlers
 
             if (e == null)
             {
-                this.logger.LogError(ex, $"Couldn't parse event: {parameters.ToString()}");
+                this.logger.LogError(ex, $"Couldn't parse event: {parameters}");
                 throw new UnknownMessageProcessingException(Messages.ErrorProcessingEvent);
             }
 
@@ -58,7 +58,7 @@ namespace Netstr.Messaging.MessageHandlers
             if (!lease.IsAcquired)
             {
                 this.logger.LogInformation($"User {sender.Context.IpAddress} is rate limited");
-                await sender.SendNotOkAsync(e.Id, Messages.RateLimited);
+                sender.SendNotOk(e.Id, Messages.RateLimited);
                 return;
             }
 
