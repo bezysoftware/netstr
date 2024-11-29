@@ -40,7 +40,7 @@ namespace Netstr.Messaging.Events.Handlers
 
             // delete events (= mark as deleted)
             var regularEventIds = GetRegularEventIds(e.Tags);
-            var replaceableQuery = GetReplaceableQuery(db, e, now);
+            var replaceableQuery = GetReplaceableQuery(db, e);
 
             var events = await db.Events
                 .Where(x => regularEventIds.Contains(x.EventId) || replaceableQuery.Contains(x.EventId))
@@ -56,7 +56,7 @@ namespace Netstr.Messaging.Events.Handlers
             if (events.Any(x => x.WrongKey || x.WrongKind))
             {
                 this.logger.LogWarning("Someone's trying to delete someone else's or undeletable event.");
-                await sender.SendNotOkAsync(e.Id, Messages.InvalidCannotDelete);
+                sender.SendNotOk(e.Id, Messages.InvalidCannotDelete);
                 return;
             }
 
@@ -77,10 +77,10 @@ namespace Netstr.Messaging.Events.Handlers
             await tx.CommitAsync();
 
             // reply
-            await sender.SendOkAsync(e.Id);
+            sender.SendOk(e.Id);
 
             // broadcast
-            await BroadcastEventAsync(e);
+            BroadcastEvent(e);
         }
 
         private IEnumerable<string> GetRegularEventIds(string[][] tags)
@@ -92,7 +92,7 @@ namespace Netstr.Messaging.Events.Handlers
                 .Distinct();
         }
 
-        private IQueryable<string> GetReplaceableQuery(NetstrDbContext db, Event e, DateTimeOffset now)
+        private IQueryable<string> GetReplaceableQuery(NetstrDbContext db, Event e)
         {
             var replacableEvents = e.Tags
                 .Where(x => x.Length >= 2 && x[0] == EventTag.ReplaceableEvent)

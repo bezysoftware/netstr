@@ -48,7 +48,7 @@ namespace Netstr.Tests
         {
             var message = $"[\"UNKNOWN\", {{}}]";
 
-            Assert.Throws<MessageProcessingException>(() => this.dispatcher.FindHandler(message));
+            Assert.Throws<UnknownMessageProcessingException>(() => this.dispatcher.FindHandler(message));
         }
     }
 }

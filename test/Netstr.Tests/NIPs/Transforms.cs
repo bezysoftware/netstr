@@ -59,12 +59,6 @@ namespace Netstr.Tests.NIPs
             return table.Rows.ToDictionary(row => row.GetString("Header"), row => row.GetString("Value"));
         }
 
-        [StepArgumentTransformation]
-        public LimitsOptions GetLimits(Table table)
-        {
-            return table.CreateInstance<LimitsOptions>();
-        }
-
         public static IEnumerable<Event> CreateEvents(Table table, Client c)
         {
             return table.CreateSet<Event>().Select((e, i) =>

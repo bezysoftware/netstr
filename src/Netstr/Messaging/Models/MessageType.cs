@@ -11,5 +11,13 @@
         public const string EndOfStoredEvents = "EOSE";
         public const string Ok = "OK";
         public const string Count = "COUNT";
+
+        public static class Negentropy
+        {
+            public const string Open = "NEG-OPEN";
+            public const string Error = "NEG-ERR";
+            public const string Message = "NEG-MSG";
+            public const string Close = "NEG-CLOSE";
+        }
     }
 }

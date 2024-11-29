@@ -16,7 +16,7 @@ namespace Netstr.Messaging.MessageHandlers
             var id = parameters[1].DeserializeRequired<string>();
 
             // remove sub
-            sender.RemoveSubscription(id);
+            sender.Subscriptions.RemoveById(id);
 
             return Task.CompletedTask;
         }

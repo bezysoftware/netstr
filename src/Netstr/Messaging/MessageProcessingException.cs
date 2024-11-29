@@ -1,38 +1,31 @@
-﻿using Netstr.Messaging.Models;
-
-namespace Netstr.Messaging
+﻿namespace Netstr.Messaging
 {
-    public class MessageProcessingException : Exception
+    public abstract class MessageProcessingException : Exception
     {
-        private readonly object[] reply = [];
+        protected readonly object[] reply = [];
 
-        public MessageProcessingException(Event e, string message) 
-            : base($"Event {e.ToStringUnique()} processing failed: {message}")
-        {
-            this.reply = ["OK", e.Id, false, message];
-        }
-
-        public MessageProcessingException(Event e, string message, Exception innerException)
+        protected MessageProcessingException(object[] reply, string message, Exception? innerException = null) 
             : base(message, innerException)
         {
-            this.reply = ["OK", e.Id, false, message];
+            this.reply = reply;
         }
 
-        public MessageProcessingException(string id, string message)
-            : base($"Subscription request '{id}' failed: {message}")
+        protected MessageProcessingException(object[] reply)
         {
-            this.reply = ["CLOSED", id, message];
+            this.reply = reply;
         }
 
-        public MessageProcessingException(string message, Exception? innerException = null)
-            : base(message, innerException)
-        {
-            this.reply = ["NOTICE", message];
-        }
-
-        public object[] GetSenderReply()
+        public virtual object[] GetSenderReply()
         {
             return this.reply;
+        }
+    }
+
+    public class UnknownMessageProcessingException : MessageProcessingException
+    {
+        public UnknownMessageProcessingException(string message, Exception? innerException = null) 
+            : base(["NOTICE", message], message, innerException)
+        {
         }
     }
 }

@@ -24,6 +24,7 @@ builder.Services
     .AddApplicationOptions<AuthOptions>("Auth")
     .AddMessaging()
     .AddHostedService<UserCacheStartupService>()
+    .AddHostedService<NegentropyBackgroundWatcher>()
     .AddScoped<IRelayInformationService, RelayInformationService>()
     .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(connectionString));
 

@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
     <PackageReference Include="NBitcoin.Secp256k1" Version="3.1.5" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
+	<PackageReference Include="Negentropy.net" Version="1.0.6" />
   </ItemGroup>
 
 </Project>

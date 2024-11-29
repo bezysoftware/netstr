@@ -18,7 +18,7 @@ namespace Netstr.Messaging.Events.Validators
 
         public string? Validate(Event e, ClientContext context)
         {
-            var limits = this.limits.Value;
+            var limits = this.limits.Value.Events;
             var now = DateTimeOffset.Now;
 
             if (limits.MaxCreatedAtLowerOffset > 0 && e.CreatedAt < now.AddSeconds(-limits.MaxCreatedAtLowerOffset))

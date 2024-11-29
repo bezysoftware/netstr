@@ -42,7 +42,7 @@ namespace Netstr.Messaging.Events.Handlers
             // check 'relay' tag matches current url or is set to ALL_RELAYS
             if (!relays.Any(x => x == path || x == AllRelaysValue))
             {
-                throw new MessageProcessingException(e, string.Format(Messages.InvalidWrongTagValue, EventTag.Relay));
+                throw new EventProcessingException(e, string.Format(Messages.InvalidWrongTagValue, EventTag.Relay));
             }
 
             using var db = this.db.CreateDbContext();
@@ -68,10 +68,10 @@ namespace Netstr.Messaging.Events.Handlers
             this.userCache.Vanish(e.PublicKey, e.CreatedAt);
 
             // reply
-            await sender.SendOkAsync(e.Id);
+            sender.SendOk(e.Id);
 
             // broadcast
-            await BroadcastEventAsync(e);
+            BroadcastEvent(e);
         }
     }
 }

@@ -4,14 +4,14 @@ namespace Netstr.Messaging
 {
     public static class SenderExtensions
     {
-        public static Task SendAsync(this IWebSocketAdapter sender, object[] message)
+        public static void Send(this IWebSocketAdapter sender, object[] message)
         {
-            return sender.SendAsync(MessageBatch.Single(message));
+            sender.Send(MessageBatch.Single(message));
         }
 
-        public static Task SendOkAsync(this IWebSocketAdapter sender, string id, string message = "")
+        public static void SendOk(this IWebSocketAdapter sender, string id, string message = "")
         {
-            return sender.SendAsync(
+            sender.Send(
             [
                 MessageType.Ok,
                 id, 
@@ -20,9 +20,9 @@ namespace Netstr.Messaging
             ]);
         }
 
-        public static Task SendNotOkAsync(this IWebSocketAdapter sender, string id, string message)
+        public static void SendNotOk(this IWebSocketAdapter sender, string id, string message)
         {
-            return sender.SendAsync(
+            sender.Send(
             [
                 MessageType.Ok,
                 id,
@@ -31,18 +31,18 @@ namespace Netstr.Messaging
             ]);
         }
 
-        public static Task SendNoticeAsync(this IWebSocketAdapter sender, string message)
+        public static void SendNotice(this IWebSocketAdapter sender, string message)
         {
-            return sender.SendAsync(
+            sender.Send(
             [
                 MessageType.Notice,
                 message
             ]);
         }
 
-        public static Task SendClosedAsync(this IWebSocketAdapter sender, string id, string message = "")
+        public static void SendClosed(this IWebSocketAdapter sender, string id, string message = "")
         {
-            return sender.SendAsync(
+            sender.Send(
             [
                 MessageType.Closed,
                 id,
@@ -50,18 +50,18 @@ namespace Netstr.Messaging
             ]);
         }
 
-        public static Task SendAuthAsync(this IWebSocketAdapter sender, string challenge)
+        public static void SendAuth(this IWebSocketAdapter sender, string challenge)
         {
-            return sender.SendAsync(
+            sender.Send(
             [
                 MessageType.Auth,
                 challenge
             ]);
         }
 
-        public static Task SendCountAsync(this IWebSocketAdapter sender, string id, int count)
+        public static void SendCount(this IWebSocketAdapter sender, string id, int count)
         {
-            return sender.SendAsync(
+            sender.Send(
             [
                 MessageType.Count,
                 id,

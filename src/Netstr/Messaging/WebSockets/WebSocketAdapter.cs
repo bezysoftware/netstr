@@ -3,84 +3,62 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Netstr.Options;
 using Netstr.Messaging.Models;
-using System.Collections.Immutable;
 using System.Threading.Channels;
 using Netstr.Messaging.Subscriptions;
 using System.Text.Json;
+using Netstr.Messaging.Negentropy;
 
 namespace Netstr.Messaging.WebSockets
 {
     public class WebSocketAdapter : IWebSocketListenerAdapter, IWebSocketAdapter
     {
         private readonly ILogger<WebSocketAdapter> logger;
-        private readonly IOptions<ConnectionOptions> connection;
         private readonly IOptions<LimitsOptions> limits;
         private readonly IOptions<AuthOptions> auth;
         private readonly IMessageDispatcher dispatcher;
         private readonly WebSocket ws;
-        private readonly Dictionary<string, SubscriptionAdapter> subscriptions;
         private readonly Channel<MessageBatch> sendChannel;
         private CancellationToken cancellationToken;
 
         public WebSocketAdapter(
             ILogger<WebSocketAdapter> logger,
-            IOptions<ConnectionOptions> connection,
             IOptions<LimitsOptions> limits,
             IOptions<AuthOptions> auth,
             IMessageDispatcher dispatcher,
+            INegentropyAdapterFactory negentropyFactory,
+            ISubscriptionsAdapterFactory subscriptionsFactory,
             CancellationToken cancellationToken,
             WebSocket ws,
             IHeaderDictionary headers,
             ConnectionInfo connectionInfo)
         {
             this.logger = logger;
-            this.connection = connection;
             this.limits = limits;
             this.auth = auth;
             this.dispatcher = dispatcher;
             this.cancellationToken = cancellationToken;
             this.ws = ws;
-            this.subscriptions = new();
             this.sendChannel = Channel.CreateBounded<MessageBatch>(
-                new BoundedChannelOptions(limits.Value.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
-                e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
+                new BoundedChannelOptions(limits.Value.Events.MaxPendingEvents) { FullMode = BoundedChannelFullMode.DropOldest }, 
+                e => logger.LogWarning($"Dropping following events due to capacity limit of {limits.Value.Events.MaxPendingEvents}: {JsonSerializer.Serialize(e.Messages)}"));
 
-            var id = headers["sec-websocket-key"].ToString();
-            
+            var id = headers.SecWebSocketKey.ToString();
 
             Context = new ClientContext(id, connectionInfo.RemoteIpAddress?.ToString() ?? string.Empty);
+            
+            Subscriptions = subscriptionsFactory.CreateAdapter(this);
+            Negentropy = negentropyFactory.CreateAdapter(this);
         }
 
         public ClientContext Context { get; }
 
-        public SubscriptionAdapter AddSubscription(string id, IEnumerable<SubscriptionFilter> filters)
+        public ISubscriptionsAdapter Subscriptions { get; }
+        
+        public INegentropyAdapter Negentropy { get; }
+
+        public void Send(MessageBatch batch)
         {
-            if (this.subscriptions.TryGetValue(id, out var existing))
-            {
-                this.logger.LogInformation($"Disposing existing subscription {id} for client {Context.ClientId}");
-                existing.Dispose();
-            }
-
-            this.logger.LogInformation($"Adding new subscription {id} for client {Context.ClientId}");
-            return this.subscriptions[id] = new SubscriptionAdapter(this, id, filters.ToArray());
-        }
-
-        public IDictionary<string, SubscriptionAdapter> GetSubscriptions()
-        {
-            return this.subscriptions.ToImmutableDictionary(x => x.Key, x => x.Value);
-        }
-
-        public void RemoveSubscription(string id)
-        {
-            this.logger.LogInformation($"Removing subscription {id} for client {Context.ClientId}");
-            this.subscriptions.Remove(id, out var subscription);
-
-            subscription?.Dispose();
-        }
-
-        public async Task SendAsync(MessageBatch batch)
-        {
-            await this.sendChannel.Writer.WriteAsync(batch);
+            this.sendChannel.Writer.TryWrite(batch);
         }
 
         public async Task StartAsync()
@@ -90,7 +68,7 @@ namespace Netstr.Messaging.WebSockets
                 // send auth challenge when it's not disabled
                 if (this.auth.Value.Mode != AuthMode.Disabled)
                 {
-                    await this.SendAuthAsync(Context.Challenge);
+                    this.SendAuth(Context.Challenge);
                 }
 
                 // start sending & receiving messages
@@ -102,7 +80,9 @@ namespace Netstr.Messaging.WebSockets
             finally
             {
                 this.sendChannel.Writer.Complete();
-                this.subscriptions.Clear();
+                
+                Subscriptions.Dispose();
+                Negentropy.Dispose();
             }
         }
 
@@ -127,7 +107,7 @@ namespace Netstr.Messaging.WebSockets
                     if (!result.EndOfMessage)
                     {
                         // payload too large, disconnect
-                        await this.SendNoticeAsync(Messages.InvalidPayloadTooLarge);
+                        this.SendNotice(Messages.InvalidPayloadTooLarge);
                         await this.ws.CloseOutputAsync(WebSocketCloseStatus.MessageTooBig, Messages.InvalidPayloadTooLarge, CancellationToken.None);
                         break;
                     }

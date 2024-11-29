@@ -14,10 +14,12 @@ namespace Netstr.Tests
         public RateLimitingTests()
         {
             this.factory = new WebApplicationFactory();
-            this.factory.Limits = new LimitsOptions
+            this.factory.EventLimits = new Options.Limits.EventLimits
             {
-                MaxPayloadSize = 524288,
                 MaxEventsPerMinute = 5,
+            };
+            this.factory.SubscriptionLimits = new Options.Limits.SubscriptionLimits
+            {
                 MaxSubscriptionsPerMinute = 2
             };
         }
@@ -41,7 +43,7 @@ namespace Netstr.Tests
             };
 
             var replies = new List<JsonElement[]>();
-            var tooManyCount = limits.Value.MaxEventsPerMinute + 1;
+            var tooManyCount = limits.Value.Events.MaxEventsPerMinute + 1;
 
             _ = ws.ReceiveAsync(replies.Add);
             
@@ -68,7 +70,7 @@ namespace Netstr.Tests
             var limits = this.factory.Services.GetRequiredService<IOptions<LimitsOptions>>();
 
             var replies = new List<JsonElement[]>();
-            var tooManyCount = limits.Value.MaxSubscriptionsPerMinute + 1;
+            var tooManyCount = limits.Value.Subscriptions.MaxSubscriptionsPerMinute + 1;
 
             _ = ws.ReceiveAsync(replies.Add);
 

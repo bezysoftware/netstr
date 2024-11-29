@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Netstr.Data;
 using Netstr.Options;
+using Netstr.Options.Limits;
 using System.Net.WebSockets;
 
 namespace Netstr.Tests
@@ -18,12 +19,21 @@ namespace Netstr.Tests
 
             builder.ConfigureAppConfiguration((ctx, b) =>
             {
-                b.AddInMemoryObject(Limits, "Limits");
+                b.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["Limits:MaxPayloadSize"] = $"{MaxPayloadSize}"
+                });
+                b.AddInMemoryObject(EventLimits, "Limits:Events");
+                b.AddInMemoryObject(SubscriptionLimits, "Limits:Subscriptions");
+                b.AddInMemoryObject(NegentropyLimits, "Limits:Negentropy");
                 b.AddInMemoryCollection([ KeyValuePair.Create("Auth:Mode", AuthMode.ToString())]);
             });
         }
 
-        public LimitsOptions? Limits { get; set; }
+        public SubscriptionLimits? SubscriptionLimits { get; set; }
+        public EventLimits? EventLimits { get; set; }
+        public NegentropyLimits? NegentropyLimits { get; set; }
+        public int MaxPayloadSize { get; set; } = 524288;
         public AuthMode AuthMode { get; set; } = AuthMode.Disabled;
 
         public async Task<WebSocket> ConnectWebSocketAsync(AuthMode authMode = AuthMode.Disabled)

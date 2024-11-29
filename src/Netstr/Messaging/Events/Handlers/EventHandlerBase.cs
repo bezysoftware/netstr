@@ -32,7 +32,7 @@ namespace Netstr.Messaging.Events.Handlers
             catch (DbUpdateException ex) when (ex.IsUniqueIndexViolation())
             {
                 this.logger.LogInformation($"Event {e.ToStringUnique()} already exists, ignoring");
-                await sender.SendOkAsync(e.Id, Messages.DuplicateEvent);
+                sender.SendOk(e.Id, Messages.DuplicateEvent);
             }
         }
 
@@ -40,14 +40,17 @@ namespace Netstr.Messaging.Events.Handlers
 
         protected abstract Task HandleEventCoreAsync(IWebSocketAdapter sender, Event e);
 
-        protected async Task BroadcastEventAsync(Event e)
+        protected void BroadcastEvent(Event e)
         {
             var adapters = this.adapters.GetAll();
 
-            await Task.WhenAll(adapters.Select(x => BroadcastEventForAdapterAsync(x, e)));
+            foreach (var adapter in adapters)
+            {
+                BroadcastEventForAdapterAsync(adapter, e);
+            }
         }
 
-        private async Task BroadcastEventForAdapterAsync(IWebSocketAdapter adapter, Event e)
+        private void BroadcastEventForAdapterAsync(IWebSocketAdapter adapter, Event e)
         {
             if (
                 this.auth.Value.ProtectedKinds.Contains(e.Kind) &&
@@ -59,13 +62,11 @@ namespace Netstr.Messaging.Events.Handlers
                 return;
             }
 
-            var broadcast = adapter
-                .GetSubscriptions()
+            adapter.Subscriptions
+                .GetAll()
                 .Where(x => x.Value.Filters.IsAnyMatch(e))
-                .Select(x => x.Value.SendEventAsync(e))
-                .ToArray();
-
-            await Task.WhenAll(broadcast);
+                .ToList()
+                .ForEach(x => x.Value.SendEvent(e));
         }
     }
 }

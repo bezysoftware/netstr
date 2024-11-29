@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Options;
 using Netstr.Data;
 using Netstr.Messaging.Models;
+using Netstr.Messaging.Subscriptions;
 using Netstr.Messaging.Subscriptions.Validators;
 using Netstr.Options;
+using System.Text.Json;
 
 namespace Netstr.Messaging.MessageHandlers
 {
@@ -27,25 +29,29 @@ namespace Netstr.Messaging.MessageHandlers
 
         protected override string AcceptedMessageType => MessageType.Req;
 
-        protected override async Task HandleMessageCoreAsync(IWebSocketAdapter adapter, string subscriptionId, IEnumerable<SubscriptionFilter> filters)
+        protected override async Task HandleMessageCoreAsync(
+            IWebSocketAdapter adapter, 
+            string subscriptionId, 
+            IEnumerable<SubscriptionFilter> filters,
+            IEnumerable<JsonDocument> remainingParameters)
         {
-            var maxSubscriptions = this.limits.Value.MaxSubscriptions;
-            if (maxSubscriptions > 0 && adapter.GetSubscriptions().Where(x => x.Key != subscriptionId).Count() >= maxSubscriptions)
+            var maxSubscriptions = this.limits.Value.Subscriptions.MaxSubscriptions;
+            if (maxSubscriptions > 0 && adapter.Subscriptions.GetAll().Where(x => x.Key != subscriptionId).Count() >= maxSubscriptions)
             {
-                throw new MessageProcessingException(subscriptionId, Messages.InvalidTooManySubscriptions);
+                throw new SubscriptionProcessingException(subscriptionId, Messages.InvalidTooManySubscriptions);
             }
 
             using var context = this.db.CreateDbContext();
 
             // add sub
-            var subscription = adapter.AddSubscription(subscriptionId, filters);
+            var subscription = adapter.Subscriptions.Add(subscriptionId, filters);
 
             // get stored events
             var entities = await GetFilteredEvents(context, filters, adapter.Context.PublicKey).ToArrayAsync();
             var events = entities.Select(CreateEvent).ToArray();
 
             // send stored events (also sends EOSE)
-            await subscription.SendStoredEventsAsync(events);
+            subscription.SendStoredEvents(events);
         }
 
         private Event CreateEvent(EventEntity e)

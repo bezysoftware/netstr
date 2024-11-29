@@ -15,13 +15,16 @@ namespace Netstr.Tests
         public LimitsTests()
         {
             this.factory = new WebApplicationFactory();
-            this.factory.Limits = new LimitsOptions
+            this.factory.MaxPayloadSize = 1024;
+            this.factory.EventLimits = new Options.Limits.EventLimits
             {
-                MaxPayloadSize = 1024,
                 MinPowDifficulty = 0, // covered by a NIP-13 test
                 MaxCreatedAtLowerOffset = 10,
                 MaxCreatedAtUpperOffset = 10,
                 MaxEventTags = 2,
+            };
+            this.factory.SubscriptionLimits = new Options.Limits.SubscriptionLimits
+            {
                 MaxInitialLimit = 5,
                 MaxFilters = 2,
                 MaxSubscriptionIdLength = 5,

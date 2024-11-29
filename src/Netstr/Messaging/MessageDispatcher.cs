@@ -31,13 +31,14 @@ namespace Netstr.Messaging
             }
             catch (MessageProcessingException ex)
             {
-                this.logger.LogWarning(ex, $"Failed to process message: {message}");
-                await sender.SendAsync(ex.GetSenderReply());
+                var reply = ex.GetSenderReply();
+                this.logger.LogWarning(ex, $"Failed to process message: {message}, reply is: {string.Join(",", reply)}");
+                sender.Send(reply);
             }
             catch (Exception ex)
             {
                 this.logger.LogError(ex, $"Error while processing message: {message}");
-                await sender.SendNoticeAsync(Messages.ErrorInternal);
+                sender.SendNotice(Messages.ErrorInternal);
             }
         }
 
@@ -49,7 +50,7 @@ namespace Netstr.Messaging
             if (parts == null || typePart == null)
             {
                 this.logger.LogWarning($"Couldn't get message type");
-                throw new MessageProcessingException(Messages.CannotParseMessage);
+                throw new UnknownMessageProcessingException(Messages.CannotParseMessage);
             }
 
             var type = typePart.Deserialize<string>() ?? "";
@@ -58,7 +59,7 @@ namespace Netstr.Messaging
             if (handler == null)
             {
                 this.logger.LogWarning($"No handler for message type {type}");
-                throw new MessageProcessingException($"{Messages.CannotProcessMessageType} {type}");
+                throw new UnknownMessageProcessingException($"{Messages.CannotProcessMessageType} {type}");
             }
 
             return (handler, parts);

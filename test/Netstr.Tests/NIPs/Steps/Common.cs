@@ -1,5 +1,6 @@
 ﻿using Netstr.Options;
 using TechTalk.SpecFlow;
+using TechTalk.SpecFlow.Assist;
 
 namespace Netstr.Tests.NIPs.Steps
 {
@@ -27,9 +28,20 @@ namespace Netstr.Tests.NIPs.Steps
         }
 
         [Given(@"a relay is running with options")]
-        public void GivenARelayIsRunningWithOptions(LimitsOptions options)
+        public void GivenARelayIsRunningWithOptions(Table table)
         {
-            this.factory.Limits = options;
+            foreach (var row in table.Rows) 
+            {
+                switch (row.GetString("Key"))
+                {
+                    case "MinPowDifficulty":
+                        this.factory.EventLimits = new Options.Limits.EventLimits
+                        {
+                            MinPowDifficulty = row.GetInt32("Value"),
+                        };
+                        break;
+                }
+            }
         }
 
         [Given(@"(.*) is connected to relay")]

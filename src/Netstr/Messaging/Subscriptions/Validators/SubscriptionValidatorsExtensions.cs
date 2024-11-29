@@ -1,4 +1,5 @@
-﻿using Netstr.Messaging.Models;
+﻿using Netstr.Messaging.MessageHandlers;
+using Netstr.Messaging.Models;
 
 namespace Netstr.Messaging.Subscriptions.Validators
 {
@@ -7,14 +8,17 @@ namespace Netstr.Messaging.Subscriptions.Validators
         /// <summary>
         /// Runs validations for the given subscription request and returns the first error or null.
         /// </summary>
-        public static string? CanSubscribe(this IEnumerable<ISubscriptionRequestValidator> validators, string id, ClientContext context, IEnumerable<SubscriptionFilter> filters)
+        public static string? CanSubscribe(this IEnumerable<ISubscriptionRequestValidator> validators, string id, ClientContext context, IEnumerable<SubscriptionFilter> filters, FilterMessageHandlerBase handler)
         {
             foreach (var validator in validators)
             {
-                var error = validator.CanSubscribe(id, context, filters);
-                if (error != null)
+                if (validator.IsApplicable(handler))
                 {
-                    return error;
+                    var error = validator.CanSubscribe(id, context, filters);
+                    if (error != null)
+                    {
+                        return error;
+                    }
                 }
             }
 

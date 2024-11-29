@@ -18,16 +18,18 @@ namespace Netstr.Messaging.Events.Validators
 
         public string? Validate(Event e, ClientContext context)
         {
-            if (this.limits.Value.MinPowDifficulty <= 0)
+            var limits = this.limits.Value.Events;
+
+            if (limits.MinPowDifficulty <= 0)
             {
                 return null;
             }
 
             var difficulty = e.GetDifficulty();
 
-            if (difficulty < this.limits.Value.MinPowDifficulty)
+            if (difficulty < limits.MinPowDifficulty)
             {
-                return string.Format(Messages.PowNotEnough, difficulty, this.limits.Value.MinPowDifficulty);
+                return string.Format(Messages.PowNotEnough, difficulty, limits.MinPowDifficulty);
             }
 
             var nonce = e.Tags.FirstOrDefault(x => x.Length == 3 && x[0] == EventTag.Nonce);
@@ -35,7 +37,7 @@ namespace Netstr.Messaging.Events.Validators
             // if there is a target difficulty check if it matches the actual one
             if (nonce != null && int.TryParse(nonce[2], out var expectedDiff) && expectedDiff != difficulty)
             {
-                return string.Format(Messages.PowNoMatch, difficulty, this.limits.Value.MinPowDifficulty);
+                return string.Format(Messages.PowNoMatch, difficulty, limits.MinPowDifficulty);
             }
 
             return null;
