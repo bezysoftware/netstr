@@ -1,10 +1,10 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 8080
 
 # restore solution packages
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS restore
 WORKDIR /
 COPY ["src/Netstr/Netstr.csproj", "src/Netstr/"]
 COPY ["test/Netstr.Tests/Netstr.Tests.csproj", "test/Netstr.Tests/"]
