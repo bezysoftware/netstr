@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Netstr.Data
 {
@@ -51,6 +52,12 @@ namespace Netstr.Data
                 e.HasKey(x => x.Id);
                 e.HasIndex(x => new { x.Name, x.Value, x.EventId }, TagValueIndexName).IsUnique();
             });
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.ConfigureWarnings(w => w.Log(RelationalEventId.PendingModelChangesWarning));
         }
     }
 }

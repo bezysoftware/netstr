@@ -58,15 +58,26 @@ namespace Netstr.Messaging.Events.Handlers
                 adapter.Context.PublicKey != e.PublicKey &&
                 e.Tags.Any(x => x.Length >= 2 && x[0] == EventTag.PublicKey && x[1] != adapter.Context.PublicKey))
             {
+                this.logger.LogInformation($"Not going to broadcast event {e.Id}");
+
                 // not going to send the event to this client
                 return;
             }
 
-            adapter.Subscriptions
+            var subs = adapter.Subscriptions
                 .GetAll()
                 .Where(x => x.Value.Filters.IsAnyMatch(e))
-                .ToList()
-                .ForEach(x => x.Value.SendEvent(e));
+                .ToList();
+
+            if (subs.Any())
+            {
+                this.logger.LogInformation($"Broadcasting event {e.Id} to subscribers");
+
+                foreach (var sub in subs)
+                {
+                    sub.Value.SendEvent(e);
+                };
+            }
         }
     }
 }

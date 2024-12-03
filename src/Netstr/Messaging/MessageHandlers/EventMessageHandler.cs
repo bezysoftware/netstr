@@ -78,6 +78,8 @@ namespace Netstr.Messaging.MessageHandlers
                 throw new EventProcessingException(e, validation);
             }
 
+            this.logger.LogInformation($"Event {e.Id} passed validations, sending to event dispatcher");
+
             await this.eventDispatcher.DispatchEventAsync(sender, e);
         }
     }
