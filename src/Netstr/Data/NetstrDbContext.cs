@@ -53,5 +53,11 @@ namespace Netstr.Data
                 e.HasIndex(x => new { x.Name, x.Value, x.EventId }, TagValueIndexName).IsUnique();
             });
         }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.ConfigureWarnings(w => w.Log(RelationalEventId.PendingModelChangesWarning));
+        }
     }
 }

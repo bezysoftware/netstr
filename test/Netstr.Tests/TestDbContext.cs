@@ -45,7 +45,6 @@ namespace Netstr.Tests
         {
             base.OnConfiguring(optionsBuilder);
 
-            optionsBuilder.ConfigureWarnings(w => w.Log(RelationalEventId.PendingModelChangesWarning));
             optionsBuilder.LogTo(x => Debug.WriteLine(x));
         }
 
