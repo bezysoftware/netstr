@@ -27,6 +27,8 @@ namespace Netstr.Messaging
             {
                 var (handler, parts) = FindHandler(message);
 
+                this.logger.LogDebug($"Received message {message}");
+
                 await handler.HandleMessageAsync(sender, parts);
             }
             catch (MessageProcessingException ex)

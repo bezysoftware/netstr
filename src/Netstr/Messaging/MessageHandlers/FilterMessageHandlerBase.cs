@@ -65,6 +65,7 @@ namespace Netstr.Messaging.MessageHandlers
             }
 
             var id = parameters[1].DeserializeRequired<string>();
+
             using var lease = this.rateLimiter.AttemptAcquire(adapter.Context.IpAddress);
 
             if (!lease.IsAcquired)
@@ -89,6 +90,8 @@ namespace Netstr.Messaging.MessageHandlers
             {
                 RaiseSubscriptionException(id, validationError);
             }
+
+            this.logger.LogInformation($"Subscription request {id} passed validations, processing further ({adapter.Context})");
 
             await HandleMessageCoreAsync(adapter, id, filters, parameters.Skip(filters.Length + 2).ToArray());
         }

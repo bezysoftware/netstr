@@ -30,6 +30,8 @@ namespace Netstr.Messaging.MessageHandlers
         {
             var e = ValidateAuthEvent(parameters, adapter.Context);
 
+            this.logger.LogInformation($"Authenticating client {adapter.Context.ClientId}.");
+
             adapter.Context.Authenticate(e.PublicKey);
 
             this.logger.LogInformation($"Client {adapter.Context.ClientId} successfully authenticated.");
