@@ -27,8 +27,7 @@ namespace Netstr.Messaging.Events.Validators
                 e.Content
             ];
 
-            // TODO: ToHexStringLower in .NET 9
-            var hash = Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(obj, serializerOptions))).ToLower();
+            var hash = Convert.ToHexStringLower(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(obj, serializerOptions)));
 
             return hash.Equals(e.Id)
                 ? null

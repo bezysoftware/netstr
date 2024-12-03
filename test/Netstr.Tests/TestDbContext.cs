@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Netstr.Data;
 using Netstr.Messaging.Models;
@@ -44,6 +45,7 @@ namespace Netstr.Tests
         {
             base.OnConfiguring(optionsBuilder);
 
+            optionsBuilder.ConfigureWarnings(w => w.Log(RelationalEventId.PendingModelChangesWarning));
             optionsBuilder.LogTo(x => Debug.WriteLine(x));
         }
 
