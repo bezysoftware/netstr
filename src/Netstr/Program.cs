@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Netstr.Data;
@@ -18,13 +17,11 @@ builder.Services
     .AddCors(x => x.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()))
     .AddControllersWithViews().Services
     .AddHttpContextAccessor()
-    .AddApplicationOptions<ConnectionOptions>("Connection")
-    .AddApplicationOptions<RelayInformationOptions>("RelayInformation")
-    .AddApplicationOptions<LimitsOptions>("Limits")
-    .AddApplicationOptions<AuthOptions>("Auth")
+    .AddApplicationsOptions()
     .AddMessaging()
     .AddHostedService<UserCacheStartupService>()
     .AddHostedService<NegentropyBackgroundWatcher>()
+    .AddHostedService<CleanupBackgroundService>()
     .AddScoped<IRelayInformationService, RelayInformationService>()
     .AddDbContextFactory<NetstrDbContext>(x => x.UseNpgsql(connectionString));
 

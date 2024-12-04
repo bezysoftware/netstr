@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Netstr.Messaging;
+﻿using Netstr.Messaging;
 using Netstr.Messaging.Events;
 using Netstr.Messaging.Events.Handlers;
 using Netstr.Messaging.Events.Handlers.Replaceable;
@@ -21,6 +20,7 @@ namespace Netstr.Extensions
             services.AddSingleton<WebSocketAdapterFactory>();
             services.AddSingleton<IWebSocketAdapterCollection, WebSocketAdapterCollection>();
             services.AddSingleton<IUserCache, UserCache>();
+            services.AddTransient<ICleanupService, CleanupService>();
 
             // message
             services.AddSingleton<IMessageDispatcher, MessageDispatcher>();
@@ -46,9 +46,6 @@ namespace Netstr.Extensions
             services.AddSingleton<IEventHandler, EphemeralEventHandler>();
             services.AddSingleton<IEventHandler, AddressableEventHandler>();
             services.AddSingleton<IEventHandler, VanishEventHandler>();
-
-            // RegularEventHandler needs to go last
-            services.AddSingleton<IEventHandler, RegularEventHandler>();
 
             // RegularEventHandler needs to go last
             services.AddSingleton<IEventHandler, RegularEventHandler>();
