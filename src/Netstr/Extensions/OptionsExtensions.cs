@@ -13,5 +13,15 @@ namespace Netstr.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddApplicationsOptions(this IServiceCollection services)
+        {
+            return services
+                .AddApplicationOptions<ConnectionOptions>("Connection")
+                .AddApplicationOptions<RelayInformationOptions>("RelayInformation")
+                .AddApplicationOptions<LimitsOptions>("Limits")
+                .AddApplicationOptions<AuthOptions>("Auth")
+                .AddApplicationOptions<CleanupOptions>("Cleanup");
+        }
     }
 }

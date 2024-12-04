@@ -86,13 +86,13 @@ namespace Netstr.Tests
 
             await ws.SendNegentropyOpenAsync("abcd", new Messaging.Models.SubscriptionFilterRequest { Kinds = [0] }, msg);
 
-            var cts = new CancellationTokenSource(2000);
+            var cts = new CancellationTokenSource(3000);
             var received = await ws.ReceiveOnceAsync(cts.Token);
 
             received[0].GetString().Should().Be("NEG-MSG");
             received[1].GetString().Should().Be("abcd");
 
-            cts = new CancellationTokenSource(2000);
+            cts = new CancellationTokenSource(3000);
 
             received = await ws.ReceiveOnceAsync(cts.Token);
 

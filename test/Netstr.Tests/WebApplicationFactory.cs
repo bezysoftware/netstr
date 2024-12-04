@@ -5,6 +5,8 @@ using Netstr.Options;
 using Netstr.Options.Limits;
 using System.Net.WebSockets;
 
+[assembly: CollectionBehavior(CollectionBehavior.CollectionPerAssembly)]
+
 namespace Netstr.Tests
 {
     public class WebApplicationFactory : WebApplicationFactory<Program>
